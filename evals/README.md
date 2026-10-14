@@ -1,18 +1,48 @@
 # Evals
 
-One folder per skill. Each case reproduces a problem the kit once had, so the fix stays fixed.
+One folder per skill. Each case reproduces a problem the kit once had, or a promise a skill makes, so the behaviour stays fixed.
 
 ```
 evals/<skill>/<case-name>/
-  prompt.md        what the user asks, plus any setup the case needs
-  graders/*.md     what a correct run must and must not do
+  prompt.md        frontmatter (max_turns, allowed_tools) + what the user types
+  graders/*.md     one grader per file; all must pass
 ```
 
-Run them with:
+## Running
+
+Always local-only, one run per case, with a cost cap. `--ablation none` skips the no-plugin baseline, which doubles the cost and rarely helps here.
 
 ```bash
-claude plugin eval .                  # every case
-claude plugin eval . --case '<glob>'  # a subset
+claude plugin eval <kit> --no-publish --runs 1 --max-cost-usd 5 --trust-plugin \
+  --ablation none --allow-tools Bash Write Edit [--case '<glob>']
 ```
 
-`/my:improve run` adds a case for every note it fixes. A case is written so that it fails on the version before the fix.
+Without `--no-publish`, the report is uploaded to claude.ai. Results land in `evals/results/` (git-ignored).
+
+## Graders
+
+Frontmatter `type` is one of `regex`, `tool_order`, `tool_used`, `file_exists`, `llm` or `baseline`. Each grader also takes `weight` (default 1).
+
+| Type | Fields | Use for |
+| --- | --- | --- |
+| `file_exists` | `path`, `exists` (default true) | an output file was (or was not) written |
+| `tool_used` | `tool`, `input_match` (regex on the input), `min`, `max`, `arm` | "must not call X": `min: 0`, `max: 0`, `arm: both` |
+| `tool_order` | `before`, `after` | step ordering |
+| `regex` | `pattern`, `target`, `match` (`contains`, `not_contains`, `count:N`), `flags` | exact strings in output |
+| `llm` | body = rubric; `focus` | judgement on content |
+
+`target` and `focus` take `last_message` (default), `trace`, `files`, or a file:
+
+```yaml
+focus:
+  source: file
+  path: data/out.md
+```
+
+## Lessons
+
+- The judge sees a truncated trace. For "never did X", use `tool_used`, not an `llm` grader with `focus: trace`.
+- Point an `llm` grader at the file it judges (`focus: {source: file, ...}`) rather than at the transcript.
+- Keep data out of the real `~/.claude/my`: prompts name a local data root (for example `./kit-data`), which the skills honour.
+- Sandboxed runs have no working `git` or `gh` auth. Skills must degrade to `unknown`, not fail.
+- A case must be able to fail. Write it against the problem first, then fix the skill.
