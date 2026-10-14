@@ -107,7 +107,11 @@ The kit follows [semantic versioning](https://semver.org):
 skills/<name>/       one folder per skill, each with SKILL.md and its templates
 evals/<skill>/       eval cases, one per problem the kit has learned from
 docs/principles.md   rules every skill follows
+docs/                question format, review lenses, local data layout
+templates/           plan, project profile, round, round summary, log entry, reviewer profile, study page
 scripts/check.sh     validation and privacy check, run by the pre-commit hook
+scripts/verify-round.sh  checks a round summary against git
+scripts/drift.sh     size versus budget, distance from main, conflict preview
 .githooks/           git hooks (enable with: git config core.hooksPath .githooks)
 .claude/CLAUDE.md    instructions for agents editing this repository
 CHANGELOG.md         what changed in each version

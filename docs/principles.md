@@ -5,30 +5,35 @@ Every skill in this kit follows these rules. Skills point here instead of restat
 ## Proportional, not strict
 
 - **Size the process to the task.** First classify the work (bug fix, feature, refactor, tool, infra, review) and its size (S, M, L). Ask only the questions that kind of work needs. A small bug fix gets a half-page plan; a large cross-cutting change gets the full one.
-- **Skip what does not apply, and say so in one line.** A section left out on purpose is fine; a section left out by accident is not.
-- **Only four things are always fixed:** the goal, the boundary, the bar for done, and the gates. Everything else scales with the task.
+- **Skip what does not apply, and say so in one line.** Leaving a section out on purpose is fine; leaving it out by accident is not.
+- **Four things are always fixed:** the goal, the boundary, the bar for done, and the gates. Everything else scales with the task.
 - **Any rule can be overridden** when the user says why. Record the reason in the plan.
 
 ## The plan is the contract
 
-- **Boundary first.** State what must stay exactly as it is today (for example "with the feature flag off, behaviour equals the main branch"). Write it before any code.
-- **Invariants are checkable.** Each one names where in the code it holds and a test that fails when it breaks.
-- **New or existing behaviour?** Before treating a behaviour as a requirement, find the test or code that pins it today. If none exists, it is a new feature and goes through scope, not through a fix.
+- **Boundary first.** State what must stay exactly as it is today (for example, "with the feature flag off, behaviour equals the main branch"). Write it before any code.
+- **Invariants are checkable.** Each one names where in the code it holds, and a test that fails when it breaks.
+- **New or existing behaviour?** Before treating a behaviour as a requirement, find the test or code that pins it today. If none exists, it is a new feature: it goes through scope, not through a fix.
 - **The bar for done is set at the start.** It is the stop criterion for every review. A review stops when the bar is met, not when it runs out of things to say.
 - **Out of scope is a list.** A finding outside the plan becomes a ticket, not a fix.
-- **Size budget and split trigger.** Agree on a rough size up front; crossing it means stop and decide whether to split.
+- **Intentional changes are a list.** Every difference from today's behaviour that the change means to make is written down. An unlisted difference is either a bug or a missing entry.
+- **Size budget and split trigger.** Agree a rough size up front. Crossing it means stop and decide whether to split.
 
 ## Humans decide at gates, agents do the rest
 
-- **Gates are agreed in the plan:** plan approval; any decision outside the bar or the boundary; the diff before a push; anything published (PR text, review comments, messages).
-- **Between gates, agents work alone.** No relaying messages between chats, no babysitting.
+- **The gates are agreed in the plan:**
+  - plan approval;
+  - any decision outside the bar or the boundary;
+  - marking a change ready for human review;
+  - anything published: PR text, review comments, replies, messages, ticket changes beyond the agreed ones.
+- **Between gates, agents work alone.** No relaying messages between sessions, no babysitting.
+- **Pushing to a draft branch is not a gate.** A round that passed verification pushes on its own, so CI and backup happen early. A user can turn this off per run.
 - **Chores never land on the user.** Restarting services, cleaning containers and rerunning suites belong to the agent doing the work.
+- **Notify at gates.** When the work stops for a decision, or a long round ends, send a short desktop notification and put the summary in chat.
 
 ## Questions the user can answer
 
-- **Multiple choice, recommended option first,** with a free answer always possible.
-- **Every option shows:** the user-visible effect, what happens today without the change, pros, cons, and how serious the issue is.
-- **No internal IDs or jargon** without a one-line meaning.
+Follow [question-format.md](question-format.md): multiple choice, recommended option first. Every option shows its effect, what happens today, its pros and cons, and how serious the issue is.
 
 ## Verify, don't assume
 
@@ -37,24 +42,46 @@ Every skill in this kit follows these rules. Skills point here instead of restat
 - **A test must be able to fail.** Drive the production caller, and check that reverting the fix makes the test fail.
 - **The writer is not the reviewer.** Reviews run in a fresh context that did not write the code.
 - **Stop and report** when the code contradicts the plan, instead of improvising.
+- **Agents in the background cannot ask the user.** When they reach a decision, they stop and report the options. The coordinating session asks.
+
+## Review depth follows the stakes
+
+- **Every round: a light conformance review** of that round's diff against the plan, by a fresh agent. The lenses are in [review-lenses.md](review-lenses.md).
+- **At milestones: the project's deep review tool,** named in the project profile. The milestones are before "ready for human review", and when drift exceeds the budget. The bar is passed in as the stop criterion.
+- **Every finding is labelled:** **block** (breaks the promise, an invariant, the boundary or the bar), **ticket** (real but out of scope) or **note**. Only block findings enter the next round.
 
 ## Repository rules are inputs, not assumptions
 
-- **Load the relevant rules explicitly.** Before work starts, find the guidance that applies to the files being touched (style guides, contribution rules, module docs), and hand it to both the executor and the reviewer.
+- **Each repository has a local profile** in `~/.claude/my/projects/<repo>.md`. It names the commands (tests, codegen, migrations, deep review, PR description), the guides to load, and the post-merge checks. The format is in [local-data.md](local-data.md).
+- **Load the relevant rules explicitly.** Before work starts, find the guides that apply to the files being touched, and hand them to both the executor and the reviewer.
 - **When a fix suggested by a reviewer conflicts with a repository rule,** the rule wins until the user decides otherwise.
 
 ## Always in a worktree
 
 - **Work happens in the worktree of the change, never in the main checkout.** Every skill checks the worktree, branch, HEAD and clean tree at start, and stops if they are wrong.
+- **New branches start from `origin/main`,** never from whatever branch happens to be checked out.
 - **One writer per worktree at a time.**
 
 ## Where files go
 
-- **Per-change files** (plans, round notes, summaries) live in the worktree's git-ignored `.plans/` folder and disappear with the worktree.
-- **Lasting personal material** (improvement log, retrospectives, reviewer profiles, study pages) lives in `~/.claude/my/`, outside this repository.
+- **Per-change files** (plans, rounds, summaries, comment triage) live in the worktree's git-ignored `.plans/` folder, and disappear with the worktree.
+- **Lasting personal material** lives in `~/.claude/my/`, outside this repository. The layout is in [local-data.md](local-data.md).
 - **Throwaway files** go in the session scratchpad.
+- **Nothing employer-specific enters this repository.**
 
 ## Language
 
-- **Skills, prompts for other agents, and hand-off files are in English.**
+- **Skills, prompts for other agents, plans and hand-off files are in English.**
 - **Conversation with the user, and study material, are in the user's language.**
+
+## Closing step of every skill
+
+Before finishing, check whether any of these happened in the session:
+
+- a decision was reversed;
+- the user had to ask for a question again, or for a simpler explanation;
+- a gate came as a surprise;
+- a review found something the plan did not foresee;
+- a stop the plan did not foresee.
+
+If one did, offer in one line to log it with `/my:improve note <what happened>`. Never edit a skill on your own.
