@@ -1,0 +1,14 @@
+{
+  "name": "my-agent-kit",
+  "description": "Private marketplace for my-agent-kit, a personal suite of workflow skills for working with agents.",
+  "owner": {
+    "name": "Lorenzo Cadamuro"
+  },
+  "plugins": [
+    {
+      "name": "my",
+      "source": "./",
+      "description": "Personal workflow skills for working with agents."
+    }
+  ]
+}
