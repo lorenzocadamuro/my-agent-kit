@@ -63,4 +63,6 @@ focus:
 - Keep data out of the real `~/.claude/my`: prompts name a local data root (for example `./kit-data`), which the skills honour.
 - Sandboxed runs have no working `git` or `gh` auth. Skills must degrade to `unknown`, not fail.
 - `focus: files` shows only the list of written files, not their content. Have the prompt name the output file, and point the grader at it.
+- `--case` takes one glob; repeating the flag keeps only the last one.
+- Long artifacts make LLM judges noisy: keep fixture tasks small, or add a `regex` grader for exact facts.
 - A case must be able to fail. Write it against the problem first, then fix the skill.

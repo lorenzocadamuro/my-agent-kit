@@ -6,6 +6,7 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ### Added
 
+- `/my:scope-plan` skill: project profile setup, ticket reading, research, size-scaled interview, independent plan review, approval gate, worktree and ticket start; evals for a small task and a false premise.
 - `/my:study-review` skill: three-layer Markdown study pages with a reading budget, cumulative glossary, reviewer profiles and index; eval for the budget and known terms.
 - Shared foundation: principles extended (gates, push policy, review depth, notifications, project profiles, closing step), question format, review lenses, local data layout.
 - Templates: plan, project profile, round, round summary, log entry, reviewer profile, study page.
