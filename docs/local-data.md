@@ -9,6 +9,8 @@ Personal and employer-specific material lives outside this repository, in `~/.cl
   projects/<repo>.md      one profile per repository
   reviewers/<handle>.md   how a reviewer thinks, written by /my:study-review, read by /my:review-lens
   study/                  study pages, glossary.md and README.md (the index)
+  reviews/                review drafts written by /my:review-lens
+  plans/                  plans written by /my:scope-plan --dry-run
   retros/                 one-page retrospective per finished change
 ```
 
