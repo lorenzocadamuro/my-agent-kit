@@ -48,7 +48,7 @@ You step in only at **gates**, which the plan agrees in advance:
 | `/my:review-lens`     | Review      | Reviews a pull request, yours or a colleague's, through the lenses senior reviewers use: promised guarantees, state ownership, durability, every caller, rollback, the roadmap of others. Returns the questions to ask and findings graded against the bar. | planned |
 | `/my:explain-comment` | Review      | For each bot or colleague comment: two lines of plain explanation, whether it is real, its weight, a proportional action and a short reply draft.                                                                                                           | planned |
 | `/my:study-review`    | Learning    | Turns a review into a short study page in three layers (one minute, ten minutes, optional depth). Keeps a personal glossary and reviewer profiles.                                                                                                          | planned |
-| `/my:improve`         | Always      | `note` logs a problem with the kit from any session; `run` turns open notes into approved changes, eval cases, a version bump and an updated README; `log` shows the history.                                                                               | planned |
+| `/my:improve`         | Always      | `note` logs a problem with the kit from any session; `run` turns open notes into approved changes, eval cases, a version bump and an updated README; `log` shows the history.                                                                               | available |
 
 ## Principles
 
