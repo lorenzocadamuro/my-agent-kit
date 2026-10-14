@@ -4,8 +4,25 @@ One folder per skill. Each case reproduces a problem the kit once had, or a prom
 
 ```
 evals/<skill>/<case-name>/
-  prompt.md        frontmatter (max_turns, allowed_tools) + what the user types
+  prompt.md        frontmatter + what the user types   (or case.yaml, below)
   graders/*.md     one grader per file; all must pass
+  setup.sh         optional fixture script, only with case.yaml
+```
+
+`prompt.md` frontmatter keys: `max_turns`, `timeout_seconds`, `allowed_tools`, `env`, `model`, `runs`, `tags`, `append_system_prompt`.
+
+A case that needs fixture files (an existing glossary, a log) uses `case.yaml` instead, and the run needs `--scaffold`:
+
+```yaml
+schema_version: "1"
+name: <case-name>
+context:
+  scaffold_script: setup.sh      # runs in the case workspace before the prompt
+execution:
+  max_turns: 30
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill]
+  prompt: |
+    /my:<skill> ...
 ```
 
 ## Running
@@ -14,7 +31,7 @@ Always local-only, one run per case, with a cost cap. `--ablation none` skips th
 
 ```bash
 claude plugin eval <kit> --no-publish --runs 1 --max-cost-usd 5 --trust-plugin \
-  --ablation none --allow-tools Bash Write Edit [--case '<glob>']
+  --ablation none --allow-tools Bash Write Edit --scaffold [--case '<glob>']
 ```
 
 Without `--no-publish`, the report is uploaded to claude.ai. Results land in `evals/results/` (git-ignored).
@@ -45,4 +62,5 @@ focus:
 - Point an `llm` grader at the file it judges (`focus: {source: file, ...}`) rather than at the transcript.
 - Keep data out of the real `~/.claude/my`: prompts name a local data root (for example `./kit-data`), which the skills honour.
 - Sandboxed runs have no working `git` or `gh` auth. Skills must degrade to `unknown`, not fail.
+- `focus: files` shows only the list of written files, not their content. Have the prompt name the output file, and point the grader at it.
 - A case must be able to fail. Write it against the problem first, then fix the skill.
