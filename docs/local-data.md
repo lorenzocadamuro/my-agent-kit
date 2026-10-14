@@ -7,8 +7,9 @@ Personal and employer-specific material lives outside this repository, in `~/.my
   deny-words.txt          words that must never enter this repository (read by scripts/check.sh)
   suite-log.md            problems with the kit, written by /my:improve note
   projects/<repo>.md      one profile per repository
-  reviewers/<handle>.md   how a reviewer thinks, written by /my:study-review, read by /my:review-lens
-  study/                  study pages, glossary.md and README.md (the index)
+  reviewers/<handle>.md   how a reviewer thinks, written by /my:learn review, read by /my:review-lens
+  reads/                  PR readings written by /my:learn pr (header records the head commit)
+  study/                  study pages, glossary.md and README.md (the index, with the comment ids studied)
   reviews/                review drafts written by /my:review-lens
   plans/                  plans written by /my:scope-plan --dry-run
   retros/                 one-page retrospective per finished change

@@ -4,6 +4,19 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-14
+
+### Changed (breaking)
+
+- `/my:study-review` is now `/my:learn review`. The skill has two modes and keeps the same study pages, glossary and index.
+
+### Added
+
+- `/my:learn pr <n>`: understand a PR before reviewing it. Gives what it does and why, the flow before and after, the reading order, its promise and the questions to keep in mind. A re-run covers only the commits since the last reading.
+- Sub-commands for a navigable menu: `/my:learn:pr`, `/my:learn:review`, `/my:improve:note`, `/my:improve:run`, `/my:improve:log`.
+- `/my:review-lens` reuses the `/my:learn pr` reading: its promise and map as the yardstick, its questions as starting hypotheses.
+- Eval `learn/pr-explains-not-judges`; the suite has 10 cases, all passing.
+
 ## [1.0.0] - 2026-10-14
 
 ### Added

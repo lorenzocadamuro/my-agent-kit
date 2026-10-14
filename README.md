@@ -24,10 +24,11 @@ flowchart LR
     B --> B
     M["/my:merge-main<br/>catch up with main"] --> B
     B --> L["/my:review-lens<br/>senior-style review"]
+    R["/my:learn:pr<br/>understand a PR first"] --> L
     L --> H(("human<br/>review"))
     H --> E["/my:explain-comment<br/>what each comment means"]
     E --> B
-    H --> S["/my:study-review<br/>learn how reviewers think"]
+    H --> S["/my:learn:review<br/>learn how reviewers think"]
     I["/my:improve<br/>note a problem, fix the kit"] -.-> A & B & L & E & S
 ```
 
@@ -49,8 +50,9 @@ Between gates, agents work in the background, a verified round pushes to the dra
 /my:merge-main                  when a round reports that main moved with conflicts
 /my:pr-round                    … until the review says the bar is met → ready-for-review gate
 /my:explain-comment             bots and reviewers answered → fixes feed the next /my:pr-round
-/my:study-review                ten minutes on how the reviewer thinks
-/my:review-lens 456             when a colleague asks you for a review
+/my:learn:review                ten minutes on how the reviewer thinks (only new comments)
+/my:learn:pr 456                understand a colleague's PR first…
+/my:review-lens 456             …then review it (reuses the reading)
 /my:improve note <what>         whenever the kit itself gets something wrong
 ```
 
@@ -63,8 +65,10 @@ Between gates, agents work in the background, a verified round pushes to the dra
 | `/my:merge-main`      | During      | Brings the branch up to date with main: previews conflicts, stops on design conflicts, regenerates generated files, re-checks migrations and the dev database. Accepts optional context ("keep their approach, adapt ours").                                | available |
 | `/my:review-lens`     | Review      | Reviews a pull request, yours or a colleague's, through the lenses senior reviewers use: promised guarantees, state ownership, durability, every caller, rollback, the roadmap of others. Returns the questions to ask and findings graded against the bar. | available |
 | `/my:explain-comment` | Review      | For each bot or colleague comment: two lines of plain explanation, whether it is real, its weight, a proportional action and a short reply draft.                                                                                                           | available |
-| `/my:study-review`    | Learning    | Turns a review into a short study page in three layers (one minute, ten minutes, optional depth). Keeps a personal glossary and reviewer profiles.                                                                                                          | available |
+| `/my:learn` | Learning | `pr <n>`: understand a PR before reviewing it (what and why, before → after, reading order, its promise, questions to keep in mind). `review <n>`: turn review comments into a three-layer study page; only comments not studied yet. Private, in your language, with a glossary and reviewer profiles. | available |
 | `/my:improve`         | Always      | `note` logs a problem with the kit from any session; `run` turns open notes into approved changes, eval cases, a version bump and an updated README; `log` shows the history.                                                                               | available |
+
+Skills with modes also have sub-commands, so the menu is navigable: `/my:learn:pr`, `/my:learn:review`, `/my:improve:note`, `/my:improve:run`, `/my:improve:log`. You rarely need the names: ask in plain words ("explain PR 456") and Claude picks the skill from its description.
 
 ## Principles
 
@@ -120,7 +124,8 @@ The kit follows [semantic versioning](https://semver.org):
 .claude-plugin/
   plugin.json        plugin manifest (name "my", version)
   marketplace.json   lets the private repo act as its own marketplace
-skills/<name>/       one folder per skill, each with SKILL.md and its templates
+skills/<name>/       one folder per skill, each with SKILL.md and its supporting files
+commands/<skill>/    thin sub-commands that call a skill in one mode (/my:<skill>:<mode>)
 evals/<skill>/       eval cases, one per problem the kit has learned from
 docs/principles.md   rules every skill follows
 docs/                question format, review lenses, local data layout

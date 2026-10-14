@@ -38,7 +38,8 @@ Talk to the user in their language. Write comment drafts in English.
 
 2. **Load the context:**
    - the project profile (`<data root>/projects/<owner-name>.md`) and the guides it maps to the changed paths;
-   - reviewer profiles in `<data root>/reviewers/`, for the requested reviewers when the PR is the user's (to anticipate them), or as extra lenses on a colleague's PR.
+   - reviewer profiles in `<data root>/reviewers/`, for the requested reviewers when the PR is the user's (to anticipate them), or as extra lenses on a colleague's PR;
+   - the reading from `/my:learn pr`, if one exists (`<data root>/reads/<repo>-pr<n>.md`, written at the current head). Use its promise and its before → after map as the yardstick, and its "questions to keep in mind" as your starting hypotheses. Do not repeat its explanations in the review. If the reading is for an older head, use it only for what the newer commits did not change.
 3. **Review.**
    - **Up to about 800 changed lines:** review it yourself.
    - **Larger:** split by area across up to 3 fresh read-only agents. Give each the lenses, the rules, the promise and its paths. Each returns findings with `file:line` evidence.
