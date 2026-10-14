@@ -65,4 +65,5 @@ focus:
 - `focus: files` shows only the list of written files, not their content. Have the prompt name the output file, and point the grader at it.
 - `--case` takes one glob; repeating the flag keeps only the last one.
 - LLM judges fail on long artifacts, even with a trivial rubric. Check facts with `regex` graders (`target: {source: file, path}`, `flags: is`), and keep `llm` graders for short files or the last message.
+- `input_match` matches the whole tool input, content included. Anchor it on the field you mean, for example `"file_path":\s*"[^"]*/skills/`.
 - A case must be able to fail. Write it against the problem first, then fix the skill.
