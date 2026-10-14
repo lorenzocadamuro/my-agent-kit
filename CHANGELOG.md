@@ -4,6 +4,8 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-14
+
 ### Added
 
 - `/my:pr-round` skill: plan-driven round with checked triage, background executor, verification against git, fresh conformance review with labelled findings, deep review at milestones, automatic draft push, five-line report and ready-for-review gate with a retrospective; evals for a silently skipped item and an out-of-scope finding.
@@ -17,6 +19,16 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 - `/my:improve` skill: `note`, list, `run`, `log`, with its first eval case.
 - Eval guide: how to run cases locally and which grader types to use.
 - Scripts: `verify-round.sh` (summary versus git) and `drift.sh` (size, distance from main, conflict preview).
+
+### Changed
+
+- Local data root moved from `~/.claude/my` to `~/.my-agent-kit`: Claude Code protects `~/.claude`, so headless runs refused to write there (found in the real trials).
+- README: gates updated (pushing a verified round to the draft branch is not a gate), end-to-end example, eval command.
+
+### Verified
+
+- 9 eval cases pass (`claude plugin eval`, local only, about $3.3 for the suite).
+- Real read-only trials of all seven skills on a large private repository, including a full `pr-round` and `merge-main` on a scratch branch that was never pushed.
 
 ## [0.1.0] - 2026-10-14
 
