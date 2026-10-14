@@ -61,6 +61,9 @@ Run a fresh agent with [triage-check.md](triage-check.md). Fix what it finds. An
 
 ### 6. Verify
 
+When the round's verification needs a manual check in the browser, follow the profile's "Manual testing" rule. Moving the local stack to this worktree is a gate: ask, then move it back afterwards.
+
+
 - Run `${CLAUDE_PLUGIN_ROOT}/scripts/verify-round.sh .plans <N>`. A missing item, a fake commit or a dirty tree fails the round: report it, and never paper over it.
 - **Check the summary's claims yourself:** audit counts, test results, and every decision taken alone.
   - A decision flagged boundary, rule or someone else's code is a gate.

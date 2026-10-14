@@ -103,10 +103,11 @@ Skip this step for `--dry-run`.
 4. **Plan file:** write it to `<worktree>/.plans/plan.md`.
    - If `.plans/` is not ignored (`git check-ignore -q .plans/`), add it to `.git/info/exclude`, never to a tracked `.gitignore`.
 5. **Ticket:** move it to the profile's start status (Linear `save_issue` with `state`), and say so in the summary. This is the only ticket change allowed without asking.
-6. **Report:**
+6. **Move the session:** when the profile says the session follows the worktree, switch this session into it with the EnterWorktree tool (`path` set to the worktree). The tool accepts worktrees under the repository's `.claude/worktrees/`. Otherwise, tell the user to open the worktree in a new session.
+7. **Report:**
    - the worktree path and branch;
    - the plan path;
-   - the next step: open the worktree as the session folder, then `/my:pr-round`.
+   - the next step: `/my:pr-round`.
 
 ### 9. Closing step
 
