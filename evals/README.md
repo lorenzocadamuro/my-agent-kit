@@ -61,8 +61,8 @@ focus:
 - The judge sees a truncated trace. For "never did X", use `tool_used`, not an `llm` grader with `focus: trace`.
 - Point an `llm` grader at the file it judges (`focus: {source: file, ...}`) rather than at the transcript.
 - Keep data out of the real `~/.claude/my`: prompts name a local data root (for example `./kit-data`), which the skills honour.
-- Sandboxed runs have no working `git` or `gh` auth. Skills must degrade to `unknown`, not fail.
+- Sandboxed runs have no working `git` (the macOS xcrun shim is blocked) and no `gh` auth. Skills must degrade to `unknown`, not fail. For git-centric skills, the scaffold (which runs outside the sandbox) builds the repository and saves the git outputs the skill needs under `git-out/`; the prompt says to use them. Real git behaviour is covered by the trials, not the evals.
 - `focus: files` shows only the list of written files, not their content. Have the prompt name the output file, and point the grader at it.
 - `--case` takes one glob; repeating the flag keeps only the last one.
-- Long artifacts make LLM judges noisy: keep fixture tasks small, or add a `regex` grader for exact facts.
+- LLM judges fail on long artifacts, even with a trivial rubric. Check facts with `regex` graders (`target: {source: file, path}`, `flags: is`), and keep `llm` graders for short files or the last message.
 - A case must be able to fail. Write it against the problem first, then fix the skill.
