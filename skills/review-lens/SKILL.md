@@ -22,7 +22,7 @@ Talk to the user in their language. Write comment drafts in English.
   - **tone.**
 - **Own PR** (the author is the authenticated `gh` user): the default mode is `local`. Findings feed `/my:pr-round`; you cannot review your own PR on GitHub.
 
-**Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.claude/my`.
+**Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.my-agent-kit`.
 
 ## Steps
 

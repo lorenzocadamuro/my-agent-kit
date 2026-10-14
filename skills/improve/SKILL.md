@@ -12,7 +12,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md` and `${CLAUDE_PLUGIN_ROOT
 
 ## Paths
 
-- **Data root:** `$MY_AGENT_KIT_HOME` if set, or a data root the user names in the request; otherwise `~/.claude/my`. The log is `<data root>/suite-log.md`. Create it with a `# Suite log` heading if missing.
+- **Data root:** `$MY_AGENT_KIT_HOME` if set, or a data root the user names in the request; otherwise `~/.my-agent-kit`. The log is `<data root>/suite-log.md`. Create it with a `# Suite log` heading if missing.
 - **Kit source:** the git repository behind `${CLAUDE_PLUGIN_ROOT}`. Resolve it with `git -C "${CLAUDE_PLUGIN_ROOT}" rev-parse --show-toplevel`. If that fails (the plugin was installed from a marketplace cache), ask for the clone path, defaulting to `~/Workspace/my-agent-kit`. Never edit the cache.
 
 ## Parse `$ARGUMENTS`

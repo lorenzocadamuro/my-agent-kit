@@ -19,7 +19,7 @@ Talk to the user in their language. Write the plan in English.
 | `--adopt <branch\|PR>` | Plan for existing work: read its diff and description, and do not create a new branch                                                                                                    |
 | `--dry-run`            | Write the plan only. No worktree, no branch, no ticket change. Save it where the user says, or at `<data root>/plans/<slug>-<date>.md`                                                   |
 
-**Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.claude/my`.
+**Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.my-agent-kit`.
 
 ## Steps
 

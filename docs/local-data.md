@@ -1,9 +1,9 @@
 # Local data
 
-Personal and employer-specific material lives outside this repository, in `~/.claude/my/`. Skills create missing folders on first use.
+Personal and employer-specific material lives outside this repository, in `~/.my-agent-kit/`. Skills create missing folders on first use. It is deliberately not under `~/.claude/`: Claude Code treats that folder as protected configuration, so every write there needs approval, and headless runs refuse it.
 
 ```
-~/.claude/my/
+~/.my-agent-kit/
   deny-words.txt          words that must never enter this repository (read by scripts/check.sh)
   suite-log.md            problems with the kit, written by /my:improve note
   projects/<repo>.md      one profile per repository

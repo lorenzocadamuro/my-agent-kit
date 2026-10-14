@@ -10,7 +10,7 @@ You are the coordinator. You stay in the user's session; all the work happens in
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`.
 
-**Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.claude/my`.
+**Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.my-agent-kit`.
 
 ## Arguments
 

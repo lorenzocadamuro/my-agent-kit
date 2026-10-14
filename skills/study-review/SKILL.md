@@ -12,7 +12,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`. Use `${CLAUDE_PLUGIN_ROO
 
 ## Paths and privacy
 
-- **Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.claude/my`. Study files go in `<data root>/study/`; reviewer profiles in `<data root>/reviewers/`.
+- **Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.my-agent-kit`. Study files go in `<data root>/study/`; reviewer profiles in `<data root>/reviewers/`.
 - **Language:** write the page, the glossary and the chat reply in the user's language (the language they write to you in). Quotes stay in the original. File names stay in English.
 - **Private:**
   - write only under the data root, never inside a repository;

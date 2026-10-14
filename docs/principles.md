@@ -52,7 +52,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 
 ## Repository rules are inputs, not assumptions
 
-- **Each repository has a local profile** in `~/.claude/my/projects/<repo>.md`. It names the commands (tests, codegen, migrations, deep review, PR description), the guides to load, and the post-merge checks. The format is in [local-data.md](local-data.md).
+- **Each repository has a local profile** in `~/.my-agent-kit/projects/<repo>.md`. It names the commands (tests, codegen, migrations, deep review, PR description), the guides to load, and the post-merge checks. The format is in [local-data.md](local-data.md).
 - **Load the relevant rules explicitly.** Before work starts, find the guides that apply to the files being touched, and hand them to both the executor and the reviewer.
 - **When a fix suggested by a reviewer conflicts with a repository rule,** the rule wins until the user decides otherwise.
 
@@ -65,7 +65,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 ## Where files go
 
 - **Per-change files** (plans, rounds, summaries, comment triage) live in the worktree's git-ignored `.plans/` folder, and disappear with the worktree.
-- **Lasting personal material** lives in `~/.claude/my/`, outside this repository. The layout is in [local-data.md](local-data.md).
+- **Lasting personal material** lives in `~/.my-agent-kit/`, outside this repository. The layout is in [local-data.md](local-data.md).
 - **Throwaway files** go in the session scratchpad.
 - **Nothing employer-specific enters this repository.**
 

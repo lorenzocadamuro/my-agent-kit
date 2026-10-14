@@ -35,8 +35,24 @@ You step in only at **gates**, which the plan agrees in advance:
 
 1. approving the plan;
 2. a decision outside the agreed bar or boundary;
-3. the diff before a push;
-4. anything that gets published (PR text, review comments, messages).
+3. marking the change ready for human review;
+4. anything that gets published (PR text, review comments, replies, messages).
+
+Between gates, agents work in the background, a verified round pushes to the draft branch on its own, and a desktop notification tells you when you are needed.
+
+## A change, end to end
+
+```text
+/my:scope-plan ABC-123          interview → plan → worktree + branch from origin/main → ticket In Progress
+/my:pr-round                    part A: triage → check → execute → verify → review → push → 5-line report
+/my:pr-round                    next part, or the block findings from the last review
+/my:merge-main                  when a round reports that main moved with conflicts
+/my:pr-round                    … until the review says the bar is met → ready-for-review gate
+/my:explain-comment             bots and reviewers answered → fixes feed the next /my:pr-round
+/my:study-review                ten minutes on how the reviewer thinks
+/my:review-lens 456             when a colleague asks you for a review
+/my:improve note <what>         whenever the kit itself gets something wrong
+```
 
 ## Skills
 
@@ -83,7 +99,7 @@ The repository is private, so nobody else can install it.
 
 The kit grows with use, but it never changes itself without approval.
 
-1. **Note.** When something goes wrong in any session, run `/my:improve note <what happened>`. The note lands in `~/.claude/my/suite-log.md`, with its context.
+1. **Note.** When something goes wrong in any session, run `/my:improve note <what happened>`. The note lands in `~/.my-agent-kit/suite-log.md`, with its context.
 2. **Run.** In a dedicated session, `/my:improve run` groups the open notes and proposes changes with pros and cons. It applies only the ones you approve.
 3. **Prove.** Each fixed note becomes an eval case in `evals/`. `claude plugin eval` must pass before the change lands, so a fixed problem cannot come back.
 4. **Record.** Every run updates this README, `CHANGELOG.md` and the version in `.claude-plugin/plugin.json`, then commits and tags.
@@ -119,17 +135,24 @@ CHANGELOG.md         what changed in each version
 
 ## What never goes in this repository
 
-This repository holds only generic, reusable material. Anything tied to an employer or to people stays local, in `~/.claude/my/`:
+This repository holds only generic, reusable material. Anything tied to an employer or to people stays local, in `~/.my-agent-kit/`:
 
 - the improvement log and retrospectives;
 - reviewer profiles and study pages;
 - internal paths, project names, ticket or pull request numbers, and colleagues' names.
 
-`scripts/check.sh` blocks a commit that contains any word listed in `~/.claude/my/deny-words.txt`. That file is local and never committed.
+`scripts/check.sh` blocks a commit that contains any word listed in `~/.my-agent-kit/deny-words.txt`. That file is local and never committed.
 
 ## Development
 
 ```bash
 git config core.hooksPath .githooks   # once per clone
 scripts/check.sh                      # validate the plugin and run the privacy check
+```
+
+Evals run locally, never published; see [evals/README.md](evals/README.md):
+
+```bash
+claude plugin eval . --no-publish --runs 1 --max-cost-usd 12 --trust-plugin \
+  --ablation none --allow-tools Bash Write Edit --scaffold -j 4
 ```
