@@ -80,7 +80,8 @@ All skills share one set of rules, kept in [docs/principles.md](docs/principles.
 - questions come with pros and cons;
 - verify before deciding;
 - repository rules are loaded explicitly;
-- work always happens in a worktree.
+- work always happens in a worktree;
+- a fresh session is named after the work, not the command.
 
 ## Install
 

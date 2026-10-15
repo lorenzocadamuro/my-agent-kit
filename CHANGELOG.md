@@ -4,6 +4,12 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-10-15
+
+### Added
+
+- Principles: a skill that opens a fresh session renames it after the work with the app's session-title tool: `<ticket or PR id> <2-3 words>`, or two or three words naming the problem. It skips the rename when the tool is missing. Before, the title stayed the command name ("Scope plan <id>").
+
 ## [2.1.0] - 2026-10-14
 
 ### Added

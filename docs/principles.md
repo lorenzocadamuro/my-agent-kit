@@ -74,6 +74,12 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 - **Skills, prompts for other agents, plans and hand-off files are in English.**
 - **Conversation with the user, and study material, are in the user's language.**
 
+## Name the session after the work
+
+- **When a skill opens a fresh session,** rename it as soon as it knows the work (after reading the ticket, the PR or the request). The app's default title is the command name ("Scope plan ENG-123"), which says nothing about the work.
+- **Format:** `<ticket or PR id> <2-3 words>` when there is one (`ENG-123 Webhook retries`, `PR 456 Auth middleware`); otherwise two or three words naming the problem (`Flaky checkout test`).
+- **How:** the app's session-title tool (`set_session_title`, session `self`). Skip it silently when the tool is missing (terminal, headless runs) or the session already has a title about the work.
+
 ## Closing step of every skill
 
 Before finishing, check whether any of these happened in the session:
