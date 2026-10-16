@@ -44,13 +44,14 @@ State the classification and its reason in one line; the user can override it in
 
 For M and L, run up to three Explore agents in parallel. For S, do it yourself. Collect:
 
-- **The code involved:** entry points, the owning code points, callers by path, with an untruncated count.
+- **The code involved:** entry points, the owning code points, and the callers by path, with an untruncated count, of every shared function or chokepoint the change extends, with what each caller reads. A plan written from one caller of shared code breaks the others.
 - **New or existing behaviour:** for each behaviour the ticket or the user describes, find the test or code that pins it today. When the premise is false (the behaviour does not exist yet), it becomes scope, and you tell the user plainly.
 - **Overlap:** open PRs touching the same paths (`gh pr list --state open --json number,title,author,files --limit 100`, intersected with the paths), and the owners' recent work there.
 - **People and merge requirements:**
   - CODEOWNERS entries for the paths;
   - branch rules (`gh api repos/<o>/<r>/rules/branches/main`), covering required reviews, code owners, checks and thread resolution.
 - **Rules to load:** the guides the profile maps to these paths.
+- **Baseline:** run the profile's check commands for these paths on `origin/main`, and note pass, fail or missing tool (principles: measure the baseline).
 
 Keep research notes in the scratchpad. They feed both the plan and the independent review.
 

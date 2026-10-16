@@ -39,6 +39,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 
 - **Check every claim against the code or the data** before it shapes a decision, including claims made by other agents.
 - **Audits are never truncated.** Report the match count and every hit.
+- **Measure the baseline before promising a check.** A command enters the bar for done or a stop condition only after it ran on `origin/main`. If it already fails there (a missing tool, a known failure), write it as "no new failures against the baseline", with the baseline counts.
 - **A test must be able to fail.** Drive the production caller, and check that reverting the fix makes the test fail.
 - **The writer is not the reviewer.** Reviews run in a fresh context that did not write the code.
 - **Stop and report** when the code contradicts the plan, instead of improvising.
@@ -67,12 +68,14 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 - **Per-change files** (plans, rounds, summaries, comment triage) live in the worktree's git-ignored `.plans/` folder, and disappear with the worktree.
 - **Lasting personal material** lives in `~/.my-agent-kit/`, outside this repository. The layout is in [local-data.md](local-data.md).
 - **Throwaway files** go in the session scratchpad.
+- **Link only files the app can open.** The desktop app's file pane opens files inside the session's folders only (working directory, scratchpad, added folders). Before linking a file under the data root (`~/.my-agent-kit/` by default), add that folder to the session with the app's directory-request tool (`request_directory`), once per session. When the tool is missing, show the path as code, not as a link.
 - **Nothing employer-specific enters this repository.**
 
 ## Language
 
 - **Skills, prompts for other agents, plans and hand-off files are in English.**
 - **Conversation with the user, and study material, are in the user's language.**
+- **Technical labels stay in English** in every language: states (`open`, `fixed`), ids, table headers, field names. Explanations around them are in the user's language.
 
 ## Name the session after the work
 

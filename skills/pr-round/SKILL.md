@@ -44,7 +44,7 @@ Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, whe
 - **Verify the claim against the code at HEAD,** and drop or rewrite what does not hold.
 - **List the callers covered, by path,** with the untruncated count.
 - **Name the owning code point,** and a test that fails without the fix and drives the production caller.
-- **Write the stop conditions.**
+- **Write the stop conditions.** A check copied from the plan or the profile keeps its baseline (principles: measure the baseline).
 
 Items outside the plan's scope, and findings labelled "ticket", go to "Not this round", with ticket text and no fix.
 

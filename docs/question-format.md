@@ -11,14 +11,19 @@ Every decision put to the user follows this format. A question the user cannot a
 ## Shape
 
 - **Use the multiple-choice question tool,** with the recommended option first and marked "(Recommended)". A free answer stays possible.
-- **Start the question with the situation in plain words:** what is happening, what the user would see, and why it matters now.
+- **One decision per question.** A question that bundles two decisions (when to merge, and what a lagging environment runs) is split in two.
+- **Start the question with the situation in plain words:** what is happening, what the user would see, and why it matters now. For a deploy or rollout, first say what the deployed thing does and what users see when it is missing or early.
 - **Each option states:**
   - **Effect:** what changes for the user, or in behaviour, if this is chosen.
   - **Today:** what happens now without the change, on the main branch or in production.
-  - **Pros** and **cons**, one short clause each.
+  - **Pros** and **cons**, one short clause each. Every option has both; an option with only a con is incomplete.
   - **Severity** when there is risk: how likely, how bad, and how easy to undo.
 - **No internal IDs or jargon** (finding numbers, internal function names, acronyms) without a one-line meaning next to them.
 - **One concrete example beats an abstract description.** "A user drags the batch while it loads" beats "manual manipulation during the loading state".
+
+## When the user dismisses the questions
+
+A dismissed batch, or an answer like "I don't understand", means "explain first". Explain in plain words, with the context the user is missing, then ask again with the tool. Never fall back to options in plain text.
 
 ## After the answer
 

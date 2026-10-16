@@ -66,7 +66,7 @@ Between gates, agents work in the background, a verified round pushes to the dra
 | `/my:review-lens`     | Review      | Reviews a pull request, yours or a colleague's, through the lenses senior reviewers use: promised guarantees, state ownership, durability, every caller, rollback, the roadmap of others. Returns the questions to ask and findings graded against the bar. | available |
 | `/my:explain-comment` | Review      | For each bot or colleague comment: two lines of plain explanation, whether it is real, its weight, a proportional action and a short reply draft.                                                                                                           | available |
 | `/my:learn` | Learning | `pr <n>`: understand a PR before reviewing it (what and why, before → after, reading order, its promise, questions to keep in mind). `review <n>`: turn review comments into a three-layer study page; only comments not studied yet. Private, in your language, with a glossary and reviewer profiles. | available |
-| `/my:improve`         | Always      | `note` logs a problem with the kit from any session; `run` turns open notes into approved changes, eval cases, a version bump and an updated README; `log` shows the history.                                                                               | available |
+| `/my:improve`         | Always      | `note` logs a problem with the kit from any session; `run` turns open notes into approved changes, eval cases, a version bump and an updated README; `log` shows the history, each note with its problem in one line and a state badge, closed ones folded away.                                                                               | available |
 
 Skills with modes also have sub-commands, so the menu is navigable: `/my:learn:pr`, `/my:learn:review`, `/my:improve:note`, `/my:improve:run`, `/my:improve:log`. You rarely need the names: ask in plain words ("explain PR 456") and Claude picks the skill from its description.
 
@@ -79,16 +79,19 @@ All skills share one set of rules, kept in [docs/principles.md](docs/principles.
 - humans decide at gates;
 - questions come with pros and cons;
 - verify before deciding;
+- checks enter the bar only after their baseline is measured;
 - repository rules are loaded explicitly;
 - work always happens in a worktree;
-- a fresh session is named after the work, not the command.
+- a fresh session is named after the work, not the command;
+- links point only to files the app can open;
+- technical labels stay in English, explanations follow the user's language.
 
 ## Install
 
 **On the development machine**, link the repository into the personal skills folder. From the next session, Claude Code loads it automatically, straight from disk, as `my@skills-dir`:
 
 ```bash
-ln -s ~/Workspace/my-agent-kit ~/.claude/skills/my
+ln -s "<path to your clone>" ~/.claude/skills/my
 ```
 
 **On any other machine**, install it from the private GitHub repository. This uses your existing `gh` or git credentials:

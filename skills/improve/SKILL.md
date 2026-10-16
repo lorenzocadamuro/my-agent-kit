@@ -13,7 +13,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md` and `${CLAUDE_PLUGIN_ROOT
 ## Paths
 
 - **Data root:** `$MY_AGENT_KIT_HOME` if set, or a data root the user names in the request; otherwise `~/.my-agent-kit`. The log is `<data root>/suite-log.md`. Create it with a `# Suite log` heading if missing.
-- **Kit source:** the git repository behind `${CLAUDE_PLUGIN_ROOT}`. Resolve it with `git -C "${CLAUDE_PLUGIN_ROOT}" rev-parse --show-toplevel`. If that fails (the plugin was installed from a marketplace cache), ask for the clone path, defaulting to `~/Workspace/my-agent-kit`. Never edit the cache.
+- **Kit source:** the git repository behind `${CLAUDE_PLUGIN_ROOT}`. Resolve it with `git -C "${CLAUDE_PLUGIN_ROOT}" rev-parse --show-toplevel`. If that fails (the plugin was installed from a marketplace cache), ask for the path of the user's clone. Never edit the cache.
 
 ## Parse `$ARGUMENTS`
 
@@ -36,15 +36,22 @@ Goal: under a minute, no questions unless the text is empty.
    - the session id if known.
 3. **Fill the entry** from `${CLAUDE_PLUGIN_ROOT}/templates/log-entry.md`.
    - Write it in English. If the user wrote in another language, keep a short quote of their words when the exact meaning matters.
-   - The id is `YYYYMMDD-NN`, where NN counts today's entries starting at 01.
+   - The id is `YYYYMMDD-NN`: re-read the log right before appending, and take the next number after today's highest, starting at 01. Another session may have written since you last read it.
    - "What happened" and "Expected" are concrete: what was done or said, not an opinion.
    - "Suspected cause" names a step, principle, template or profile line when you can point to it; otherwise `unknown`. Do not investigate deeply here.
 4. **Append** the entry to the log. Change nothing else: no skill, doc, template or profile.
 5. **Confirm in exactly one line,** and nothing else: `Logged <id> · <skill> · <n> open`. Missing context goes in the entry as `unknown`; do not explain it in the reply.
 
+## Showing entries
+
+List and Log share one view. Each entry shows its id, skill, state as a coloured badge, and the problem in one line, written in the user's language from "What happened". Its detail (what happened, expected, suspected cause, where) opens on demand. Labels follow the principles: states, ids and headers in English, the problem and the detail in the user's language.
+
+- **With the app's visual widget tool** (`show_widget`, after its `read_me` with the `interactive` module): render one widget. Each entry is a collapsible row; badges are green for `open`, grey for `fixed` and `wontfix`, amber for `deferred`. Closed entries sit in one more collapsible section, closed by default.
+- **Without it:** a Markdown table with the columns `Id · Skill · State · Problem`, states as `🟢 open`, `✅ fixed`, `⏸ deferred`, `⚪ wontfix`. Closed entries follow the open ones in a separate table under `Closed (<n>)`.
+
 ## List (no argument)
 
-Show the open entries grouped by skill, then by suspected cause, each with its id and one-line "what happened". End with the count, and one line saying whether a run looks worthwhile. Three or more notes on the same cause are a strong signal; a single vague note may need more evidence first.
+Show the open entries, grouped by skill and then by suspected cause. End with the count, and one line saying whether a run looks worthwhile. Three or more notes on the same cause are a strong signal; a single vague note may need more evidence first.
 
 ## Run
 
@@ -80,7 +87,7 @@ Show the open entries grouped by skill, then by suspected cause, each with its i
 
 ## Log
 
-Show every entry (or one skill's), newest first: id, state, and the version that fixed it. End with totals by state.
+Show every entry (or one skill's), open ones first, newest first within each group, with the version that fixed each closed one. End with totals by state.
 
 ## Rules
 

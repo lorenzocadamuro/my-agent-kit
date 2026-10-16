@@ -74,7 +74,7 @@ Flags, deploy order, data migrations, backfills, monitoring, how to turn it off.
 
 ## Verification [always]
 
-- Targeted tests: <commands from the project profile>
+- Targeted tests: <commands from the project profile, each with its baseline on origin/main>
 - Manual check: <what to see, where>
 
 ## Decisions [always]
