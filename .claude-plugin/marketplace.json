@@ -9,6 +9,11 @@
       "name": "my",
       "source": "./",
       "description": "Personal workflow skills for working with agents."
+    },
+    {
+      "name": "my-status",
+      "source": "./mods/my-status",
+      "description": "Optional status line for the my kit: where a plan stands, how far a run is, what needs you, and the next action."
     }
   ]
 }

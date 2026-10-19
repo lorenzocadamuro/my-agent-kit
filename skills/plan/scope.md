@@ -95,7 +95,7 @@ Skip this step for `--dry-run`.
    - If the branch already exists locally or remotely, stop and offer `--adopt`.
    - With `--adopt`, reuse the existing worktree, or add one for the existing branch.
 3. **Setup:** run the profile's setup command, in the background when it is slow.
-4. **Plan file:** write it to `<worktree>/.plans/plan.md`.
+4. **Plan file:** write it to `<worktree>/.plans/plan.md`, then write the state file (round.md § The state file) with `state: "ready"`, the plan's title and path, and its parts.
    - If `.plans/` is not ignored (`git check-ignore -q .plans/`), add it to `.git/info/exclude`, never to a tracked `.gitignore`.
 5. **Ticket:** move it to the profile's start status (Linear `save_issue` with `state`), and say so in the summary. This is the only ticket change allowed without asking.
 6. **Move the session:** when the profile says the session follows the worktree, switch this session into it with the EnterWorktree tool (`path` set to the worktree). The tool accepts worktrees under the repository's `.claude/worktrees/`. Otherwise, tell the user to open the worktree in a new session.
