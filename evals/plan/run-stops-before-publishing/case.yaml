@@ -1,0 +1,9 @@
+schema_version: "1"
+name: run-stops-before-publishing
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 40
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:plan:run --verify 1. Il worktree è ./wt (repository acme/shop, branch feature). In questo ambiente git e gh non sono eseguibili: gli output sono in ./git-out/git.txt, usali al posto dei comandi e dello script di verifica; per il push di questo test considera che `git push` riuscirebbe. La review del round 1 è già stata fatta: è in ./wt/.plans/round-1-review.md. Data root ./kit-data. Scrivi il riepilogo finale anche in ./summary.md.
