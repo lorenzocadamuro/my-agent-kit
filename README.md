@@ -18,18 +18,22 @@ This kit encodes the fixes as reusable skills. It also keeps a log, so each new 
 
 ## The workflow
 
+The menu is organised by object: `plan:*` for a change and its plan, `pr:*` for a pull request and its review, `improve:*` for the kit itself.
+
 ```mermaid
 flowchart LR
-    A["/my:scope-plan<br/>plan with boundary,<br/>invariants, bar"] --> B["/my:pr-round<br/>execute, verify,<br/>review"]
-    B --> B
-    M["/my:merge-main<br/>catch up with main"] --> B
-    B --> L["/my:review-lens<br/>senior-style review"]
-    R["/my:learn:pr<br/>understand a PR first"] --> L
-    L --> H(("human<br/>review"))
-    H --> E["/my:explain-comment<br/>what each comment means"]
-    E --> B
-    H --> S["/my:learn:review<br/>learn how reviewers think"]
-    I["/my:improve<br/>note a problem, fix the kit"] -.-> A & B & L & E & S
+    A["/my:plan:scope<br/>plan with boundary,<br/>invariants, bar"] --> R["/my:plan:run<br/>rounds until a gate"]
+    A --> O["/my:plan:round<br/>one round, then stop"]
+    O --> R
+    R --> R
+    Y["/my:pr:sync<br/>catch up with main"] --> R
+    R --> V["/my:pr:review<br/>senior-style review"]
+    N["/my:pr:learn<br/>understand a PR first"] --> V
+    V --> H(("human<br/>review"))
+    H --> C["/my:pr:comments<br/>what each comment means"]
+    C --> R
+    H --> S["/my:pr:study<br/>learn how reviewers think"]
+    I["/my:improve<br/>signals, notes, fixes"] -.-> A & R & V & C & S
 ```
 
 You step in only at **gates**, which the plan agrees in advance:
@@ -39,36 +43,42 @@ You step in only at **gates**, which the plan agrees in advance:
 3. marking the change ready for human review;
 4. anything that gets published (PR text, review comments, replies, messages).
 
-Between gates, agents work in the background, a verified round pushes to the draft branch on its own, and a desktop notification tells you when you are needed.
+Between gates, agents work in the background: `plan:run` starts the next round on its own as long as each one succeeds, a verified round pushes to the draft branch, and one desktop notification tells you when you are needed.
 
 ## A change, end to end
 
 ```text
-/my:scope-plan ABC-123          interview → plan → worktree + branch from origin/main → ticket In Progress
-/my:pr-round                    part A: triage → check → execute → verify → review → push → 6-line report
-/my:pr-round                    next part, or the block findings from the last review
-/my:merge-main                  when a round reports that main moved with conflicts
-/my:pr-round                    … until the review says the bar is met → ready-for-review gate
-/my:explain-comment             bots and reviewers answered → fixes feed the next /my:pr-round
-/my:learn:review                ten minutes on how the reviewer thinks (only new comments)
-/my:learn:pr 456                understand a colleague's PR first…
-/my:review-lens 456             …then review it (reuses the reading)
-/my:improve note <what>         whenever the kit itself gets something wrong
+/my:plan:scope ABC-123     interview → plan → worktree + branch from origin/main → ticket In Progress
+/my:plan:run               rounds one after another: triage → check → execute → verify → review → push,
+                           until a gate, new PR comments, conflicts with main, the bar, or 5 rounds
+/my:plan:round             one round and a 6-line report, when you want to watch each step
+/my:pr:sync                when a round reports that main moved with conflicts
+/my:pr:comments            bots and reviewers answered → fixes feed the next /my:plan:run
+/my:pr:study               ten minutes on how the reviewer thinks (only new comments)
+/my:pr:learn 456           understand a colleague's PR first…
+/my:pr:review 456          …then review it (reuses the reading)
+/my:improve                whenever you want to see what the kit has learned, or fix it
 ```
 
-## Skills
+## Commands
 
-| Command               | Stage       | What it does                                                                                                                                                                                                                                                | Status  |
-| --------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| `/my:scope-plan`      | Before code | Interviews you with multiple-choice questions and writes the plan: goal, boundary, invariants with tests, bar for done, size budget, reviewers, gates. Adapts its depth to the kind and size of the task.                                                   | available |
-| `/my:pr-round`        | During      | Runs one round: executes the work in the background, checks the result against git, reviews it against the plan, and reports in six lines with a drift signal and the lessons it logged.                                                                                             | available |
-| `/my:merge-main`      | During      | Brings the branch up to date with main: previews conflicts, stops on design conflicts, regenerates generated files, re-checks migrations and the dev database. Accepts optional context ("keep their approach, adapt ours").                                | available |
-| `/my:review-lens`     | Review      | Reviews a pull request, yours or a colleague's, through the lenses senior reviewers use: promised guarantees, state ownership, durability, every caller, rollback, the roadmap of others. Returns the questions to ask and findings graded against the bar. | available |
-| `/my:explain-comment` | Review      | For each bot or colleague comment: two lines of plain explanation, whether it is real, its weight, a proportional action and a short reply draft.                                                                                                           | available |
-| `/my:learn` | Learning | `pr <n>`: understand a PR before reviewing it (what and why, before → after, reading order, its promise, questions to keep in mind). `review <n>`: turn review comments into a three-layer study page; only comments not studied yet. Private, in your language, with a glossary and reviewer profiles. | available |
-| `/my:improve`         | Always      | `note` logs a problem with the kit from any session; `digest` turns the signals every skill collects while you work into a few clear notes; `run` finds the upstream lesson behind open notes and turns it into approved changes, eval cases, a version bump and an updated README; `log` shows the history, each note with its problem in one line and a state badge, closed ones folded away.                                                                               | available |
+| Command            | Stage       | What it does |
+| ------------------ | ----------- | ------------ |
+| `/my:plan:scope`   | Before code | Interviews you with multiple-choice questions and writes the plan: goal, boundary, invariants with tests, bar for done, size budget, reviewers, gates. Adapts its depth to the kind and size of the task. |
+| `/my:plan:round`   | During      | Runs one round: executes the work in the background, checks the result against git, reviews it against the plan, and reports in six lines with a drift signal and the lessons it logged. |
+| `/my:plan:run`     | During      | Runs rounds one after another while each succeeds, carrying block findings to the next round and ticking plan parts; stops at a gate, failed verification, drift over budget, conflicts with main, new PR comments, red CI, anything to publish, the bar, or 5 rounds; one summary at the end. |
+| `/my:pr:sync`      | During      | Brings the branch up to date with main: previews conflicts, stops on design conflicts, regenerates generated files, re-checks migrations and the dev database. Accepts optional context ("keep their approach, adapt ours"). |
+| `/my:pr:review`    | Review      | Reviews a pull request, yours or a colleague's, through the lenses senior reviewers use: promised guarantees, state ownership, durability, every caller, rollback, the roadmap of others. Returns the questions to ask and findings graded against the bar. |
+| `/my:pr:comments`  | Review      | For each bot or colleague comment: two lines of plain explanation, whether it is real, its weight, a proportional action and a short reply draft. |
+| `/my:pr:learn`     | Learning    | Understand a PR before reviewing it: what and why, before → after, reading order, its promise, questions to keep in mind. Private, in your language. |
+| `/my:pr:study`     | Learning    | Turn the review comments you received into a three-layer study page; only comments not studied yet. Private, with a glossary and reviewer profiles. |
+| `/my:improve`      | Always      | `note` logs a problem with the kit from any session; `digest` turns the signals every skill collects while you work into a few clear notes; `run` finds the upstream lesson behind open notes and turns it into approved changes, eval cases, a version bump and an updated README; `log` shows the history, each note with its problem in one line and a state badge, closed ones folded away. |
 
-Skills with modes also have sub-commands, so the menu is navigable: `/my:learn:pr`, `/my:learn:review`, `/my:improve:note`, `/my:improve:digest`, `/my:improve:run`, `/my:improve:log`. You rarely need the names: ask in plain words ("explain PR 456") and Claude picks the skill from its description.
+Behind them are three skills with modes: `plan` (scope, round, run), `pr` (learn, study, review, comments, sync) and `improve` (note, digest, run, log). You rarely need the names: ask in plain words ("explain PR 456", "run the plan") and Claude picks the command from its description.
+
+## The status line (optional)
+
+`my-status` is a small mod that shows, in one line above the prompt, where the work stands: the plan's parts as tiles that fill up, the percentage, the time left, what needs you, and the next action as a button (it fills the prompt with the command; you press Enter). "Open plan" shows the plan in a pane. It reads the state file `plan:round` and `plan:run` write, plus `git` and `gh`; it never changes your files. The kit works the same without it.
 
 ## Principles
 
@@ -104,6 +114,15 @@ claude plugin install my@my-agent-kit
 
 The repository is private, so nobody else can install it.
 
+**The status line mod** is installed on its own, from your clone used as a local marketplace. The marketplace also lists `my`: do not install that one where `~/.claude/skills/my` already loads the kit, or it loads twice.
+
+```bash
+claude plugin marketplace add "<path to your clone>"
+claude plugin install my-status@my-agent-kit
+```
+
+Edits to `mods/my-status` reach a session with `/reload-plugins`.
+
 ## Improving the kit
 
 The kit grows with use, but it never changes itself without approval.
@@ -129,9 +148,10 @@ The kit follows [semantic versioning](https://semver.org):
 .claude-plugin/
   plugin.json        plugin manifest (name "my", version)
   marketplace.json   lets the private repo act as its own marketplace
-skills/<name>/       one folder per skill, each with SKILL.md and its supporting files
+skills/<name>/       plan, pr and improve: a SKILL.md that routes to one file per mode
 commands/<skill>/    thin sub-commands that call a skill in one mode (/my:<skill>:<mode>)
 evals/<skill>/       eval cases, one per problem the kit has learned from
+mods/my-status/      the optional status line mod (hooks module, its state contract, tests)
 docs/principles.md   rules every skill follows
 docs/                question format, review lenses, local data layout
 templates/           plan, project profile, round, round summary, log entry, reviewer profile, study page
@@ -165,4 +185,11 @@ Evals run locally, never published; see [evals/README.md](evals/README.md):
 ```bash
 claude plugin eval . --no-publish --runs 1 --max-cost-usd 12 --trust-plugin \
   --ablation none --allow-tools Bash Write Edit --scaffold -j 4
+```
+
+The mod has its own checks:
+
+```bash
+claude plugin validate mods/my-status
+claude plugin test mods/my-status
 ```

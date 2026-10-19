@@ -4,6 +4,30 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-19
+
+### Changed (breaking)
+
+- Commands are grouped by object. `/my:scope-plan` is `/my:plan:scope`, `/my:pr-round` is `/my:plan:round`, `/my:learn:pr` is `/my:pr:learn`, `/my:learn:review` is `/my:pr:study`, `/my:review-lens` is `/my:pr:review`, `/my:explain-comment` is `/my:pr:comments`, `/my:merge-main` is `/my:pr:sync`. `/my:improve:*` is unchanged. Each mode keeps today's steps and outputs.
+- Three skills with modes: `plan` (scope, round, run), `pr` (learn, study, review, comments, sync) and `improve`. Each command carries its own "Use for…" phrases; the private learning rules stay with `pr:learn` and `pr:study`.
+- Log entries and signals name `skill:mode`. `improve` reads older entries and signals under the new names and shows only those.
+- Eval cases moved to `evals/plan/` and `evals/pr/`.
+
+### Added
+
+- `/my:plan:run`: rounds one after another while each succeeds (verification passed, push done or disabled, no open question), across plan parts. It stops at a gate the plan or the principles name, failed verification, drift over budget, conflicts with main, new PR comments, red CI known at round start, anything to publish, the ready-for-review gate, or 5 consecutive rounds, with one notification and one summary at the end.
+- Rounds write their review to `.plans/round-<N>-review.md`, so block findings reach the next round, and tick a plan part's checkboxes when its items are verified.
+- The state file `<data root>/state/<owner-name>-<branch>.json`, written by `plan:scope` (ready), `plan:round` and `plan:run` at every step; its shape is in `docs/local-data.md`.
+- A session chapter per round.
+- `mods/my-status`, an optional mod installed from the repository's marketplace: one line above the prompt with the plan's parts as tiles that fill up, the percentage, the time left, what needs the user, and the next action as a button that fills the prompt; "Open plan" in a pane; a status line entry. It only reads (plus a `git fetch` at most every 10 minutes while a PR exists).
+- Evals `plan/run-carries-blocks` and `plan/run-stops-before-publishing`; `improve/log-shows-problems` checks the new names. The suite has 17 cases.
+
+### Fixed
+
+- Eval graders that searched the trace for `git worktree add` and `git push` now check the commands actually run, not the instructions the agent read.
+- `improve/run-finds-upstream-lesson` uses regex graders instead of an LLM judge on a long reply, and checks that only new names reach the user; `improve/digest-groups-signals` accepts the confirmation line in the user's language.
+- `plan:scope`: a dropped plan section is one line with nothing under it.
+
 ## [2.4.1] - 2026-10-19
 
 ### Changed

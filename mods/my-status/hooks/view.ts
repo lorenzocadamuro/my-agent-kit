@@ -126,7 +126,7 @@ export function bandView(snap: MyStatusSnapshot | null, columns: number): BandVi
       tiles: tiles(run, 'warning'),
       badges: [{ key: 'state', text: isStopped ? 'Stopped' : 'Needs you', tone: isStopped ? 'danger' : 'warning' }],
       detail: run.reason ?? undefined,
-      actions: isStopped ? [ONE_ROUND, OPEN_PLAN] : [OPEN_PLAN],
+      actions: snap.newComments > 0 ? [REVIEW_COMMENTS, OPEN_PLAN] : snap.conflicts > 0 ? [MERGE_MAIN, OPEN_PLAN] : isStopped ? [ONE_ROUND, OPEN_PLAN] : [OPEN_PLAN],
       status: `${isStopped ? 'Stopped' : 'Waiting for you'}${notes}`,
     }, columns)
   }

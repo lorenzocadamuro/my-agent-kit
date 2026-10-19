@@ -14,7 +14,7 @@ Personal and employer-specific material lives outside this repository, in `~/.my
   reviews/                review drafts written by /my:pr:review
   plans/                  plans written by /my:plan:scope --dry-run
   retros/                 one-page retrospective per finished change
-  state/<owner-name>-<branch>.json  where a change stands, written by /my:plan:round and /my:plan:run, read by the status mod
+  state/<owner-name>-<branch>.json  where a change stands, written by /my:plan:scope, /my:plan:round and /my:plan:run, read by the status mod
 ```
 
 ## Project profile
@@ -33,7 +33,7 @@ One entry per problem, in the format of [templates/log-entry.md](../templates/lo
 
 ## State file
 
-One file per change, `state/<owner-name>-<branch>.json` (`/` in the branch becomes `-`), rewritten whole through a temp file and a rename. `/my:plan:round` and `/my:plan:run` write it; the optional status mod reads it. A run resuming after compaction reads it too.
+One file per change, `state/<owner-name>-<branch>.json` (`/` in the branch becomes `-`), rewritten whole through a temp file and a rename. `/my:plan:scope` (on approval), `/my:plan:round` and `/my:plan:run` write it; the optional status mod reads it. A run resuming after compaction reads it too.
 
 ```json
 {
@@ -57,5 +57,5 @@ One file per change, `state/<owner-name>-<branch>.json` (`/` in the branch becom
 ```
 
 - `step`: `triage`, `check`, `execute`, `verify`, `review`, `push`, `report`.
-- `state`: `running`, `needs_you` (a gate is waiting, `reason` says which), `stopped` (failed or capped, `reason` says why), `done` (the bar is met).
+- `state`: `ready` (the plan is approved, or a round ended and the next one can start), `running`, `needs_you` (a gate is waiting, `reason` says which), `stopped` (failed or capped, `reason` says why), `done` (the bar is met).
 - `parts[].status`: `todo`, `running`, `done`; a plan without parts has one part, the plan itself.

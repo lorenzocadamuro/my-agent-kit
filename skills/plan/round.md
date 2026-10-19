@@ -16,12 +16,14 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 | source          | `part B` of the plan; a file (`.plans/comments-<date>.md`, a review file); or a list in plain words. By default, the open block findings of the last review (`.plans/round-<N>-review.md`), or else the next unfinished plan part. In `run`, the first round starts there and the next ones follow the plan |
 | `--triage-only` | Build and check the triage, then stop and show it. Refused with `run`                                                                                                                         |
 | `--verify N`    | Skip to step 6 for round N, when its executor has already finished. In `run`, resume there and then loop                                                                                       |
-| `--deep`        | Also run the deep review: this round, or in `run` at each milestone only                                                                                                                       |
+| `--deep`        | Also run the deep review: this round; in `run`, when a part finishes and at the ready-for-review gate                                                                                         |
 | `--no-push`     | Do not push                                                                                                                                                                                     |
 
 ## The state file
 
 Write `<data root>/state/<owner-name>-<branch>.json` (`/` in the branch becomes `-`) at the start of each round, at each step below, at each gate and its answer, and at the end. Write a temp file and rename it, so a reader never sees half a file. The shape is in `${CLAUDE_PLUGIN_ROOT}/docs/local-data.md`. It feeds the optional status mod; nothing in the kit reads it except a resuming run.
+
+At the end of a round or a run, set `state`: `done` when the bar is met (the ready-for-review gate); `needs_you` with a `reason` when a gate or a question waits for the user; `stopped` with a `reason` when verification failed or the run hit its cap; otherwise `ready`, waiting for the next round.
 
 ## Steps
 
@@ -29,7 +31,7 @@ Write `<data root>/state/<owner-name>-<branch>.json` (`/` in the branch becomes 
 
 - **The plan:** `<worktree>/.plans/plan.md`. If it is missing, offer `/my:plan:scope --adopt`. For a tiny task, the user may prefer three questions (goal, boundary, bar) and a stub plan instead.
 - **The project profile:** commands, the guides to load for the touched paths, the deep review tool.
-- **New PR comments:** those created since the previous round (its `Comments read until` line), read with the query of `pr:comments` step 1 but without touching its state file. A real comment that the plan, the research or the last review should have caught is a signal (principles: closing step). When comments need work, suggest `/my:pr:comments` to turn them into this round's source.
+- **New PR comments:** those created since the previous round (its `Comments read until` line), read with the query of `pr:comments` step 1 but without touching its state file. A real comment that the plan, the research or the last review should have caught is a signal (principles: closing step). When comments need work, suggest `/my:pr:comments` to turn them into this round's source. Comments a `pr:comments` file covers count as read when that file is the source: move `Comments read until` past them.
 - **CI:** read it through the app's PR status tool when one is available. Never poll.
 
 ### 2. Preflight
@@ -119,7 +121,7 @@ Follow the principles. In `round`, the digest already ran in step 9; run it agai
 
 ## Run
 
-`run` repeats steps 1–9 without the user, round after round.
+`run` repeats steps 1–9 without the user, round after round. Each round reports one line (`Round N: k done · verdict · next`) instead of the six-line report; the full summary comes at the end.
 
 - **A round succeeds** when verification passed, the push is done or disabled, and no question is open.
 - **After a round that succeeds,** start the next one at once: the block findings in `.plans/round-<N>-review.md` first, then the next unfinished part. Finishing a part does not stop the run, unless the plan puts a gate there.
@@ -128,11 +130,13 @@ Follow the principles. In `round`, the digest already ran in step 9; run it agai
   - failed verification;
   - drift over budget;
   - conflicts with main;
-  - new PR comments (suggest "Review comments");
+  - new PR comments not covered by the source (suggest "Review comments");
   - red CI known at round start;
   - anything to publish: the first push's draft-PR question, replies, ticket changes;
   - the ready-for-review gate (step 10 runs, its questions are the stop);
-  - 5 consecutive rounds.
+  - 5 consecutive rounds;
+  - any other round that does not succeed (a rejected push, an executor that stopped).
+- **After the user answers a gate,** the run goes on under the same rules, unless the answer ends it.
 - **At each round start,** re-read this section, the plan and the state file, so a compacted session resumes where it was.
 - **At the end:** run `/my:improve digest` once, send one desktop notification, set the state file to `needs_you`, `stopped` or `done`, and give one summary:
 

@@ -26,7 +26,7 @@ type Network = { at: number; newComments: number; conflicts: number }
 
 async function sh($: EngineInterface, argv: string[], cwd?: string): Promise<string | null> {
   try {
-    const ran = await $.process.run(argv, { cwd, timeoutMs: 20_000 })
+    const ran = await $.process.run(argv, { cwd, timeoutMs: 20_000, env: { GIT_TERMINAL_PROMPT: '0' } })
     return ran.exitCode === 0 ? ran.stdout.trim() : null
   } catch {
     return null
@@ -54,9 +54,9 @@ async function dataRoot($: EngineInterface): Promise<string | null> {
   return home ? `${home}/.my-agent-kit` : null
 }
 
-async function conflictsWithMain($: EngineInterface, dir: string): Promise<number> {
+async function conflictsWithMain($: EngineInterface, dir: string, base: string): Promise<number> {
   try {
-    const ran = await $.process.run(['git', 'merge-tree', '--write-tree', '--name-only', 'HEAD', 'origin/main'], { cwd: dir, timeoutMs: 20_000 })
+    const ran = await $.process.run(['git', 'merge-tree', '--write-tree', '--name-only', 'HEAD', base], { cwd: dir, timeoutMs: 20_000 })
     if (ran.exitCode === 0) return 0
     const [, ...rest] = ran.stdout.split('\n')
     const end = rest.indexOf('')
@@ -70,9 +70,11 @@ async function newComments($: EngineInterface, dir: string, run: MyStatusRun): P
   const since = run.commentsReadUntil ?? run.updatedAt
   if (!run.pr || !since) return 0
   const query = `[.[] | select(.created_at > "${since}")] | length`
-  const review = await sh($, ['gh', 'api', `repos/{owner}/{repo}/pulls/${run.pr}/comments`, '--jq', query], dir)
-  const issue = await sh($, ['gh', 'api', `repos/{owner}/{repo}/issues/${run.pr}/comments`, '--jq', query], dir)
-  return (Number(review) || 0) + (Number(issue) || 0)
+  const count = async (path: string) => {
+    const out = await sh($, ['gh', 'api', '--paginate', `${path}?per_page=100&since=${since}`, '--jq', query], dir)
+    return (out ?? '').split('\n').reduce((sum, line) => sum + (Number(line) || 0), 0)
+  }
+  return (await count(`repos/{owner}/{repo}/pulls/${run.pr}/comments`)) + (await count(`repos/{owner}/{repo}/issues/${run.pr}/comments`))
 }
 
 let network: Network = { at: 0, newComments: 0, conflicts: 0 }
@@ -94,9 +96,10 @@ async function refresh($: EngineInterface): Promise<void> {
     const root = await dataRoot($)
     if (!top || !root) {
       await update($, snapAtom, () => null)
+      $.ui.status(undefined)
       return
     }
-    const branch = (await sh($, ['git', 'branch', '--show-current'], top)) ?? 'detached'
+    const branch = (await sh($, ['git', 'branch', '--show-current'], top)) || 'detached'
     const remote = await sh($, ['git', 'remote', 'get-url', 'origin'], top)
     const file = `${root}/state/${ownerName(remote, top)}-${branch.replace(/\//g, '-')}.json`
     const text = await readText($, file)
@@ -109,8 +112,9 @@ async function refresh($: EngineInterface): Promise<void> {
     const now = await $.clock.now()
     if (run?.pr && now - network.at >= NETWORK_MS) {
       const dir = run.worktree ?? top
-      await sh($, ['git', 'fetch', '--quiet', 'origin', 'main'], dir)
-      network = { at: now, conflicts: await conflictsWithMain($, dir), newComments: await newComments($, dir, run) }
+      const base = (await sh($, ['git', 'symbolic-ref', '--short', 'refs/remotes/origin/HEAD'], dir)) || 'origin/main'
+      await sh($, ['git', 'fetch', '--quiet', 'origin', base.replace(/^origin\//, '')], dir)
+      network = { at: now, conflicts: await conflictsWithMain($, dir, base), newComments: await newComments($, dir, run) }
     }
     const log = await readText($, `${root}/suite-log.md`)
     const openNotes = log ? (log.match(/^## \d{8}-\d{2} .* · open$/gm) ?? []).length : 0

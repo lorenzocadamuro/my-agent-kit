@@ -67,7 +67,7 @@ About 4 questions for S, 8 for M, 12 for L. Never ask what research already answ
 ### 5. Write the plan
 
 - Use `templates/plan.md`. If the profile names a plan style guide, follow its structure and keep the template's sections inside it.
-- Drop the sections that do not apply to the size, with one line each saying so.
+- Drop the sections that do not apply to the size, with one line each saying so. A dropped section is that line and nothing under it; content it would have held goes in a section the size keeps (an S plan's steps go in Verification).
 - An S plan fits on about one page.
 
 ### 6. Independent review

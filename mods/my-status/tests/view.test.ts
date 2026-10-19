@@ -22,6 +22,11 @@ test('one state at a time, in priority order', async () => {
   expect(bandView(snap(READY), 120)?.actions.map(a => a.label)).toEqual(['Run plan', 'One round'])
 })
 
+test('a run stopped by comments or conflicts offers the action that unblocks it', async () => {
+  expect(bandView(snap(NEEDS_YOU, { newComments: 2 }), 120)?.actions.map(a => a.label)).toEqual(['Review comments', 'Open plan'])
+  expect(bandView(snap(NEEDS_YOU, { conflicts: 1 }), 120)?.actions.map(a => a.label)).toEqual(['Merge main', 'Open plan'])
+})
+
 test('nothing to show draws no band', async () => {
   expect(bandView(null, 120)).toBe(null)
   expect(bandView(snap(null), 120)).toBe(null)

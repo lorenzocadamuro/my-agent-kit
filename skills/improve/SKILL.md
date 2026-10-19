@@ -17,7 +17,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md` and `${CLAUDE_PLUGIN_ROOT
 
 ## Old names
 
-Entries and signals written before 3.0.0 name skills that are now modes. Read them as their new names everywhere: in List and Log views, in Run selection, and in Digest. Show only the new names; the old ones never reach the user. A filter on a skill (`log plan`) matches every mode of it.
+Entries and signals written before 3.0.0 name skills that are now modes. Read them as their new names everywhere: in List and Log views, in Run selection, and in Digest. Show only the new names, in tables and in prose alike; the old ones never reach the user, not even to explain the rename. A filter on a skill (`log plan`) matches every mode of it.
 
 | Old         | New           |
 | ----------- | ------------- |
