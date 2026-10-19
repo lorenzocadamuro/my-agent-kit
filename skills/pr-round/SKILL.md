@@ -32,7 +32,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 
 ### 2. Preflight
 
-- A linked worktree, on the change's branch, with a clean tree.
+- A linked worktree on the change's branch, or what the profile names instead (principles: always in a worktree), with a clean tree.
 - Record HEAD, and whether it equals its upstream.
 - Run `${CLAUDE_PLUGIN_ROOT}/scripts/drift.sh --lines <budget> --files <budget>`, with the budgets taken from the plan.
 - **If main moved and the preview shows conflicts,** ask whether to run `/my:merge-main` first.

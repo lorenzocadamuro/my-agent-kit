@@ -1,6 +1,6 @@
 {
   "name": "my",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "A personal suite of skills for planning, running and reviewing code changes with agents: scoped plans, autonomous rounds that stop only at agreed gates, senior-style reviews, and a log-driven loop that improves the kit over time.",
   "author": {
     "name": "Lorenzo Cadamuro"

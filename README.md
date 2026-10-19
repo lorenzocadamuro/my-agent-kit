@@ -78,10 +78,10 @@ All skills share one set of rules, kept in [docs/principles.md](docs/principles.
 - the plan as contract;
 - humans decide at gates;
 - questions come with pros and cons;
-- verify before deciding;
+- verify before deciding, including the agent's own claims;
 - checks enter the bar only after their baseline is measured;
 - repository rules are loaded explicitly;
-- work always happens in a worktree;
+- work happens in a worktree, unless the project profile says how you work there instead;
 - a fresh session is named after the work, not the command;
 - links point only to files the app can open;
 - reasoning is in the user's language, and repository vocabulary is never translated;

@@ -4,6 +4,15 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [2.4.1] - 2026-10-19
+
+### Changed
+
+- Principles, verify: "check every claim" now names the agent's own claims too: a ticket's premises, live state (flags, config, environment, a preview), the consequences written into an option, and "done", "it is live" or "it works". Each carries evidence or is marked unverified; the question format points option effects at this rule.
+- Principles, worktree: the project profile can say how the user works in a repository (for example "work on `main`, no worktree"), and skills check what the profile names. `pr-round` preflight follows it. Building a profile now asks how the user works there and how the local stack runs; the profile template records the stack variant and the move and move-back commands.
+- Question format: a term's plain meaning also covers ideas introduced earlier in the conversation; an answer that makes a pending question stale means dropping or rewriting it.
+- Principles, links: the scratchpad is not openable from the app's file pane; a file the user must read goes in the working directory's `.plans/` or the data root.
+
 ## [2.4.0] - 2026-10-19
 
 ### Added

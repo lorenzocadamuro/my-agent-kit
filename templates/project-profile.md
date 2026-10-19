@@ -5,7 +5,7 @@ Confirmed by the user on <date>. Correct it through `/my:improve` when it is wro
 ## Repository
 
 - Default branch: `main` · New branches from: `origin/main`
-- Worktree root: <path pattern; prefer the editor's own worktree folder, e.g. <repo>/.claude/worktrees/<short-name>>
+- Worktree root: <path pattern; prefer the editor's own worktree folder, e.g. <repo>/.claude/worktrees/<short-name> | none: work on `main` (one task at a time)>
 - Session follows the worktree: <yes: move the session in with EnterWorktree | no: open the worktree in a new session>
 - Setup after creating a worktree: `<command>`
 - Branch naming: <rule, e.g. "Linear gitBranchName when a ticket exists">
@@ -44,6 +44,7 @@ Routing index for module rules, if any: <path>
 ## Manual testing
 
 - Where the local stack runs, and whether to move it to the change's worktree for browser checks (a gate): <rule>
+- Local stack variant: <e.g. native or compose> · Move to a worktree: `<command>` · Move back: `<command>`
 
 ## Tickets
 

@@ -37,7 +37,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 
 ## Verify, don't assume
 
-- **Check every claim against the code or the data** before it shapes a decision, including claims made by other agents.
+- **Check every claim against the code or the data** before it shapes a decision or reaches the user, including claims made by other agents and your own: a ticket's premises, live state (flags, config, the environment, a preview), the consequences written into a question's options, and "done", "it is live" or "it works". Each one carries its evidence (`file:line`, a read-only query, a measurement in the page) or is marked unverified.
 - **Audits are never truncated.** Report the match count and every hit.
 - **Measure the baseline before promising a check.** A command enters the bar for done or a stop condition only after it ran on `origin/main`. If it already fails there (a missing tool, a known failure), write it as "no new failures against the baseline", with the baseline counts.
 - **A test must be able to fail.** Drive the production caller, and check that reverting the fix makes the test fail.
@@ -59,7 +59,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 
 ## Always in a worktree
 
-- **Work happens in the worktree of the change, never in the main checkout.** Every skill checks the worktree, branch, HEAD and clean tree at start, and stops if they are wrong.
+- **Work happens in the worktree of the change, never in the main checkout,** unless the project profile says how the user works there instead (for example "work on `main`, no worktree" in a single-thread repository). Every skill checks the worktree (or what the profile names), branch, HEAD and clean tree at start, and stops if they are wrong.
 - **New branches start from `origin/main`,** never from whatever branch happens to be checked out.
 - **One writer per worktree at a time.**
 
@@ -68,7 +68,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 - **Per-change files** (plans, rounds, summaries, comment triage) live in the worktree's git-ignored `.plans/` folder, and disappear with the worktree.
 - **Lasting personal material** lives in `~/.my-agent-kit/`, outside this repository. The layout is in [local-data.md](local-data.md).
 - **Throwaway files** go in the session scratchpad.
-- **Link only files the app can open.** The desktop app's file pane opens files inside the session's folders only (working directory, scratchpad, added folders). Before linking a file under the data root (`~/.my-agent-kit/` by default), add that folder to the session with the app's directory-request tool (`request_directory`), once per session. When the tool is missing, show the path as code, not as a link.
+- **Link only files the app can open.** The desktop app's file pane opens files inside the session's working directory and added folders, not the scratchpad. A file the user must read goes in the working directory (a git-ignored `.plans/`) or the data root. Before linking a file under the data root (`~/.my-agent-kit/` by default), add that folder to the session with the app's directory-request tool (`request_directory`), once per session. When the tool is missing, show the path as code, not as a link.
 - **Nothing employer-specific enters this repository.**
 
 ## Language
