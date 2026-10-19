@@ -4,6 +4,23 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-10-19
+
+### Added
+
+- The kit learns while it is used. Every skill records signals without interrupting: a free "Other" answer or a dismissed question (and why), a request for a simpler explanation, a reversed decision, a surprise gate or stop, a review finding or a reviewer or bot comment the plan should have caught, rework. They go to `<data root>/signals/`, so they survive the session and the worktree.
+- `/my:improve digest` (and `/my:improve:digest`): turns pending signals into a few notes grouped by upstream cause. Withdrawn signals are marked dropped, and a cause that already has an open note gains `Evidence:` lines instead of a new note. Every skill runs it at the end.
+- `pr-round` reads the PR comments that are new since the last round, without touching `explain-comment`'s state, and its report gains a `Lessons:` line. `explain-comment` records a real comment the plan should have caught as a signal.
+- Log entries gain "Why it was a problem" and "Missing question". Their reasoning is in the user's language.
+- `/my:improve run --propose-only` stops after the proposals.
+- Evals `improve/note-explains-why`, `improve/digest-groups-signals` and `improve/run-finds-upstream-lesson`; `explain-comment/duplicates` also checks the signal. The suite has 15 cases.
+
+### Changed
+
+- `improve run` looks for the upstream lesson first: the missing question, and the existing rule that should have covered it and why it did not. It prefers refining, generalising or moving that rule to adding one.
+- Principles, language: reasoning is in the user's language, in plain words. Repository and kit vocabulary is never translated, and a term gets a plain meaning the first time it appears. This replaces the "technical labels" rule; the question format keeps terms instead of paraphrasing them.
+- The principles' closing step collects signals and runs the digest, instead of offering a note.
+
 ## [2.3.0] - 2026-10-16
 
 ### Added

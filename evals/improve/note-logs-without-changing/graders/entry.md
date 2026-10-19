@@ -12,4 +12,4 @@ This is the suite log after the run. Pass only if it holds exactly one new entry
 2. names a planning skill (for example `scope-plan` or `plan`);
 3. states concretely that the same feature-flag question was asked twice, with different wording the second time;
 4. has an "Expected" line, a suspected cause, and the signal "question re-asked";
-5. is written in English.
+5. has its reasoning fields (what happened, expected, why it was a problem) in English, the language of the prompt.

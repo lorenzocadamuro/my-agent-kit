@@ -6,4 +6,4 @@ execution:
   max_turns: 30
   allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
   prompt: |
-    /my:explain-comment Nessun accesso a GitHub: i commenti sono in ./comments.md e il codice in ./app. Salva il triage in ./triage.md. Non pubblicare nulla.
+    /my:explain-comment Nessun accesso a GitHub: i commenti sono in ./comments.md, il codice in ./app e il piano della PR in ./plan.md. Data root ./kit-data. Salva il triage in ./triage.md. Non pubblicare nulla.

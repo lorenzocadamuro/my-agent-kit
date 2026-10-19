@@ -73,9 +73,9 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 
 ## Language
 
-- **Skills, prompts for other agents, plans and hand-off files are in English.**
-- **Conversation with the user, and study material, are in the user's language.**
-- **Technical labels stay in English** in every language: states (`open`, `fixed`), ids, table headers, field names. Explanations around them are in the user's language.
+- **Skills, prompts for other agents, plans and hand-off files are in English.** Signals and the reasoning in log entries are the exception.
+- **Reasoning is in the user's language:** the conversation, study material, signals and the reasoning in log notes. Plain words, the why before the what.
+- **Vocabulary is never translated.** Repository terms (code names, domain nouns, flags, commands) and the kit's own terms (`bar for done`, `boundary`, `round`, states, ids, table headers) stay as they are in every language, so the user finds them in the code and in conversations with colleagues. The first time a term appears in a conversation, give its meaning in one plain line.
 
 ## Name the session after the work
 
@@ -85,12 +85,14 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 
 ## Closing step of every skill
 
-Before finishing, check whether any of these happened in the session:
+The kit learns while it is used. Every skill collects signals during the work and digests them at the end; only `/my:improve` note, list, log and digest are exempt.
 
-- a decision was reversed;
-- the user had to ask for a question again, or for a simpler explanation;
-- a gate came as a surprise;
-- a review found something the plan did not foresee;
-- a stop the plan did not foresee.
-
-If one did, offer in one line to log it with `/my:improve note <what happened>`. Never edit a skill on your own.
+- **A signal is a sign that the kit's directives missed something:**
+  - the user answers with a free answer ("Other") or dismisses a question. Record why: the question was unclear, the proposed method did not fit, or the user added an instruction of their own;
+  - the user asks for a simpler explanation, or the reasoning in the chat shows a gap in the plan or the method;
+  - a decision is reversed, a gate comes as a surprise, or a stop the plan did not foresee happens;
+  - a review finding, or a real comment from a reviewer or a bot, that the plan, the research or the round's own review should have caught;
+  - rework in a round.
+- **Record each one when it happens, without interrupting the work.** Append one line to this session's signals file, `<data root>/signals/<owner-name>-<branch>.md` (`/` in the branch becomes `-`; without a branch, `<owner-name or "none">-<date>-<session id or time>.md`), creating it with a `# Signals: <repo> · <branch>` heading: `- <date time> · <kind> · <skill> · <what happened> · <source>`. Only the coordinating session writes signals.
+- **At the end, run `/my:improve digest <this session's signals file>`.** It turns pending signals into a few clear notes in the log. When there were none, say nothing about it.
+- **Never edit a skill on your own.**

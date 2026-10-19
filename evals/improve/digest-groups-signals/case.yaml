@@ -1,0 +1,9 @@
+schema_version: "1"
+name: digest-groups-signals
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 20
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill]
+  prompt: |
+    /my:improve digest — usa ./kit-data come data root per questo test. Rispondimi in italiano.

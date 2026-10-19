@@ -45,7 +45,7 @@ Between gates, agents work in the background, a verified round pushes to the dra
 
 ```text
 /my:scope-plan ABC-123          interview → plan → worktree + branch from origin/main → ticket In Progress
-/my:pr-round                    part A: triage → check → execute → verify → review → push → 5-line report
+/my:pr-round                    part A: triage → check → execute → verify → review → push → 6-line report
 /my:pr-round                    next part, or the block findings from the last review
 /my:merge-main                  when a round reports that main moved with conflicts
 /my:pr-round                    … until the review says the bar is met → ready-for-review gate
@@ -61,14 +61,14 @@ Between gates, agents work in the background, a verified round pushes to the dra
 | Command               | Stage       | What it does                                                                                                                                                                                                                                                | Status  |
 | --------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
 | `/my:scope-plan`      | Before code | Interviews you with multiple-choice questions and writes the plan: goal, boundary, invariants with tests, bar for done, size budget, reviewers, gates. Adapts its depth to the kind and size of the task.                                                   | available |
-| `/my:pr-round`        | During      | Runs one round: executes the work in the background, checks the result against git, reviews it against the plan, and reports in five lines with a drift signal.                                                                                             | available |
+| `/my:pr-round`        | During      | Runs one round: executes the work in the background, checks the result against git, reviews it against the plan, and reports in six lines with a drift signal and the lessons it logged.                                                                                             | available |
 | `/my:merge-main`      | During      | Brings the branch up to date with main: previews conflicts, stops on design conflicts, regenerates generated files, re-checks migrations and the dev database. Accepts optional context ("keep their approach, adapt ours").                                | available |
 | `/my:review-lens`     | Review      | Reviews a pull request, yours or a colleague's, through the lenses senior reviewers use: promised guarantees, state ownership, durability, every caller, rollback, the roadmap of others. Returns the questions to ask and findings graded against the bar. | available |
 | `/my:explain-comment` | Review      | For each bot or colleague comment: two lines of plain explanation, whether it is real, its weight, a proportional action and a short reply draft.                                                                                                           | available |
 | `/my:learn` | Learning | `pr <n>`: understand a PR before reviewing it (what and why, before → after, reading order, its promise, questions to keep in mind). `review <n>`: turn review comments into a three-layer study page; only comments not studied yet. Private, in your language, with a glossary and reviewer profiles. | available |
-| `/my:improve`         | Always      | `note` logs a problem with the kit from any session; `run` turns open notes into approved changes, eval cases, a version bump and an updated README; `log` shows the history, each note with its problem in one line and a state badge, closed ones folded away.                                                                               | available |
+| `/my:improve`         | Always      | `note` logs a problem with the kit from any session; `digest` turns the signals every skill collects while you work into a few clear notes; `run` finds the upstream lesson behind open notes and turns it into approved changes, eval cases, a version bump and an updated README; `log` shows the history, each note with its problem in one line and a state badge, closed ones folded away.                                                                               | available |
 
-Skills with modes also have sub-commands, so the menu is navigable: `/my:learn:pr`, `/my:learn:review`, `/my:improve:note`, `/my:improve:run`, `/my:improve:log`. You rarely need the names: ask in plain words ("explain PR 456") and Claude picks the skill from its description.
+Skills with modes also have sub-commands, so the menu is navigable: `/my:learn:pr`, `/my:learn:review`, `/my:improve:note`, `/my:improve:digest`, `/my:improve:run`, `/my:improve:log`. You rarely need the names: ask in plain words ("explain PR 456") and Claude picks the skill from its description.
 
 ## Principles
 
@@ -84,7 +84,8 @@ All skills share one set of rules, kept in [docs/principles.md](docs/principles.
 - work always happens in a worktree;
 - a fresh session is named after the work, not the command;
 - links point only to files the app can open;
-- technical labels stay in English, explanations follow the user's language.
+- reasoning is in the user's language, and repository vocabulary is never translated;
+- the kit learns while it is used: every skill collects signals and digests them into notes.
 
 ## Install
 
@@ -107,8 +108,8 @@ The repository is private, so nobody else can install it.
 
 The kit grows with use, but it never changes itself without approval.
 
-1. **Note.** When something goes wrong in any session, run `/my:improve note <what happened>`. The note lands in `~/.my-agent-kit/suite-log.md`, with its context.
-2. **Run.** In a dedicated session, `/my:improve run` groups the open notes and proposes changes with pros and cons. It applies only the ones you approve.
+1. **Signals.** While you work, every skill records signals without interrupting you: a free "Other" answer, a dismissed question, a reversed decision, a reviewer comment the plan should have caught, rework. At the end, `/my:improve digest` groups them into a few clear notes in `~/.my-agent-kit/suite-log.md`: repeats merge, withdrawn ones drop, and a cause already open gains an evidence line instead of a new note. You can also add a note by hand with `/my:improve note <what happened>`.
+2. **Run.** Whenever you like, from any session, `/my:improve run` looks for the upstream lesson behind the open notes (the question that should have been asked, and the existing rule that should have covered it) and proposes refining that rule rather than adding a patch. It applies only the changes you approve.
 3. **Prove.** Each fixed note becomes an eval case in `evals/`. `claude plugin eval` must pass before the change lands, so a fixed problem cannot come back.
 4. **Record.** Every run updates this README, `CHANGELOG.md` and the version in `.claude-plugin/plugin.json`, then commits and tags.
 

@@ -5,7 +5,8 @@ Personal and employer-specific material lives outside this repository, in `~/.my
 ```
 ~/.my-agent-kit/
   deny-words.txt          words that must never enter this repository (read by scripts/check.sh)
-  suite-log.md            problems with the kit, written by /my:improve note
+  suite-log.md            problems with the kit, written by /my:improve note and digest
+  signals/<owner-name>-<branch>.md  raw signals collected during the work, until /my:improve digest turns them into notes
   projects/<repo>.md      one profile per repository
   reviewers/<handle>.md   how a reviewer thinks, written by /my:learn review, read by /my:review-lens
   reads/                  PR readings written by /my:learn pr (header records the head commit)
@@ -19,7 +20,7 @@ Personal and employer-specific material lives outside this repository, in `~/.my
 
 Template: [templates/project-profile.md](../templates/project-profile.md). `<repo>` is the GitHub `owner-name` slug, for example `acme-web`.
 
-`/my:scope-plan` creates the profile on first use. It reads the repository's agent instructions (`CLAUDE.md`, `AGENTS.md`), contributing guides, CI workflows and skills, then asks the user to confirm it. Any skill that finds a profile wrong offers `/my:improve note`, and `/my:improve run` can correct it.
+`/my:scope-plan` creates the profile on first use. It reads the repository's agent instructions (`CLAUDE.md`, `AGENTS.md`), contributing guides, CI workflows and skills, then asks the user to confirm it. A skill that finds a profile wrong records a signal, and `/my:improve run` can correct it.
 
 ## Reviewer profile
 
@@ -27,4 +28,4 @@ Template: [templates/reviewer-profile.md](../templates/reviewer-profile.md). It 
 
 ## Suite log
 
-One entry per problem, in the format of [templates/log-entry.md](../templates/log-entry.md). Entries are appended and never deleted. A fixed entry keeps its text and gains a `fixed <version>` status.
+One entry per problem, in the format of [templates/log-entry.md](../templates/log-entry.md). Entries are appended and never deleted. A fixed entry keeps its text and gains a `fixed <version>` status. The digest may append `Evidence:` lines to an open entry, never change its other lines. Labels are in English; the reasoning is in the user's language.

@@ -3,6 +3,10 @@
 - When: <date time>
 - Where: <repo> · <branch or PR> · session <id if known>
 - What happened: <one to three sentences, concrete>
+- Why it was a problem: <what it cost the user, in plain words: time lost, a wrong decision, a question asked again>
+- Missing question: <the question or directive that, asked or applied at the start, would have avoided it, or "unknown">
 - Expected: <what the kit should have done>
 - Suspected cause: <skill step, principle, template, project profile, or "unknown">
-- Signal: <decision reversed | question re-asked | surprise gate | review found unplanned issue | unplanned stop | other>
+- Signal: <decision reversed | question re-asked | free answer | question dismissed | reviewer correction | rework | surprise gate | review found unplanned issue | unplanned stop | other>
+<!-- Zero or more lines, appended by the digest only, never by hand:
+- Evidence: <date> · <skill> · <what happened> · <source> -->

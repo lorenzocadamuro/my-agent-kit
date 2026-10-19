@@ -27,3 +27,22 @@ C1 (bugbot, app/cache.py line 17): `clear()` mutates `_cache` without holding `_
 C2 (review-bot, app/cache.py line 16): Thread-safety: the cache is cleared outside the lock; take `_lock` in `clear()` like `get` and `put` do.
 C3 (bugbot, app/cache.py line 8): `get` reads `_cache` without the lock, which can return a stale value.
 P
+cat > plan.md <<'P'
+# Add a clear operation to the cache
+
+## Goal
+
+Callers can empty the cache.
+
+## Invariants
+
+| #  | Statement | Holds at | Test |
+| -- | --------- | -------- | ---- |
+| I1 | Every read or write of `_cache` holds `_lock` | app/cache.py | tests/test_cache.py::test_concurrent_clear |
+
+## Parts
+
+### Part A: add `clear()`
+
+- [ ] `clear()` empties `_cache` — test first: `test_clear_empties`
+P

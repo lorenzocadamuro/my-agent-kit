@@ -1,6 +1,6 @@
 ---
 name: pr-round
-description: Run one round of work on a change, autonomously, against its plan. Builds and independently checks the round's triage (from a plan part, an explain-comment file, review findings, or a list), executes it with a background agent in the change's worktree (test first, one commit per item), verifies the summary against git, runs a fresh conformance review against the plan (deep review at milestones), pushes the draft branch, and reports in five lines with a drift signal. Stops only at the agreed gates and notifies the user. Use for "/my:pr-round", "run the next round", "esegui il giro", "fix these findings", "implement part B of the plan".
+description: Run one round of work on a change, autonomously, against its plan. Builds and independently checks the round's triage (from a plan part, an explain-comment file, review findings, or a list), executes it with a background agent in the change's worktree (test first, one commit per item), verifies the summary against git, runs a fresh conformance review against the plan (deep review at milestones), pushes the draft branch, and reports in six lines with a drift signal and the lessons learned. Stops only at the agreed gates and notifies the user. Use for "/my:pr-round", "run the next round", "esegui il giro", "fix these findings", "implement part B of the plan".
 argument-hint: "[source: plan part | file | list] [--triage-only] [--verify N] [--deep] [--no-push]"
 ---
 
@@ -28,6 +28,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 
 - **The plan:** `<worktree>/.plans/plan.md`. If it is missing, offer `/my:scope-plan --adopt`. For a tiny task, the user may prefer three questions (goal, boundary, bar) and a stub plan instead.
 - **The project profile:** commands, the guides to load for the touched paths, the deep review tool.
+- **New PR comments:** those created since the previous round (its `Comments read until` line), read with the query of `explain-comment` step 1 but without touching its state file. A real comment that the plan, the research or the last review should have caught is a signal (principles: closing step). When comments need work, suggest `/my:explain-comment` to turn them into this round's source.
 
 ### 2. Preflight
 
@@ -68,6 +69,7 @@ When the round's verification needs a manual check in the browser, follow the pr
 - **Check the summary's claims yourself:** audit counts, test results, and every decision taken alone.
   - A decision flagged boundary, rule or someone else's code is a gate.
   - Any other decision is listed in the report.
+- **Record signals** (principles: closing step) for rework, stopped items, and reversed decisions.
 
 ### 7. Review
 
@@ -77,6 +79,7 @@ When the round's verification needs a manual check in the browser, follow the pr
   - **block** → next round's items;
   - **ticket** → append to `.plans/tickets.md`;
   - **note** → listed in the report.
+- A block finding the plan did not foresee is a signal.
 
 ### 8. Push
 
@@ -86,13 +89,16 @@ When the round's verification needs a manual check in the browser, follow the pr
 
 ### 9. Report
 
-Five lines, and a desktop notification when the round ran long:
+First run `/my:improve digest` on this session's signals file (principles: closing step).
+
+Six lines, and a desktop notification when the round ran long:
 
 ```
 Round N: <k done / m stopped / s skipped>  ·  HEAD <sha> (pushed | not pushed: why)
 Review: <verdict against the bar>; block <b>, ticket <t>, note <n>
 Drift: <lines>/<budget> lines, <files>/<budget> files; main <ahead/behind>
 Decisions taken alone: <count, or the flagged ones>
+Lessons: <note ids from the digest | none>
 Next: <next round with b items | ready-for-review gate | a question>
 ```
 
@@ -106,4 +112,4 @@ When the review says the bar is met and no block finding remains:
 
 ### 11. Closing step
 
-Follow the principles. A round with rework, a surprise gate or a decision reversal is worth a `/my:improve note`.
+Follow the principles. The digest already ran in step 9; run it again only for signals recorded after the report.

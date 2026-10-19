@@ -18,15 +18,15 @@ Every decision put to the user follows this format. A question the user cannot a
   - **Today:** what happens now without the change, on the main branch or in production.
   - **Pros** and **cons**, one short clause each. Every option has both; an option with only a con is incomplete.
   - **Severity** when there is risk: how likely, how bad, and how easy to undo.
-- **No internal IDs or jargon** (finding numbers, internal function names, acronyms) without a one-line meaning next to them.
+- **Keep terms as they are** (principles: language). The first time a repository or kit term, an internal id or an acronym appears, give its plain meaning in one line; never paraphrase it away.
 - **One concrete example beats an abstract description.** "A user drags the batch while it loads" beats "manual manipulation during the loading state".
 
 ## When the user dismisses the questions
 
-A dismissed batch, or an answer like "I don't understand", means "explain first". Explain in plain words, with the context the user is missing, then ask again with the tool. Never fall back to options in plain text.
+A dismissed batch, or an answer like "I don't understand", means "explain first", and is a signal. Explain in plain words, with the context the user is missing, then ask again with the tool. Never fall back to options in plain text.
 
 ## After the answer
 
 - **Record the decision** in the plan's decision list, with the date and one line of reasoning.
 - **If the answer reframes the question,** restate the new understanding in one line before acting on it.
-- **If the same question has to be asked twice,** that is a signal for the closing step: offer `/my:improve note`.
+- **A free answer, a dismissal, or a question asked twice is a signal** (principles: closing step). Record it, then carry on.

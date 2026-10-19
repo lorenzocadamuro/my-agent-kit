@@ -2,6 +2,7 @@
 
 Plan: `.plans/plan.md` · Trigger: <plan part | comments file | review findings | user list>
 Start: branch <name>, HEAD <sha> (= origin? yes/no), clean tree required.
+Comments read until: <time of the newest PR comment read at the start of this round, or "none">
 Bar: see plan § Bar for done. Act only on items below; anything else is reported, not fixed.
 
 ## Rules for every item

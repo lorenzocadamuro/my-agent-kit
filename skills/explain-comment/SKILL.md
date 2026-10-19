@@ -10,6 +10,8 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, and `${CLAUDE_PLUGIN_ROO
 
 Talk to the user in their language. Reply drafts are in English.
 
+**Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.my-agent-kit`.
+
 ## Arguments
 
 | Argument        | What it selects                                                                     |
@@ -32,6 +34,7 @@ Pasted comments work too, when `gh` is unavailable.
    - Is the issue still present? Has a later commit already fixed it? Compare the comment's commit with HEAD.
    - Read the code the comment points to, plus its callers and tests.
    - Classify the group as **real**, **duplicate** (of which group), **not a bug** (with evidence), **already fixed** (with the commit), or **out of scope** (outside the PR's plan or diff).
+   - A real group that the plan, the research or a round's review should have caught is a signal (principles: closing step). Read the plan (`.plans/plan.md`, or the one the user names) to judge it.
 4. **Weigh and act.** Weight is block, ticket or note, as in the lenses doc. Pick a proportional action: fix, document, ticket, or reply only. A low-value style point on a local tool does not get an elaborate fix.
 5. **Draft the replies:** at most 3 sentences, factual, in English.
    - Fixed: "Addressed in `<sha>`: <how>."
