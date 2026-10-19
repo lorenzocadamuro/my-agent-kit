@@ -1,6 +1,6 @@
 # Review lenses
 
-Shared by `/my:review-lens`, the review step of `/my:pr-round` and `/my:explain-comment`. Senior reviewers rarely hunt for line-level bugs first. They ask whether the change keeps its promises. Use the lenses that fit the change, and skip the rest silently.
+Shared by `/my:pr:review`, the review step of `/my:plan:round` and `/my:plan:run`, and `/my:pr:comments`. Senior reviewers rarely hunt for line-level bugs first. They ask whether the change keeps its promises. Use the lenses that fit the change, and skip the rest silently.
 
 ## The lenses
 

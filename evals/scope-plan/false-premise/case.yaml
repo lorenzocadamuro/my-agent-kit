@@ -1,9 +1,0 @@
-schema_version: "1"
-name: false-premise
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 40
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
-  prompt: |
-    /my:scope-plan --dry-run Quando un ordine viene annullato, oggi mandiamo già un'email di conferma al cliente. Aggiungi anche un SMS di conferma. Data root ./kit-data, salva il piano in ./plan.md. Non c'è un repository git: pianifica dai file presenti.

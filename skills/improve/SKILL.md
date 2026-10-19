@@ -15,6 +15,19 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md` and `${CLAUDE_PLUGIN_ROOT
 - **Data root:** `$MY_AGENT_KIT_HOME` if set, or a data root the user names in the request; otherwise `~/.my-agent-kit`. The log is `<data root>/suite-log.md`. Create it with a `# Suite log` heading if missing. Signals live in `<data root>/signals/`.
 - **Kit source:** the git repository behind `${CLAUDE_PLUGIN_ROOT}`. Resolve it with `git -C "${CLAUDE_PLUGIN_ROOT}" rev-parse --show-toplevel`. If that fails (the plugin was installed from a marketplace cache), ask for the path of the user's clone. Never edit the cache.
 
+## Old names
+
+Entries and signals written before 3.0.0 name skills that are now modes. Read them as their new names everywhere: in List and Log views, in Run selection, and in Digest. Show only the new names; the old ones never reach the user. A filter on a skill (`log plan`) matches every mode of it.
+
+| Old         | New           |
+| ----------- | ------------- |
+| `scope-plan` | `plan:scope` |
+| `pr-round`  | `plan:round`  |
+| `learn`     | `pr:learn` when the entry is about a PR reading, `pr:study` when it is about a review study |
+| `review-lens` | `pr:review` |
+| `explain-comment` | `pr:comments` |
+| `merge-main` | `pr:sync`    |
+
 ## Parse `$ARGUMENTS`
 
 | First word    | Mode                                                   |
@@ -30,7 +43,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md` and `${CLAUDE_PLUGIN_ROOT
 
 Goal: under a minute, no questions unless the text is empty.
 
-1. **Identify the skill:** from the text, or else from the most recent `/my:` skill used in this session, or else `general`. Use `principles`, `templates`, `scripts` or `profile:<repo>` when the problem is there.
+1. **Identify the skill and mode,** written `skill:mode` (`plan:scope`, `plan:run`, `pr:review`, `improve:run`): from the text, or else from the most recent `/my:` command used in this session, or else `general`. Use `principles`, `templates`, `scripts`, `mod` or `profile:<repo>` when the problem is there.
 2. **Collect context without asking:**
    - date and time;
    - current repository (`git rev-parse --show-toplevel`, remote slug), branch, and PR number (`gh pr view --json number -q .number`, if any);

@@ -8,11 +8,11 @@ Personal and employer-specific material lives outside this repository, in `~/.my
   suite-log.md            problems with the kit, written by /my:improve note and digest
   signals/<owner-name>-<branch>.md  raw signals collected during the work, until /my:improve digest turns them into notes
   projects/<repo>.md      one profile per repository
-  reviewers/<handle>.md   how a reviewer thinks, written by /my:learn review, read by /my:review-lens
-  reads/                  PR readings written by /my:learn pr (header records the head commit)
+  reviewers/<handle>.md   how a reviewer thinks, written by /my:pr:study, read by /my:pr:review
+  reads/                  PR readings written by /my:pr:learn (header records the head commit)
   study/                  study pages, glossary.md and README.md (the index, with the comment ids studied)
-  reviews/                review drafts written by /my:review-lens
-  plans/                  plans written by /my:scope-plan --dry-run
+  reviews/                review drafts written by /my:pr:review
+  plans/                  plans written by /my:plan:scope --dry-run
   retros/                 one-page retrospective per finished change
 ```
 
@@ -20,7 +20,7 @@ Personal and employer-specific material lives outside this repository, in `~/.my
 
 Template: [templates/project-profile.md](../templates/project-profile.md). `<repo>` is the GitHub `owner-name` slug, for example `acme-web`.
 
-`/my:scope-plan` creates the profile on first use. It reads the repository's agent instructions (`CLAUDE.md`, `AGENTS.md`), contributing guides, CI workflows and skills, then asks the user to confirm it. A skill that finds a profile wrong records a signal, and `/my:improve run` can correct it.
+`/my:plan:scope` creates the profile on first use. It reads the repository's agent instructions (`CLAUDE.md`, `AGENTS.md`), contributing guides, CI workflows and skills, then asks the user to confirm it. A skill that finds a profile wrong records a signal, and `/my:improve run` can correct it.
 
 ## Reviewer profile
 
