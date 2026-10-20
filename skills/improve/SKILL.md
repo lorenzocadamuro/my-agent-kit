@@ -87,6 +87,7 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
 1. **Preflight the kit source.** Clean tree, on `main`, `git pull --ff-only`. Stop if any of these fails. With `--propose-only`, skip the preflight, and stop after step 4 without the closing step.
 2. **Select entries:** all open ones, or those matching the given skill or ids. Read each affected skill, the principles and templates, and any session or file an entry points to.
 3. **Find the upstream lesson.** Group the notes by upstream cause, not by surface event. For each group:
+   - **Check it against the constitution first.** Read `${CLAUDE_PLUGIN_ROOT}/CONSTITUTION.md`, and check each note and each proposal against it. When a note asks for something the constitution forbids, or a proposal would contradict it, do not propose the change: say which clause it contradicts, and that only the user can amend the constitution, by hand or on explicit request.
    - **Name the missing question:** what should have been asked or checked at the start.
    - **Find the existing rule that should have covered it,** and say why it did not apply: not reached by the step where it happened, worded too narrowly, or worded for one case.
    - **Place the fix,** in this order of preference: refine, generalise or move that rule; merge it with a neighbour; add a new rule only when none covers the cause. Never word a fix around one case.
@@ -122,5 +123,6 @@ Show every entry (or one skill's), open ones first, newest first within each gro
 ## Rules
 
 - Never change a skill, doc or template outside `run`, and never without approval.
+- Never edit `CONSTITUTION.md`, and never write "Amend constitution" in a commit message unless the user asked for the amendment.
 - Never write employer, project, ticket or colleague names into the kit source. The log and the project profiles may hold them, because they live outside the repository.
 - Language follows the principles: kit source in English; conversation, signals and the reasoning in log entries in the user's language; terms never translated.
