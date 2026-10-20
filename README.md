@@ -82,7 +82,7 @@ Behind them are three skills with modes: `plan` (scope, round, run), `pr` (learn
 
 ## Principles
 
-[CONSTITUTION.md](CONSTITUTION.md) comes first: what the kit is for, and what it must not become. It changes only by hand or at your explicit request, and it wins over every other rule. `/my:improve run` checks each proposal against it and stops on a contradiction.
+[CONSTITUTION.md](CONSTITUTION.md) comes first: what the kit is for, and what it must not become. It changes only by hand or at your explicit request, and it wins over every other rule. `/my:improve run` checks each proposal against it, refuses what it forbids, and for the cause behind such a note proposes only what it allows.
 
 All skills share one set of rules, kept in [docs/principles.md](docs/principles.md), which serve the constitution:
 
