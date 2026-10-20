@@ -4,6 +4,12 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [3.2.1] - 2026-10-20
+
+### Changed
+
+- Constitution, amended at the user's explicit request. Reason: the user wants the kit to automate as much of the workflow as it can, and to earn autonomy over time; the old text ("decisions are mine", "publishes without my yes") read as if every commit and push in the user's projects needed a yes, and did not say where the kit is heading. Clause 1 now says that decisions are the user's today, that the goal is for the user to decide only architecture, design and whatever speaks for them, and that the kit takes a kind of decision alone only after its recommendations for that kind have matched the user's choices and the user has handed it over. "What the kit must not become" now separates speaking for the user to other people (replies, PR descriptions, ready for review, messages: always the user's yes) from changing itself or pushing to its own repository (the user's yes); in the user's projects, committing and pushing are automation, not publishing.
+
 ## [3.2.0] - 2026-10-20
 
 ### Added
