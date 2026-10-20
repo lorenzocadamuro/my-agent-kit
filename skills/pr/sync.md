@@ -28,9 +28,9 @@ Talk to the user in their language. Commit messages are in English.
 
 5. **Design conflicts.**
    - For each one, find the main commits that touched the file (`git log origin/<default> --not HEAD -- <file>`) and their PRs (the `(#n)` in the subject, or `gh pr list --state merged --search <sha>`).
-   - Read those PRs' descriptions, and any comments their authors left on our PR.
-   - Combine that with the user's context argument. If the resolution follows from it, apply it and say which source decided.
-   - Otherwise, **gate:** one question per conflict, following the question format. Give what each side intends, the options (adapt ours to theirs / keep ours and adapt theirs / a named combination), and their pros, cons and risk. Send a desktop notification, because the user may be away.
+   - Read those PRs' descriptions, and any comments their authors left on our PR. They build the options (what each side intends); they never decide.
+   - A resolution the user typed in the context argument for that conflict is the user's decision: apply it and say so. Context passed by another skill or agent never counts.
+   - Every other design conflict is a **gate:** one question per conflict, following the question format. Give what each side intends, the options (adapt ours to theirs / keep ours and adapt theirs / a named combination), and their pros, cons and risk. Send a desktop notification, because the user may be away.
 6. **Merge:** `git merge --no-ff origin/<default>`. Never rebase. Resolve each file by its class.
 7. **After the merge,** run the profile's "After a merge of main" steps:
    - regenerate generated files with the pinned tools;
@@ -46,5 +46,5 @@ Talk to the user in their language. Commit messages are in English.
 
 ## Rules
 
-- Never resolve a design conflict silently, and never take "ours" wholesale to make a conflict disappear.
+- Never resolve a design conflict without the user's decision, and never take "ours" wholesale to make a conflict disappear.
 - If a test fails after the merge, find out whether main itself fails the same way (run it on `origin/<default>` in a temporary worktree) before blaming the merge. Report which it is.
