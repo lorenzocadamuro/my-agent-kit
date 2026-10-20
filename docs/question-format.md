@@ -7,6 +7,7 @@ Every decision put to the user follows this format. A question the user cannot a
 - **Ask only real decisions:** scope, boundary, the bar, product behaviour, anything published, and trade-offs where the user's priorities decide.
 - **Do not ask what the code, the plan or a sensible default can answer.** Pick the default, and state it in one line.
 - **Batch related questions** (up to four at a time), and ask them at the point the work actually needs them.
+- **Explore first, then decide.** While a design is still taking shape (a UI, a layout, a naming scheme), iterate in the chat on a mockup or a draft, and apply the user's corrections as plain chat replies; ask with the tool once the shape is stable and a real choice is left.
 
 ## Shape
 
@@ -19,7 +20,8 @@ Every decision put to the user follows this format. A question the user cannot a
   - **Pros** and **cons**, one short clause each. Every option has both; an option with only a con is incomplete.
   - **Severity** when there is risk: how likely, how bad, and how easy to undo.
 - **Keep terms as they are** (principles: language). The first time a repository or kit term, an internal id, an acronym, or an idea introduced earlier in this conversation appears, give its plain meaning in one line; never paraphrase it away.
-- **One concrete example beats an abstract description.** "A user drags the batch while it loads" beats "manual manipulation during the loading state".
+- **Show the case.** One concrete example beats an abstract description ("a user drags the batch while it loads"). For a structural or visual rule, show it: a small before/after (two trees, two rows, a mockup), and say in one line what it shows.
+- **Say why the recommended option is recommended:** the principle it rests on. When the only reason is "it keeps today's behaviour", say so, and name any product principle that points the other way.
 
 ## When the user dismisses the questions
 

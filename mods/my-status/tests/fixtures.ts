@@ -60,3 +60,9 @@ export const DONE: MyStatusRun = {
 }
 
 export const WITH_PR: MyStatusRun = { ...READY, state: 'ready', pr: 456 }
+
+export const PLANNING: MyStatusRun = {
+  plan: { title: 'Discounts on carts', path: '' },
+  state: 'planning',
+  step: 'interview',
+}

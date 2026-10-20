@@ -4,7 +4,7 @@ HEAD before: <sha> · HEAD after: <sha> · Tree clean: <yes/no>
 
 ## Items
 
-| Item | State (done / incomplete / skipped / stopped) | Commit | Note |
+| Item | State (done / checked / incomplete / skipped / stopped) | Commit | Note |
 | ---- | --------------------------------------------- | ------ | ---- |
 | 1    |                                               |        |      |
 

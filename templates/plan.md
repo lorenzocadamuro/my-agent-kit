@@ -23,6 +23,11 @@ The change is ready to merge when:
 - [ ] no block finding open against the bar
 - [ ] <reviewer-specific asks met>
 
+How it is checked, and what it costs:
+
+- Every round: <the quick check that decides whether a round worked, e.g. targeted tests, a screening run> (~<time or cost>)
+- Once, at the end: <the full proof that the change is done, e.g. the full suite, two independent A/B runs, a manual check> (~<time or cost>)
+
 Reviews stop when these hold. Anything else becomes a ticket.
 
 ## Gates [always]

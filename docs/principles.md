@@ -57,6 +57,12 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 - **Load the relevant rules explicitly.** Before work starts, find the guides that apply to the files being touched, and hand them to both the executor and the reviewer.
 - **When a fix suggested by a reviewer conflicts with a repository rule,** the rule wins until the user decides otherwise.
 
+## The kit carries the plan it made
+
+- **An approved plan runs only through `/my:plan:run` or `/my:plan:round`.** Together with `/my:plan:scope`, which keeps it while planning, they keep the state file, and so the status line, true from the first step to the last.
+- **A request to do part of it directly** ("implement part B") becomes a round with that part as its source.
+- **Leave the kit for a change only when the user says so;** then delete its state file, and work as plain Claude Code.
+
 ## Always in a worktree
 
 - **Work happens in the worktree of the change, never in the main checkout,** unless the project profile says how the user works there instead (for example "work on `main`, no worktree" in a single-thread repository). Every skill checks the worktree (or what the profile names), branch, HEAD and clean tree at start, and stops if they are wrong.

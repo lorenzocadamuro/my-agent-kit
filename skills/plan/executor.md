@@ -17,6 +17,7 @@ You are executing round <N> of a code change. You work alone, in the background.
 
 - **Test first.** Write the test, see it fail, then fix. The test drives the production caller, not a state built by hand.
 - **One commit per item.** Name the item in the message, for example `Round <N> item <k>: <what>`. Commit locally. **Never push.**
+- **A check-only item** (`Change: none, check only`) has no test and no commit: run its commands and report `checked`, with the command and result in the note.
 - **Caller audits are untruncated:** no `head`, and no filter that hides real callers. Report the count and every hit.
 - **Commands:** targeted tests `<cmd>`, lint `<cmd>`, codegen `<cmd>`. Do not run `<slow suites>` locally.
 - **Do the chores yourself:** restart services, clean up containers you started, rerun flaky suites once.
@@ -36,4 +37,4 @@ When you stop, finish what is safe, commit it, and return the summary with your 
 
 ## Return
 
-Return the summary as text, in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`. Include one row for **every** item (done, incomplete, skipped or stopped), every decision taken alone with its flag, and the environment you left behind. Do not write report files; the coordinator writes them.
+Return the summary as text, in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`. Include one row for **every** item (done, checked, incomplete, skipped or stopped; `checked` is a verification-only item, with no commit and the command and result in the note), every decision taken alone with its flag, and the environment you left behind. Do not write report files; the coordinator writes them.

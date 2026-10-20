@@ -1,7 +1,7 @@
 import { expect, test } from 'claude-code/testing'
 
 import { bandView, planPercent, statusLine, timeLeft } from '../hooks/view'
-import { DONE, FIRST_ROUND, NEEDS_YOU, READY, RUNNING, WITH_PR, snap } from './fixtures'
+import { DONE, FIRST_ROUND, NEEDS_YOU, PLANNING, READY, RUNNING, WITH_PR, snap } from './fixtures'
 
 test('the plan percentage gives each part an equal share', async () => {
   expect(planPercent(RUNNING.parts ?? [])).toBe(50)
@@ -25,6 +25,20 @@ test('one state at a time, in priority order', async () => {
 test('a run stopped by comments or conflicts offers the action that unblocks it', async () => {
   expect(bandView(snap(NEEDS_YOU, { newComments: 2 }), 120)?.actions.map(a => a.label)).toEqual(['Review comments', 'Open plan'])
   expect(bandView(snap(NEEDS_YOU, { conflicts: 1 }), 120)?.actions.map(a => a.label)).toEqual(['Merge main', 'Open plan'])
+})
+
+test('while the plan is being made the band says Planning and where it is', async () => {
+  const view = bandView(snap(PLANNING), 120)
+  expect(view?.badges[0]?.text).toBe('Planning')
+  expect(view?.detail).toBe('Interview')
+  expect(view?.tiles.length).toBe(5)
+  expect(view?.actions).toEqual([])
+})
+
+test('a planning state left untouched for hours is ignored', async () => {
+  const old = { ...PLANNING, updatedAt: '2026-01-10T00:00:00Z' }
+  expect(bandView(snap(old, { now: Date.parse('2026-01-10T07:00:00Z') }), 120)).toBe(null)
+  expect(bandView(snap(old, { now: Date.parse('2026-01-10T01:00:00Z') }), 120)?.badges[0]?.text).toBe('Planning')
 })
 
 test('nothing to show draws no band', async () => {

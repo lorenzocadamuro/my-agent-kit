@@ -78,7 +78,7 @@ Behind them are three skills with modes: `plan` (scope, round, run), `pr` (learn
 
 ## The status line (optional)
 
-`my-status` is a small mod that shows, in one line above the prompt, where the work stands: the plan's parts as tiles that fill up, the percentage, the time left, what needs you, and the next action as a button (it fills the prompt with the command; you press Enter). "Open plan" shows the plan in a pane. It reads the state file `plan:round` and `plan:run` write, plus `git` and `gh`; it never changes your files. The kit works the same without it.
+`my-status` is a small mod that shows, in one line above the prompt, where the work stands, from the first step of `plan:scope` ("Planning", with its steps: research, interview, writing, review, approval) to the end of a run: the plan's parts as tiles that fill up, the percentage, the time left, what needs you, and the next action as a button (it fills the prompt with the command; you press Enter). "Open plan" shows the plan in a pane. It reads the state file `plan:scope`, `plan:round` and `plan:run` write, plus `git` and `gh`; it never changes your files. The kit works the same without it.
 
 ## Principles
 
@@ -95,7 +95,8 @@ All skills share one set of rules, kept in [docs/principles.md](docs/principles.
 - a fresh session is named after the work, not the command;
 - links point only to files the app can open;
 - reasoning is in the user's language, and repository vocabulary is never translated;
-- the kit learns while it is used: every skill collects signals and digests them into notes.
+- the kit learns while it is used: every skill collects signals and digests them into notes;
+- an approved plan runs only through `plan:run` or `plan:round`, so the status line is always true; leaving the kit is your call.
 
 ## Install
 

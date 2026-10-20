@@ -18,6 +18,7 @@ export type BandView = {
   status: string
 }
 
+const STALE_PLANNING_MS = 6 * 60 * 60_000
 const WIDE = 90
 const NARROW = 70
 const MINUTE = 60_000
@@ -28,7 +29,13 @@ const OPEN_PLAN: Action = { key: 'open', label: 'Open plan', opensPlan: true }
 const REVIEW_COMMENTS: Action = { key: 'comments', label: 'Review comments', command: '/my:pr:comments' }
 const MERGE_MAIN: Action = { key: 'sync', label: 'Merge main', command: '/my:pr:sync' }
 
+const PLANNING_STEPS = ['research', 'interview', 'write', 'review', 'approval'] as const
+
 const STEPS: Record<string, string> = {
+  research: 'Research',
+  interview: 'Interview',
+  write: 'Writing the plan',
+  approval: 'Waiting for approval',
   triage: 'Triage',
   check: 'Triage check',
   execute: 'Execute',
@@ -115,9 +122,23 @@ function fit(view: BandView, columns: number): BandView {
 
 export function bandView(snap: MyStatusSnapshot | null, columns: number): BandView | null {
   if (snap === null) return null
-  const run = snap.run
+  const isStalePlanning = snap.run?.state === 'planning' && !!snap.run.updatedAt && snap.now - Date.parse(snap.run.updatedAt) > STALE_PLANNING_MS
+  const run = isStalePlanning ? null : snap.run
   const title = run?.plan?.title
   const notes = snap.openNotes > 0 ? ` · ${snap.openNotes} kit notes` : ''
+
+  if (run && run.state === 'planning') {
+    const at = Math.max(0, PLANNING_STEPS.indexOf((run.step ?? 'research') as (typeof PLANNING_STEPS)[number]))
+    const label = STEPS[PLANNING_STEPS[at] ?? 'research'] ?? 'Research'
+    return fit({
+      title,
+      tiles: PLANNING_STEPS.map((_, k) => (k < at ? { fill: 1, tone: 'success' as Tone } : k === at ? { fill: 0.5, tone: 'accent' as Tone } : { fill: 0, tone: 'neutral' as Tone })),
+      badges: [{ key: 'state', text: 'Planning', tone: 'accent' }],
+      detail: label,
+      actions: [],
+      status: `Planning · ${label}${notes}`,
+    }, columns)
+  }
 
   if (run && (run.state === 'needs_you' || run.state === 'stopped')) {
     const isStopped = run.state === 'stopped'

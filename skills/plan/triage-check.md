@@ -7,7 +7,7 @@ For each item, check:
 1. **The claim is true** at HEAD. Open the cited `file:line`.
 2. **The callers are named by path,** and the list is complete. Re-run the search yourself, untruncated, and compare the counts.
 3. **The fix lives in one owning code point.** No local guard repeated at each call site; no retry that hides an ordering problem.
-4. **The test can fail** without the fix, and drives the production caller.
+4. **The test can fail** without the fix, and drives the production caller. A check-only item instead names the commands it runs and what result counts as passing.
 5. **The item is inside the plan's scope,** and respects the boundary and the decisions. If it is not, it belongs in "Not this round" or needs a user decision.
 6. **The item has no hidden second reading:** an instruction two people could execute differently.
 

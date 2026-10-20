@@ -21,7 +21,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 
 ## The state file
 
-Write `<data root>/state/<owner-name>-<branch>.json` (`/` in the branch becomes `-`) at the start of each round, at each step below, at each gate and its answer, and at the end. Write a temp file and rename it, so a reader never sees half a file. The shape is in `${CLAUDE_PLUGIN_ROOT}/docs/local-data.md`. It feeds the optional status mod; nothing in the kit reads it except a resuming run.
+Write the state file (name and shape in `${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) at the start of each round, at each step below, at each gate and its answer, and at the end. Write a temp file and rename it, so a reader never sees half a file. It feeds the optional status mod; nothing in the kit reads it except a resuming run.
 
 At the end of a round or a run, set `state`: `done` when the bar is met (the ready-for-review gate); `needs_you` with a `reason` when a gate or a question waits for the user; `stopped` with a `reason` when verification failed or the run hit its cap; otherwise `ready`, waiting for the next round.
 
@@ -48,8 +48,8 @@ Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, whe
 
 - **Verify the claim against the code at HEAD,** and drop or rewrite what does not hold.
 - **List the callers covered, by path,** with the untruncated count.
-- **Name the owning code point,** and a test that fails without the fix and drives the production caller.
-- **Write the stop conditions.** A check copied from the plan or the profile keeps its baseline (principles: measure the baseline).
+- **Name the owning code point,** and a test that fails without the fix and drives the production caller. A check-only item (it changes no code) names instead the commands it runs and the result that counts as passing.
+- **Write the stop conditions.** They use the plan's "every round" checks; the "once, at the end" proof belongs to the ready-for-review gate. A check copied from the plan or the profile keeps its baseline (principles: measure the baseline).
 
 Items outside the plan's scope, and findings labelled "ticket", go to "Not this round", with ticket text and no fix. An item whose only fix crosses the boundary or a repository rule is a gate: ask before executing.
 
@@ -99,7 +99,7 @@ In `round`, first run `/my:improve digest` on this session's signals file (princ
 Six lines, and a desktop notification when the round ran long (in `run`, the notification waits for the end):
 
 ```
-Round N: <k done / m stopped / s skipped>  ·  HEAD <sha> (pushed | not pushed: why)
+Round N: <k done / c checked / m stopped / s skipped>  ·  HEAD <sha> (pushed | not pushed: why)
 Review: <verdict against the bar>; block <b>, ticket <t>, note <n>
 Drift: <lines>/<budget> lines, <files>/<budget> files; main <ahead/behind>
 Decisions taken alone: <count, or the flagged ones>
@@ -111,7 +111,7 @@ Next: <Run plan | One round | Review comments | Merge main | a question | ready-
 
 When the review says the bar is met and no block finding remains:
 
-1. Run `/my:pr:review` on the PR in `local` mode, and the deep review, if this round did not already.
+1. Run the plan's "once, at the end" checks. If one fails, the bar is not met: its failures become the next round's items, and the state stays `ready` (or `needs_you` when the fix is a decision). Then run `/my:pr:review` on the PR in `local` mode and the deep review, if this round did not already.
 2. Write a one-page retrospective to `<data root>/retros/<repo>-<branch>.md`: rounds, rework and its causes, decision reversals, drift, and what the reviewers asked.
 3. Ask the user, one question each: mark the PR ready, update the description, notify the reviewers (all of these are publishing).
 

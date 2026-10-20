@@ -22,7 +22,7 @@ for k in $items; do
   fi
   state="$(echo "$row" | awk -F'|' '{gsub(/^ +| +$/,"",$3); print tolower($3)}')"
   case "$state" in
-    done|incomplete|skipped|stopped) ;;
+    done|checked|incomplete|skipped|stopped) ;;
     *) echo "item $k: invalid state '$state'" >&2; fail=1 ;;
   esac
   for sha in $(echo "$row" | awk -F'|' '{print $4}' | grep -oE '\b[0-9a-f]{7,40}\b' || true); do
@@ -34,6 +34,9 @@ for k in $items; do
   done
   if [[ "$state" == "done" ]] && ! echo "$row" | awk -F'|' '{print $4}' | grep -qE '[0-9a-f]{7,40}'; then
     echo "item $k: done but no commit listed" >&2; fail=1
+  fi
+  if [[ "$state" == "checked" ]] && [[ -z "$(echo "$row" | awk -F'|' '{gsub(/^ +| +$/,"",$5); print $5}')" ]]; then
+    echo "item $k: checked but no evidence in the note" >&2; fail=1
   fi
 done
 

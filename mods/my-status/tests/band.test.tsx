@@ -8,7 +8,7 @@ import { NEEDS_YOU, READY, RUNNING, WITH_PR } from './fixtures'
 const SURFACES = ['terminal', 'desktop'] as const
 const STATE_FILE = '/home/u/.my-agent-kit/state/acme-shop-feature.json'
 
-type World = { run?: MyStatusRun; conflicts?: string; comments?: string; log?: string; now?: string }
+type World = { run?: MyStatusRun; conflicts?: string; comments?: string; log?: string; now?: string; otherName?: string }
 
 function band(bodyColumns: number) {
   return {
@@ -36,10 +36,14 @@ function world(on: On, w: World, ran: string[] = []): void {
     return out('', 1)
   })
   on('fs.read', ($, e) => {
-    if (e.path === STATE_FILE && w.run) return { value: JSON.stringify(w.run) }
+    if (e.path === STATE_FILE && w.run && !w.otherName) return { value: JSON.stringify(w.run) }
+    if (w.otherName && e.path === `/home/u/.my-agent-kit/state/${w.otherName}` && w.run) return { value: JSON.stringify(w.run) }
     if (e.path.endsWith('/suite-log.md') && w.log) return { value: w.log }
     return { deny: `no file ${e.path}` }
   })
+  on('fs.list', () => ({
+    value: (w.otherName ? [w.otherName] : w.run ? ['acme-shop-feature.json'] : []).map(name => ({ name, kind: 'file' as const, size: 1, mtimeMs: 0, isLink: false })),
+  }))
   on('ui.render', ($, e) => {
     const { Box } = $.ui.resolve(e)
     return <Box key="engine" />
@@ -63,6 +67,14 @@ test('a running plan shows its percentage on every surface', async ($, on) => {
     expect(await ui.find({ key: 'open' })).toBeDefined()
     await ui.unmount()
   }
+})
+
+test('a state file written under an older name is found by its worktree', async ($, on) => {
+  world(on, { run: { ...RUNNING, worktree: '/work', plan: { title: 'Learn from use', path: '' } }, otherName: 'local-shop-feature.json' })
+  await refresh($)
+  const ui = await $.ui.mount({ plugin: 'my-status', surface: 'terminal', ...band(120) })
+  expect((await ui.find({ key: 'percent' }))?.text).toMatch(/50%/)
+  await ui.unmount()
 })
 
 test('a gate shows Needs you and its reason', async ($, on) => {

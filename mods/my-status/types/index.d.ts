@@ -23,7 +23,7 @@ export type MyStatusRun = {
   round?: number
   step?: string
   items?: { done: number; total: number }
-  state?: 'ready' | 'running' | 'needs_you' | 'stopped' | 'done'
+  state?: 'planning' | 'ready' | 'running' | 'needs_you' | 'stopped' | 'done'
   reason?: string | null
   rounds?: MyStatusRound[]
   pr?: number | null

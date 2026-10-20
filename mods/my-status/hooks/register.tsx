@@ -77,6 +77,32 @@ async function newComments($: EngineInterface, dir: string, run: MyStatusRun): P
   return (await count(`repos/{owner}/{repo}/pulls/${run.pr}/comments`)) + (await count(`repos/{owner}/{repo}/issues/${run.pr}/comments`))
 }
 
+function parseRun(text: string | null): MyStatusRun | null {
+  if (!text) return null
+  try {
+    return JSON.parse(text) as MyStatusRun
+  } catch {
+    return null
+  }
+}
+
+async function findRun($: EngineInterface, root: string, file: string, top: string): Promise<MyStatusRun | null> {
+  const exact = parseRun(await readText($, file))
+  if (exact) return exact
+  let names: string[] = []
+  try {
+    names = (await $.fs.list(`${root}/state`)).filter(entry => entry.kind === 'file' && entry.name.endsWith('.json')).map(entry => entry.name)
+  } catch {
+    return null
+  }
+  let best: MyStatusRun | null = null
+  for (const name of names) {
+    const run = parseRun(await readText($, `${root}/state/${name}`))
+    if (run?.worktree === top && (best === null || (run.updatedAt ?? '') > (best.updatedAt ?? ''))) best = run
+  }
+  return best
+}
+
 let network: Network = { at: 0, newComments: 0, conflicts: 0 }
 let inFlight: Promise<void> | null = null
 
@@ -102,13 +128,7 @@ async function refresh($: EngineInterface): Promise<void> {
     const branch = (await sh($, ['git', 'branch', '--show-current'], top)) || 'detached'
     const remote = await sh($, ['git', 'remote', 'get-url', 'origin'], top)
     const file = `${root}/state/${ownerName(remote, top)}-${branch.replace(/\//g, '-')}.json`
-    const text = await readText($, file)
-    let run: MyStatusRun | null = null
-    try {
-      run = text ? (JSON.parse(text) as MyStatusRun) : null
-    } catch {
-      run = null
-    }
+    const run = await findRun($, root, file, top)
     const now = await $.clock.now()
     if (run?.pr && now - network.at >= NETWORK_MS) {
       const dir = run.worktree ?? top

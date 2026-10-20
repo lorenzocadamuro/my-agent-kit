@@ -4,6 +4,26 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-10-20
+
+### Added
+
+- The status is visible from the first step: `plan:scope` writes the state file as `planning`, with its step (research, interview, writing, review, approval), and the status line shows "Planning". `--dry-run` deletes it at the end.
+- Principles, "the kit carries the plan it made": an approved plan runs only through `/my:plan:run` or `/my:plan:round`; a request to do part of it directly becomes a round with that part as its source; leaving the kit for a change is the user's call.
+- Verification-only items: a round item can be "check only"; its summary row is `checked`, with no commit and the evidence in the note, and `verify-round.sh` accepts it.
+- The plan's bar for done says what is checked every round and what once at the end, with the cost of each; rounds use the first, the ready-for-review gate the second.
+
+### Changed
+
+- One rule for the state file's name, from the session's folder and never from the project profile: `<owner>-<repo>-<branch>` from the git remote, or `none-<folder>`. The file follows the session into a worktree. The status mod also finds a state file by its `worktree` when the name differs.
+- `plan:scope` research traces how the things the plan relies on really work: the callers of shared code, every field and rule of code or data it replaces, the order in which a measuring tool runs, each with `file:line` and checked against a scenario that runs today.
+- Question format: explore in the chat on a mockup while a design takes shape, and ask with the tool once a real choice is left; show structural or visual cases as a small before/after; say which principle the recommended option rests on, and when it only keeps today's behaviour.
+- At approval, `plan:scope` writes the worktree branch's state file (with `repo`, `branch` and `worktree`) and deletes the planning one, so the bar shows wherever the work continues; a cancelled plan deletes it, and an existing branch sets it to `needs_you`. The status mod ignores a `planning` state untouched for 6 hours.
+- If the plan's end-of-work checks fail at the ready-for-review gate, their failures become the next round's items.
+- Check-only items are exempt from "test first" and "one commit per item" in the round template, the executor and the triage check; the round report counts them.
+- `plan:scope` lists the sections an S plan drops on one line, without headings.
+- Eval `plan/small-task` checks that planning writes a state file (it fails on 3.0.0); mod tests cover the planning state, the fallback by worktree and stale planning states; the `pr/design-conflict-stops` options grader accepts Italian pros and cons.
+
 ## [3.0.0] - 2026-10-19
 
 ### Changed (breaking)
