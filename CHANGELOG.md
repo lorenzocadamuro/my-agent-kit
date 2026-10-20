@@ -4,6 +4,16 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-10-20
+
+### Added
+
+- `CONSTITUTION.md`: what the kit is for, nine clauses, what it must not become, and how it is amended. The user asked for it and approved the text in chat; it wins over every other rule, the principles included. It changes only by hand or at the user's explicit request, with the reason written down.
+- `.githooks/commit-msg`: a commit that touches `CONSTITUTION.md` fails unless its message contains "Amend constitution"; merges pass. A guard against accidents, not a wall.
+- `/my:improve run` reads the constitution before proposing: when a note asks for something it forbids, or a proposal would contradict it, the run names the clause and says that only the user can amend it, instead of proposing the change. It never edits the file.
+- Pointers: `docs/principles.md` serves the constitution; `.claude/CLAUDE.md` states the amendment rule and that agents never write the phrase on their own; the README names it first among the principles.
+- Eval `improve/run-respects-constitution` (it fails on 3.1.0).
+
 ## [3.1.0] - 2026-10-20
 
 ### Added

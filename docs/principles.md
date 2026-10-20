@@ -2,6 +2,8 @@
 
 Every skill in this kit follows these rules. Skills point here instead of restating them, so a change made here reaches all of them.
 
+These principles serve [CONSTITUTION.md](../CONSTITUTION.md). Where they disagree, the constitution wins.
+
 ## Proportional, not strict
 
 - **Size the process to the task.** First classify the work (bug fix, feature, refactor, tool, infra, review) and its size (S, M, L). Ask only the questions that kind of work needs. A small bug fix gets a half-page plan; a large cross-cutting change gets the full one.

@@ -82,7 +82,9 @@ Behind them are three skills with modes: `plan` (scope, round, run), `pr` (learn
 
 ## Principles
 
-All skills share one set of rules, kept in [docs/principles.md](docs/principles.md):
+[CONSTITUTION.md](CONSTITUTION.md) comes first: what the kit is for, and what it must not become. It changes only by hand or at your explicit request, and it wins over every other rule. `/my:improve run` checks each proposal against it and stops on a contradiction.
+
+All skills share one set of rules, kept in [docs/principles.md](docs/principles.md), which serve the constitution:
 
 - proportional rather than strict;
 - the plan as contract;
@@ -153,13 +155,15 @@ skills/<name>/       plan, pr and improve: a SKILL.md that routes to one file pe
 commands/<skill>/    thin sub-commands that call a skill in one mode (/my:<skill>:<mode>)
 evals/<skill>/       eval cases, one per problem the kit has learned from
 mods/my-status/      the optional status line mod (hooks module, its state contract, tests)
+CONSTITUTION.md      what the kit is for; wins over every other rule; changed only by the user
 docs/principles.md   rules every skill follows
 docs/                question format, review lenses, local data layout
 templates/           plan, project profile, round, round summary, log entry, reviewer profile, study page
 scripts/check.sh     validation and privacy check, run by the pre-commit hook
 scripts/verify-round.sh  checks a round summary against git
 scripts/drift.sh     size versus budget, distance from main, conflict preview
-.githooks/           git hooks (enable with: git config core.hooksPath .githooks)
+.githooks/pre-commit runs scripts/check.sh
+.githooks/commit-msg blocks a commit touching CONSTITUTION.md without "Amend constitution"
 .claude/CLAUDE.md    instructions for agents editing this repository
 CHANGELOG.md         what changed in each version
 ```
@@ -180,6 +184,8 @@ This repository holds only generic, reusable material. Anything tied to an emplo
 git config core.hooksPath .githooks   # once per clone
 scripts/check.sh                      # validate the plugin and run the privacy check
 ```
+
+`git config core.hooksPath .githooks` enables both hooks: `pre-commit` runs `scripts/check.sh`, and `commit-msg` blocks a commit that touches `CONSTITUTION.md` unless its message contains "Amend constitution" (merges pass).
 
 Evals run locally, never published; see [evals/README.md](evals/README.md):
 
