@@ -35,8 +35,8 @@ Talk to the user in their language. Write comment drafts in English.
    - reviewer profiles in `<data root>/reviewers/`, for the requested reviewers when the PR is the user's (to anticipate them), or as extra lenses on a colleague's PR;
    - the reading from `/my:pr:learn`, if one exists (`<data root>/reads/<repo>-pr<n>.md`, written at the current head). Use its promise and its before → after map as the yardstick, and its "questions to keep in mind" as your starting hypotheses. Do not repeat its explanations in the review. If the reading is for an older head, use it only for what the newer commits did not change.
 3. **Review.**
-   - **Up to about 800 changed lines:** review it yourself.
-   - **Larger:** split by area across up to 3 fresh read-only agents. Give each the lenses, the rules, the promise and its paths. Each returns findings with `file:line` evidence.
+   - **Up to about 800 changed lines, on a colleague's PR:** review it yourself.
+   - **Larger, or the user's own PR at any size:** split by area across up to 3 fresh read-only agents (one for a small PR). Give each the lenses, the rules, the promise and its paths. Each returns findings with `file:line` evidence. On the user's own PR they also verify and grade them (steps 4–5); you draft from their findings and drop none.
 
    Use only the lenses that fit the change. Never truncate a caller audit.
 
