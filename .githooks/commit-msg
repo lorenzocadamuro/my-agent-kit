@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Blocks a commit that touches CONSTITUTION.md unless its message says
+# "Amend constitution". A guard against accidents, not a wall.
+set -euo pipefail
+
+msg_file="$1"
+git_dir="$(git rev-parse --git-dir)"
+
+# A merge carries amendments already approved on their own commits.
+if [[ -f "$git_dir/MERGE_HEAD" ]]; then
+  exit 0
+fi
+
+staged="$(git diff --cached --name-only --no-renames)"
+if grep -qx 'CONSTITUTION.md' <<<"$staged" && ! grep -qi 'Amend constitution' "$msg_file"; then
+  echo "commit-msg: this commit touches CONSTITUTION.md, so its message must contain \"Amend constitution\"." >&2
+  echo "The constitution changes only by hand or at the user's explicit request (see .claude/CLAUDE.md)." >&2
+  exit 1
+fi
