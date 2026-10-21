@@ -1,12 +1,12 @@
 ---
 name: improve
-description: Grow the `my` kit from real use. `note <text>` logs a problem with any /my skill (or its principles, templates, or a project profile) from any session, without changing anything; `digest` turns the signals other skills collected during the work into a few clear notes; no argument lists open notes; `run [skill|ids]` finds the upstream lesson behind open notes and turns it into approved changes backed by eval cases, then updates README, CHANGELOG and version, commits, tags and pushes; `log` shows the history. Use when the user says "/my:improve", "annota", "note this problem with the kit", "the skill did X wrong", "improve the kit", "what's open on the kit".
+description: Grow the `my` kit from real use. `note <text>` logs a problem with any /my skill (or its principles, templates, or a project profile) from any session, without changing anything; `digest` turns the signals other skills collected during the work into a few clear notes; no argument lists open notes; `run [skill|ids]` finds the upstream lesson behind open notes and turns it into approved changes backed by eval cases, then updates README, CHANGELOG and version, and ships them after showing you the diff; `log` shows the history. Use when the user says "/my:improve", "annota", "note this problem with the kit", "the skill did X wrong", "improve the kit", "what's open on the kit".
 argument-hint: "note <what happened> | digest [file] | run [skill|ids] [--propose-only] | log [skill] | (none: list open)"
 ---
 
 # /my:improve — the kit's improvement loop
 
-The kit changes only through this skill, and only with the user's approval. A note never changes anything; a run changes only what the user approves.
+The kit changes only through an approved plan (`/my:plan:*`) or `run`, and only with the user's yes. A note never changes anything; a run changes only what the user approves.
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md` and `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`.
 
@@ -84,25 +84,25 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
 
 ## Run
 
-1. **Preflight the kit source.** Clean tree, on `main`, `git pull --ff-only`. Stop if any of these fails. With `--propose-only`, skip the preflight, and stop after step 4 without the closing step.
+1. **Preflight the kit source** (the main checkout; no worktree yet). Clean tree, on `main`, `git pull --ff-only`. Stop if any of these fails. With `--propose-only`, skip the preflight, and stop after step 4 without the closing step.
 2. **Select entries:** all open ones, or those matching the given skill or ids. Read each affected skill, the principles and templates, and any session or file an entry points to.
 3. **Find the upstream lesson.** Group the notes by upstream cause, not by surface event. For each group:
    - **Check it against the constitution first.** Read `${CLAUDE_PLUGIN_ROOT}/CONSTITUTION.md`, and check each note and each proposal against it. When a note asks for something the constitution forbids, or a proposal would contradict it, do not propose that change: say which clause it contradicts, and that only the user can amend the constitution, by hand or on explicit request. For the cause behind the note, propose only what the constitution allows.
    - **Name the missing question:** what should have been asked or checked at the start.
    - **Find the existing rule that should have covered it,** and say why it did not apply: not reached by the step where it happened, worded too narrowly, or worded for one case.
    - **Place the fix,** in this order of preference: refine, generalise or move that rule; merge it with a neighbour; add a new rule only when none covers the cause. Never word a fix around one case.
-   - **Project profile** (`<data root>/projects/<repo>.md`) only for a fact about one repository: edit it, no version bump.
+   - **Project profile** (`<data root>/projects/<repo>.md`) only for a fact about one repository: propose the change like any other, and apply it only after approval, with no version bump.
    - **No change** when the kit behaved as designed: explain why, and propose `wontfix`.
 4. **Propose,** following the question format: one question per group, with up to four options, in the user's language.
    - Show the missing question and the rule first, then the concrete change, its pros and cons, and what it costs (skill length, extra steps).
    - Always offer "Defer" and "Won't fix".
    - **Prefer removing or merging a rule to adding one.** If the change makes a skill longer than about 200 lines, say so and propose what to cut.
-5. **For each approved change:**
+5. **For each approved change.** At the first one, create the kit worktree from `origin/main`: `<kit source>/.claude/worktrees/improve-<date>-<time>`, on a branch of the same name. Make sure `.claude/worktrees/` is ignored (`git check-ignore`, else add it to `.git/info/exclude`), and run `git config core.hooksPath .githooks` in it. This is `<kit worktree>`: every later edit, eval and gate (5.1–5.3, 6) uses it, never the main checkout.
    1. **Eval first.** Add or extend a case in `evals/<skill>/<case>/`, following `evals/README.md`. The case reproduces the problem in generic terms, with no employer, project or person names. Run it on the current version with the command in `evals/README.md`, filtered with `--case '<case>'`. It should fail; if it cannot fail in an eval, say why and continue.
    2. **Make the change.**
    3. **Run the gates:**
-      - `claude plugin validate "<kit source>" --strict`;
-      - `"<kit source>/scripts/check.sh"`;
+      - `claude plugin validate "<kit worktree>" --strict`;
+      - `"<kit worktree>/scripts/check.sh"`;
       - the touched skills' evals, with the command in `evals/README.md`.
 
       Report the spend.
@@ -112,8 +112,9 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
    - **CHANGELOG:** add an entry under the new version.
    - **Version** in `.claude-plugin/plugin.json`: patch for wording and fixes, minor for new behaviour or a new skill, major for incompatible command changes.
    - The README must agree with the change before you go on.
-7. **Ship:** show the changed files with one line each, then commit (`Improve <skill>: <what>`), tag `v<version>`, and push with tags.
-8. **Close the entries.** Set each to `fixed <version> (<short sha>)`, `wontfix: <reason>` or `deferred: <reason>`. Never delete an entry.
+   - **Commit** in `<kit worktree>` (`Improve <skill>: <what>`). Then a fresh agent that did not write the change reviews `git diff origin/main..HEAD` there against the approved proposals and the constitution. Fix its block findings in a new commit, then rerun the 5.3 gates.
+7. **Ship:** show the full diff (`git diff origin/main..HEAD`) and ask. Only on yes: fast-forward `main` in the main checkout to the worktree's branch, tag `v<version>`, push with tags, then remove the worktree and delete its branch. On no, keep the worktree, say where it is, and leave the entries open.
+8. **Close the entries,** only after shipping (or at once when no change was approved). Set each to `fixed <version> (<short sha>)`, `wontfix: <reason>` or `deferred: <reason>`. Never delete an entry.
 9. **Tell the user** what changed, and that it takes effect from the next session. Then the closing step (principles).
 
 ## Log
@@ -122,7 +123,6 @@ Show every entry (or one skill's), open ones first, newest first within each gro
 
 ## Rules
 
-- Never change a skill, doc or template outside `run`, and never without approval.
 - Never edit `CONSTITUTION.md`, and never write "Amend constitution" in a commit message unless the user asked for the amendment.
 - Never write employer, project, ticket or colleague names into the kit source. The log and the project profiles may hold them, because they live outside the repository.
 - Language follows the principles: kit source in English; conversation, signals and the reasoning in log entries in the user's language; terms never translated.
