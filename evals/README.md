@@ -27,7 +27,7 @@ execution:
 
 ## Running
 
-Always local-only, one run per case, with a cost cap. `--ablation none` skips the no-plugin baseline, which doubles the cost and rarely helps here.
+Always local-only, one run per case (2–3 for a noisy grader: principles § Verify, don't assume, "Stop and report"), with a cost cap. `--ablation none` skips the no-plugin baseline, which doubles the cost and rarely helps here.
 
 ```bash
 claude plugin eval <kit> --no-publish --runs 1 --max-cost-usd 5 --trust-plugin \
@@ -67,4 +67,3 @@ focus:
 - LLM judges fail on long artifacts, even with a trivial rubric. Check facts with `regex` graders (`target: {source: file, path}`, `flags: is`), and keep `llm` graders for short files or the last message.
 - `input_match` matches the whole tool input, content included. Anchor it on the field you mean, for example `"file_path":\s*"[^"]*/skills/`.
 - A case must be able to fail. Write it against the problem first, then fix the skill.
-- A case with a noisy grader (an LLM judge, a model's choice) runs 2–3 times before it is called green or red.
