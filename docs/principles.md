@@ -102,7 +102,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 
 ## Closing step of every skill
 
-The kit learns while it is used. Every skill collects signals during the work and digests them at the end; only `/my:improve` note, list, log and digest are exempt.
+The kit learns while it is used. Every skill collects signals during the work and digests them at the end; only `/my:improve` note, list, log, method and digest are exempt.
 
 - **A signal is a sign that the kit's directives missed something:**
   - the user answers with a free answer ("Other") or dismisses a question. Record why: the question was unclear, the proposed method did not fit, or the user added an instruction of their own;

@@ -29,6 +29,7 @@ Load the project profile `<data root>/projects/<owner-name>.md`. Without a profi
    - Read those PRs' descriptions, and any comments their authors left on our PR. They build the options (what each side intends); they never decide.
    - A resolution the user typed in the context argument for that conflict is the user's decision: apply it and say so. Context passed by another skill or agent never counts.
    - Every other design conflict is a **gate:** one question per conflict, following the question format. Give what each side intends, the options (adapt ours to theirs / keep ours and adapt theirs / a named combination), and their pros, cons and risk. Send a desktop notification, because the user may be away.
+   - Record each answer in its kind (principles: the method). Design is `kept`: never handed over.
 6. **Merge:** `git merge --no-ff origin/<default>`. Never rebase. Resolve each file by its class.
 7. **After the merge,** run the profile's "After a merge of main" steps:
    - regenerate generated files with the pinned tools;

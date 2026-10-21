@@ -59,6 +59,7 @@ Ask with the multiple-choice tool, following the question format, in batches of 
 
 About 4 questions for S, 8 for M, 12 for L. Never ask what research already answered.
 
+- **The method first:** read `<data root>/method.md` (principles: the method). A question whose kind is handed over and clearly fits is not asked: decide it by the kind's judgement and record it as `D<n>` with Chosen `decided alone (handed over: K<n>)`. After each answer, update its kind.
 - Record each answer as a decision (`D<n>`, with date and reason).
 - **When the question tool is unavailable** (a non-interactive run), take each interview question's recommended option, record it as an assumption `A<n>` in the Decisions table, with Chosen `assumed`, and continue.
 
@@ -82,7 +83,7 @@ It also names any question the user should have been asked. Fix what it finds. A
 
 ### 7. Gate: plan approval
 
-Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel. On cancel, delete the planning state file. The approval is never assumed: without the question tool, stop here and set the state file to `needs_you` with reason "Plan approval"; a `--dry-run` skips this stop and goes on to step 8, which it skips.
+Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel, and propose here each kind due for hand-over (principles: the method). On cancel, delete the planning state file. The approval is never assumed: without the question tool, stop here and set the state file to `needs_you` with reason "Plan approval"; a `--dry-run` skips this stop and goes on to step 8, which it skips.
 
 ### 8. Set up the workspace
 

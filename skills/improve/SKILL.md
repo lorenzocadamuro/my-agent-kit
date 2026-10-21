@@ -1,7 +1,7 @@
 ---
 name: improve
-description: Grow the `my` kit from real use. `note <text>` logs a problem with any /my skill (or its principles, templates, or a project profile) from any session, without changing anything; `digest` turns the signals other skills collected during the work into a few clear notes; no argument lists open notes; `run [skill|ids]` finds the upstream lesson behind open notes and turns it into approved changes backed by eval cases, then updates README, CHANGELOG and version, and ships them after showing you the diff; `log` shows the history. Use when the user says "/my:improve", "annota", "note this problem with the kit", "the skill did X wrong", "improve the kit", "what's open on the kit".
-argument-hint: "note <what happened> | digest [file] | run [skill|ids] [--propose-only] | log [skill] | (none: list open)"
+description: Grow the `my` kit from real use. `note <text>` logs a problem with any /my skill (or its principles, templates, or a project profile) from any session, without changing anything; `digest` turns the signals other skills collected during the work into a few clear notes; no argument lists open notes; `run [skill|ids]` finds the upstream lesson behind open notes and turns it into approved changes backed by eval cases, then updates README, CHANGELOG and version, and ships them after showing you the diff; `log` shows the history; `method` lists the decision kinds the kit has learned and which ones are handed over. Use when the user says "/my:improve", "annota", "note this problem with the kit", "the skill did X wrong", "improve the kit", "what's open on the kit".
+argument-hint: "note <what happened> | digest [file] | run [skill|ids] [--propose-only] | log [skill] | method | (none: list open)"
 ---
 
 # /my:improve — the kit's improvement loop
@@ -36,6 +36,7 @@ Entries and signals written before 3.0.0 name skills that are now modes. Read th
 | `digest`      | Digest: an optional signals file follows               |
 | `run`         | Run: optional skill name, entry ids, `--propose-only`  |
 | `log`         | Log: optional skill name follows                       |
+| `method`      | Method: list the decision kinds                        |
 | none, `list`  | List open entries                                      |
 | anything else | Treat the whole text as a note, and say so in one line |
 
@@ -118,6 +119,10 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
 7. **Ship:** show the full diff (`git diff origin/main..HEAD`) and ask. Only on yes: fast-forward `main` in the main checkout to the worktree's branch, tag `v<version>`, push with tags, then remove the worktree and delete its branch. On no, keep the worktree, say where it is, and leave the entries open.
 8. **Close the entries,** only after shipping (or at once when no change was approved). Set each to `fixed <version> (<short sha>)`, `wontfix: <reason>` or `deferred: <reason>`. Never delete an entry.
 9. **Tell the user** what changed, and that it takes effect from the next session. Then the closing step (principles).
+
+## Method
+
+Show `<data root>/method.md`, handed-over kinds first: id, judgement, class, state, matches and the last dates, labels as the principles say. Without the file, say that no kind is recorded yet. Change nothing; a take-back the user says afterwards in this session is applied as the principles' method says.
 
 ## Log
 

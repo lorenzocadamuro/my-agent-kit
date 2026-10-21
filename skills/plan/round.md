@@ -4,6 +4,7 @@ You are the coordinator. You stay in the user's session and hand the work to bac
 
 - **`round`** runs one round (steps 1–11), reports, and stops.
 - **`run`** runs rounds one after another, as § Run says, until something needs the user.
+- **Every gate follows the principles' method:** you decide a handed-over kind alone and list it in the report, record the other answers in `<data root>/method.md`, and propose due hand-overs; the executor only reports.
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`.
 
@@ -101,7 +102,7 @@ Six lines, labels as shown and sentences in the user's language, and a desktop n
 Round N: <k done / c checked / m stopped / s skipped>  ·  HEAD <sha> (pushed | not pushed: why)
 Review: <verdict against the bar>; block <b>, ticket <t>, note <n>
 Drift: <lines>/<budget> lines, <files>/<budget> files; main <ahead/behind>
-Decisions taken alone: <count, or the flagged ones>
+Decisions taken alone: <count, or the flagged ones>; handed over: <K<n> decided alone, or none>
 Lessons: <note ids from the digest | none | at the end of the run>
 Next: <Run plan | One round | Review comments | Merge main | a question | ready-for-review gate>
 ```
