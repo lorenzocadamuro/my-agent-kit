@@ -50,7 +50,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
    - the verdict in two lines;
    - the questions;
    - the findings table;
-   - the file path.
+   - the file, presented (principles: where files go); unless the mode is `local`, the summary and the comments to publish, pasted in chat.
 
    Then the gate: ask whether to create the pending review as drafted, switch the mode, or edit first.
 

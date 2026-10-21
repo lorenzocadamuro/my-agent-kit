@@ -26,7 +26,7 @@ Use `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` to name reasoning moves and th
   - Add at most 5 new terms per page, as `### <Term> — <meaning>`, followed by "In general", "In the code", "Seen in".
 - **Memory:** each of the two modes records what it has covered, so a re-run covers only what is new (see the mode file).
 - **Finish:**
-  - Open the page with `open <file>`.
+  - Present the page (principles: where files go).
   - Reply in chat in at most 8 lines: the path, layer 0 in brief, and one question that checks the user understood.
   - Then offer the natural next step: after `learn`, `/my:pr:review <n>`; after `study`, `/my:pr:comments <n>` when replies are owed.
 - **Closing step:** follow the principles.
