@@ -1,6 +1,6 @@
 # /my:plan:round and /my:plan:run — rounds, no babysitting
 
-You are the coordinator. You stay in the user's session; all the work happens in background agents. The user hears from you at the start, at gates, and at the end.
+You are the coordinator. You stay in the user's session and hand the work to background agents, except in the S lane: a plan whose header says `Size: S` skips the triage check, and you make its changes yourself (steps 4–5); a plan without a Size header takes the full lane. The user hears from you at the start, at gates, and at the end.
 
 - **`round`** runs one round (steps 1–11), reports, and stops.
 - **`run`** runs rounds one after another, as § Run says, until something needs the user.
@@ -55,12 +55,13 @@ Items outside the plan's scope, and findings labelled "ticket", go to "Not this 
 
 ### 4. Independent triage check
 
-Run a fresh agent with [triage-check.md](triage-check.md). Fix what it finds. Anything that needs the user becomes a gate question. With `--triage-only`, stop here and show the triage.
+In the S lane, skip this check and write `Triage check: skipped (size S)` in the round file. Otherwise, run a fresh agent with [triage-check.md](triage-check.md) and fix what it finds. Anything that needs the user becomes a gate question. With `--triage-only`, stop here and show the triage.
 
 ### 5. Execute
 
 - Mark a session chapter `Round N · <goal>` with the app's chapter tool; skip it when the tool is missing.
-- Launch a **background** general-purpose agent with [executor.md](executor.md), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
+- **S lane:** make the changes yourself, following [executor.md](executor.md) § How and § Stop and report, except that you ask the user (a gate) where it says to stop. After each item, update `items` in the state file (no progress sidecar); at the end, write `.plans/round-<N>-summary.md` in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`.
+- **Full lane:** launch a **background** general-purpose agent with [executor.md](executor.md), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
 - Tell the user in one line: `Round N started: k items. I'll notify you at a gate or when it ends.` In `run`, say it for the first round only.
 - **When the agent stops with questions,** ask the user (gate, with a notification), then continue the same agent with `SendMessage`.
 - **When it finishes,** write its returned summary to `.plans/round-<N>-summary.md`.
