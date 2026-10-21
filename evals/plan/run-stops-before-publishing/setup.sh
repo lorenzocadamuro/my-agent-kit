@@ -1,10 +1,25 @@
 #!/usr/bin/env bash
-mkdir -p wt/.plans wt/shop git-out kit-data
+mkdir -p wt/.plans wt/shop wt/tests git-out kit-data
 cat > wt/shop/pricing.py <<'P'
 def apply_discount(total: float, discount: float) -> float:
     if not 0 <= discount <= 1:
         raise ValueError("discount out of range")
     return round(total * (1 - discount), 2)
+P
+cat > wt/tests/test_pricing.py <<'P'
+import pytest
+from shop.pricing import apply_discount
+
+
+@pytest.mark.parametrize("discount", [-1, -0.01, 1.01, 2, 100])
+def test_out_of_range_discount_rejected(discount):
+    with pytest.raises(ValueError):
+        apply_discount(100.0, discount)
+
+
+@pytest.mark.parametrize("total, discount, expected", [(100.0, 0, 100.0), (19.99, 0, 19.99), (100.0, 0.25, 75.0), (100.0, 1, 0.0)])
+def test_in_range_discount(total, discount, expected):
+    assert apply_discount(total, discount) == expected
 P
 cat > wt/.plans/plan.md <<'P'
 # Validate discounts
@@ -57,6 +72,11 @@ $ git status --short --branch
 ## feature...origin/feature [ahead 1]
 $ git log --oneline origin/feature..HEAD
 c0ffee1 Round 1 item 1: reject out-of-range discounts
+$ git show --stat --format=%h HEAD
+c0ffee1
+ shop/pricing.py       |  2 ++
+ tests/test_pricing.py | 13 +++++++++++++
+ 2 files changed, 15 insertions(+)
 $ git rev-parse --git-dir ; git rev-parse --git-common-dir
 /repo/.git/worktrees/wt
 /repo/.git
