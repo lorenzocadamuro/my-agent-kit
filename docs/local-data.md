@@ -8,7 +8,7 @@ Personal and employer-specific material lives outside this repository, in the da
   suite-log.md            problems with the kit, written by /my:improve note and digest
   method.md               the user's decision kinds and which ones are handed over (§ Method)
   signals/<owner-name>-<branch>.md  raw signals collected during the work, until /my:improve digest turns them into notes
-  projects/<repo>.md      one profile per repository
+  projects/<owner>-<repo>.md  one profile per repository
   reviewers/<handle>.md   how a reviewer thinks, written by /my:pr:study, read by /my:pr:review
   reads/                  PR readings written by /my:pr:learn (header records the head commit)
   study/                  study pages, glossary.md and README.md (the index, with the comment ids studied)

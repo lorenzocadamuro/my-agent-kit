@@ -1,6 +1,6 @@
 # Building a project profile
 
-Used by `/my:plan:scope` when `<data root>/projects/<owner-name>.md` does not exist. The result follows `${CLAUDE_PLUGIN_ROOT}/templates/project-profile.md`. The profile holds employer-specific facts and therefore never enters the kit repository.
+Used by `/my:plan:scope` when `<data root>/projects/<owner>-<repo>.md` does not exist. The result follows `${CLAUDE_PLUGIN_ROOT}/templates/project-profile.md`. The profile holds employer-specific facts and therefore never enters the kit repository.
 
 ## Sources, in order
 
