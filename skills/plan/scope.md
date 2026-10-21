@@ -57,7 +57,7 @@ Ask with the multiple-choice tool, following the question format, in batches of 
 | M and L    | invariants, existing versus new behaviour (only where research found a question), out of scope, intentional changes, size budget and split trigger |
 | L          | people and what they are building next, rollout (flags, deploy order, migrations, backfills), extra gates and stop conditions                      |
 
-About 4 questions for S, 8 for M, 12 for L. Never ask what research already answered.
+About 4 questions for S, 8 for M, 12 for L. Never ask what research already answered. Ask now only what the plan and its first part need; a later part's choice becomes a gate or an open question of that part (question format: when to ask).
 
 - **The method first:** read `<data root>/method.md`. A question the method lets you decide alone (principles: the method) is not asked: decide it and record it as `D<n>` with Chosen `decided alone (handed over: K<n>)`. After each answer, update its kind.
 - Record each answer as a decision (`D<n>`, with date and reason).
