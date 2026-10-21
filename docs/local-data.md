@@ -6,6 +6,7 @@ Personal and employer-specific material lives outside this repository, in the da
 <data root>/              ~/.my-agent-kit/ by default
   deny-words.txt          words that must never enter this repository (read by scripts/check.sh; `$MY_AGENT_KIT_DENY` names another file)
   suite-log.md            problems with the kit, written by /my:improve note and digest
+  method.md               the user's decision kinds and which ones are handed over (§ Method)
   signals/<owner-name>-<branch>.md  raw signals collected during the work, until /my:improve digest turns them into notes
   projects/<repo>.md      one profile per repository
   reviewers/<handle>.md   how a reviewer thinks, written by /my:pr:study, read by /my:pr:review
@@ -31,6 +32,10 @@ Template: [templates/reviewer-profile.md](../templates/reviewer-profile.md). It 
 ## Suite log
 
 One entry per problem, in the format of [templates/log-entry.md](../templates/log-entry.md). Entries are appended and never deleted. A fixed entry keeps its text and gains a `fixed <version>` status. The digest may append `Evidence:` lines to an open entry, never change its other lines.
+
+## Method
+
+`method.md` holds the decision kinds of the principles' § The method, one row each in a table with the columns `Kind · Judgement · Class · Matches · State · Last matches · Hand-over`: `K<n>`; the judgement in one line, as the habitual choice ("For X, choose Y"); `work`, or `kept` for architecture, design, speaking for the user, plan approval, a boundary or rule crossing, anything published, ready for review, a release, someone else's code and moving the local stack; the matches in a row; `asked`, `proposed` or `handed over`; the dates of the last matches; the date of the last hand-over or take-back. At most 30 kinds. No repository, project, code or person names and no code: repository facts belong in the project profile. Re-read it, then rewrite it whole through a temp file and a rename.
 
 ## State file
 

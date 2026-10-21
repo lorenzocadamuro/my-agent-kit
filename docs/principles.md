@@ -33,6 +33,14 @@ These principles serve [CONSTITUTION.md](../CONSTITUTION.md). Where they disagre
 - **Chores never land on the user.** Restarting services, cleaning containers and rerunning suites belong to the agent doing the work.
 - **Notify at gates.** When the work stops for a decision, or a long round ends, send a short desktop notification and put the summary in chat.
 
+## The method
+
+- **Gate decisions are learned as kinds** in `<data root>/method.md` ([local-data.md](local-data.md) § Method); only the coordinating session edits it. Every gate decision belongs to a kind; one that fits none gets the next `K<n>`, in generic words. Two kinds are close when the same judgement would recommend the same option; merged, they keep the lower count and the less autonomous state.
+- **A recommendation follows its kind's judgement** unless research says otherwise, and then says so. Only the user's choice counts, never an assumption: a match adds one; a mismatch rewrites the judgement to the user's choice and resets the count to 0. The plan's Decisions table records both options (plans with older columns stay valid).
+- **At 5 matches a `work` kind becomes `proposed`,** and the next gate in any session proposes handing it over: yes makes it `handed over`; no sets it back to `asked`, count 0. `kept` kinds are recorded, so recommendations can cite them, and never proposed.
+- **A handed-over kind is decided alone only when the decision clearly fits it;** in doubt, ask, and the answer counts. The report and the plan then say "decided alone (handed over: K<n>)".
+- **The user takes a kind back by saying so in chat,** in any session: the coordinator sets it to `asked`, with the date.
+
 ## Questions the user can answer
 
 Follow [question-format.md](question-format.md): multiple choice, recommended option first. Every option shows its effect, what happens today, its pros and cons, and how serious the issue is.

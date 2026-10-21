@@ -84,9 +84,9 @@ Flags, deploy order, data migrations, backfills, monitoring, how to turn it off.
 
 ## Decisions [always]
 
-| #   | Date | Decision | Why |
-| --- | ---- | -------- | --- |
-| D1  |      |          |     |
+| #   | Date | Kind | Recommended | Chosen | Why |
+| --- | ---- | ---- | ----------- | ------ | --- |
+| D1  |      | K<n> |             | <the user's option, or "decided alone (handed over: K<n>)"> |     |
 
 ## Open questions
 

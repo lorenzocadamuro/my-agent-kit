@@ -60,7 +60,7 @@ Ask with the multiple-choice tool, following the question format, in batches of 
 About 4 questions for S, 8 for M, 12 for L. Never ask what research already answered.
 
 - Record each answer as a decision (`D<n>`, with date and reason).
-- **When the question tool is unavailable** (a non-interactive run), take each interview question's recommended option, record it as an assumption `A<n>` in the Decisions table, and continue.
+- **When the question tool is unavailable** (a non-interactive run), take each interview question's recommended option, record it as an assumption `A<n>` in the Decisions table, with Chosen `assumed`, and continue.
 
 ### 5. Write the plan
 
