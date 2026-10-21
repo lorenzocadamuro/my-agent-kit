@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 mkdir -p wt/.plans wt/shop wt/tests git-out kit-data
+: > wt/conftest.py
 cat > wt/shop/pricing.py <<'P'
 def apply_discount(total: float, discount: float) -> float:
     if not 0 <= discount <= 1:
