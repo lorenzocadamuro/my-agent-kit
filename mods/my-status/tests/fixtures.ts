@@ -66,3 +66,14 @@ export const PLANNING: MyStatusRun = {
   state: 'planning',
   step: 'interview',
 }
+
+export const LONG_TITLE = 'Make checkout charging reliable across provider timeouts and retries'
+export const LONG_REASON = 'Verification failed: item 4 has no commit and the webhook retry tests are red'
+
+export const OLD_NEEDS_YOU: MyStatusRun = { ...NEEDS_YOU, plan: { title: LONG_TITLE, path: '' }, reason: LONG_REASON }
+
+export const NAMED: MyStatusRun = { ...RUNNING, name: 'Webhook retries', updatedAt: '2026-01-10T09:20:00Z' }
+
+export const STOPPED: MyStatusRun = { ...RUNNING, state: 'stopped', reason: 'Tests failing' }
+
+export const AFTER_ROUND: MyStatusRun = { ...RUNNING, state: 'ready', step: 'report' }

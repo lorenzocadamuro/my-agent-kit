@@ -18,6 +18,7 @@ export type MyStatusRun = {
   worktree?: string
   updatedAt?: string
   mode?: string
+  name?: string
   plan?: { title: string; path: string }
   parts?: MyStatusPart[]
   round?: number
@@ -30,10 +31,25 @@ export type MyStatusRun = {
   commentsReadUntil?: string | null
 }
 
+export type MyStatusProgress = {
+  round?: number
+  items?: { done: number; total: number }
+  updatedAt?: string
+}
+
+export type MyStatusActivity = {
+  mode?: string
+  name?: string
+  state?: 'running' | 'needs_you' | 'done'
+  updatedAt?: string
+}
+
 export type MyStatusSnapshot = {
   run: MyStatusRun | null
-  newComments: number
-  conflicts: number
+  progress?: MyStatusProgress | null
+  activity?: MyStatusActivity | null
+  newComments: number | null
+  conflicts: number | null
   openNotes: number
   now: number
 }

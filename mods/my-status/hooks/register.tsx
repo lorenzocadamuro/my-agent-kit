@@ -1,15 +1,15 @@
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
-import type { MyStatusRun, MyStatusSnapshot } from '../types'
-import { bandView, statusLine } from './view'
+import type { MyStatusActivity, MyStatusProgress, MyStatusRun, MyStatusSnapshot } from '../types'
+import { bandView, statusLine, TILE_CELLS } from './view'
 import type { Badge, Tile, Tone } from './view'
 
 const PLUGIN = 'my-status'
 const PANE = 'my-status-plan'
 const POLL_MS = 60_000
 const NETWORK_MS = 10 * 60_000
-const TILE_CELLS = 3
+const COMMENT_ROW = '.[] | {login: .user.login, at: .created_at}'
 
 export const snapAtom = atom({ plugin: 'my-status', key: 'snap' } as const, null)
 export const planAtom = atom({ plugin: 'my-status', key: 'planText' } as const, null)
@@ -22,7 +22,7 @@ const COLOR: Record<Tone, string> = {
   danger: 'red',
 }
 
-type Network = { at: number; newComments: number; conflicts: number }
+type Network = { at: number; newComments: number | null; conflicts: number | null }
 
 async function sh($: EngineInterface, argv: string[], cwd?: string): Promise<string | null> {
   try {
@@ -54,56 +54,70 @@ async function dataRoot($: EngineInterface): Promise<string | null> {
   return home ? `${home}/.my-agent-kit` : null
 }
 
-async function conflictsWithMain($: EngineInterface, dir: string, base: string): Promise<number> {
+/** 0 on a clean merge (exit 0), the conflicted files on exit 1, unknown (null) on any other exit or a failed call. */
+async function conflictsWithMain($: EngineInterface, dir: string, base: string): Promise<number | null> {
   try {
     const ran = await $.process.run(['git', 'merge-tree', '--write-tree', '--name-only', 'HEAD', base], { cwd: dir, timeoutMs: 20_000 })
     if (ran.exitCode === 0) return 0
+    if (ran.exitCode !== 1) return null
     const [, ...rest] = ran.stdout.split('\n')
     const end = rest.indexOf('')
     return (end === -1 ? rest : rest.slice(0, end)).filter(Boolean).length
   } catch {
-    return 0
+    return null
   }
 }
 
-async function newComments($: EngineInterface, dir: string, run: MyStatusRun): Promise<number> {
-  const since = run.commentsReadUntil ?? run.updatedAt
-  if (!run.pr || !since) return 0
-  const query = `[.[] | select(.created_at > "${since}")] | length`
-  const count = async (path: string) => {
-    const out = await sh($, ['gh', 'api', '--paginate', `${path}?per_page=100&since=${since}`, '--jq', query], dir)
-    return (out ?? '').split('\n').reduce((sum, line) => sum + (Number(line) || 0), 0)
+/** Comments by others since the last read (or the first round's start); unknown (null) when that date, the login or a call is missing. */
+async function newComments($: EngineInterface, dir: string, run: MyStatusRun): Promise<number | null> {
+  const since = run.commentsReadUntil ?? run.rounds?.[0]?.startedAt
+  const sinceMs = since ? Date.parse(since) : NaN
+  if (!run.pr || !Number.isFinite(sinceMs)) return null
+  const me = await sh($, ['gh', 'api', 'user', '--jq', '.login'], dir)
+  if (!me) return null
+  let count = 0
+  for (const path of [`repos/{owner}/{repo}/pulls/${run.pr}/comments`, `repos/{owner}/{repo}/issues/${run.pr}/comments`]) {
+    const out = await sh($, ['gh', 'api', '--paginate', `${path}?per_page=100&since=${since}`, '--jq', COMMENT_ROW], dir)
+    if (out === null) return null
+    for (const line of out.split('\n').filter(Boolean)) {
+      const row = parseJson<{ login?: string; at?: string }>(line)
+      if (!row) return null
+      if (row.login !== me && row.at && Date.parse(row.at) > sinceMs) count += 1
+    }
   }
-  return (await count(`repos/{owner}/{repo}/pulls/${run.pr}/comments`)) + (await count(`repos/{owner}/{repo}/issues/${run.pr}/comments`))
+  return count
 }
 
-function parseRun(text: string | null): MyStatusRun | null {
+function parseJson<T>(text: string | null): T | null {
   if (!text) return null
   try {
-    return JSON.parse(text) as MyStatusRun
+    return JSON.parse(text) as T
   } catch {
     return null
   }
 }
 
-async function findRun($: EngineInterface, root: string, file: string, top: string): Promise<MyStatusRun | null> {
-  const exact = parseRun(await readText($, file))
-  if (exact) return exact
+const SIDECAR = /\.(progress|activity)\.json$/
+
+async function findRun($: EngineInterface, root: string, file: string, top: string): Promise<{ run: MyStatusRun; file: string } | null> {
+  const exact = parseJson<MyStatusRun>(await readText($, file))
+  if (exact) return { run: exact, file }
   let names: string[] = []
   try {
-    names = (await $.fs.list(`${root}/state`)).filter(entry => entry.kind === 'file' && entry.name.endsWith('.json')).map(entry => entry.name)
+    names = (await $.fs.list(`${root}/state`)).filter(entry => entry.kind === 'file' && entry.name.endsWith('.json') && !SIDECAR.test(entry.name)).map(entry => entry.name)
   } catch {
     return null
   }
-  let best: MyStatusRun | null = null
+  let best: { run: MyStatusRun; file: string } | null = null
   for (const name of names) {
-    const run = parseRun(await readText($, `${root}/state/${name}`))
-    if (run?.worktree === top && (best === null || (run.updatedAt ?? '') > (best.updatedAt ?? ''))) best = run
+    const path = `${root}/state/${name}`
+    const run = parseJson<MyStatusRun>(await readText($, path))
+    if (run?.worktree === top && (best === null || (run.updatedAt ?? '') > (best.run.updatedAt ?? ''))) best = { run, file: path }
   }
   return best
 }
 
-let network: Network = { at: 0, newComments: 0, conflicts: 0 }
+const network = new Map<string, Network>()
 let inFlight: Promise<void> | null = null
 
 function poll($: EngineInterface): Promise<void> {
@@ -127,21 +141,32 @@ async function refresh($: EngineInterface): Promise<void> {
     }
     const branch = (await sh($, ['git', 'branch', '--show-current'], top)) || 'detached'
     const remote = await sh($, ['git', 'remote', 'get-url', 'origin'], top)
-    const file = `${root}/state/${ownerName(remote, top)}-${branch.replace(/\//g, '-')}.json`
-    const run = await findRun($, root, file, top)
+    const base = `${root}/state/${ownerName(remote, top)}-${branch.replace(/\//g, '-')}`
+    const found = await findRun($, root, `${base}.json`, top)
+    const run = found?.run ?? null
+    const progress = found ? parseJson<MyStatusProgress>(await readText($, found.file.replace(/\.json$/, '.progress.json'))) : null
+    const activity = parseJson<MyStatusActivity>(await readText($, `${base}.activity.json`))
     const now = await $.clock.now()
-    if (run?.pr && now - network.at >= NETWORK_MS) {
+    let net: Network | undefined
+    if (run?.pr) {
       const dir = run.worktree ?? top
-      const base = (await sh($, ['git', 'symbolic-ref', '--short', 'refs/remotes/origin/HEAD'], dir)) || 'origin/main'
-      await sh($, ['git', 'fetch', '--quiet', 'origin', base.replace(/^origin\//, '')], dir)
-      network = { at: now, conflicts: await conflictsWithMain($, dir, base), newComments: await newComments($, dir, run) }
+      const key = `${dir}#${run.pr}`
+      net = network.get(key)
+      if (!net || now - net.at >= NETWORK_MS) {
+        const main = (await sh($, ['git', 'symbolic-ref', '--short', 'refs/remotes/origin/HEAD'], dir)) || 'origin/main'
+        await sh($, ['git', 'fetch', '--quiet', 'origin', main.replace(/^origin\//, '')], dir)
+        net = { at: now, conflicts: await conflictsWithMain($, dir, main), newComments: await newComments($, dir, run) }
+        network.set(key, net)
+      }
     }
     const log = await readText($, `${root}/suite-log.md`)
     const openNotes = log ? (log.match(/^## \d{8}-\d{2} .* · open$/gm) ?? []).length : 0
     const snap: MyStatusSnapshot = {
       run,
-      newComments: run?.pr ? network.newComments : 0,
-      conflicts: run?.pr ? network.conflicts : 0,
+      progress,
+      activity,
+      newComments: net ? net.newComments : 0,
+      conflicts: net ? net.conflicts : 0,
       openNotes,
       now,
     }
@@ -159,6 +184,7 @@ async function openPlan($: EngineInterface, path: string, title: string): Promis
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     await $.command.register({ name: 'my-status', description: 'Refresh the my status line and open the plan, if one is running' })
+    network.clear()
     $.clock.every(POLL_MS, () => void poll($))
     void poll($)
     return next(e)
@@ -210,18 +236,20 @@ export const register: Register = on => {
       <Box key="spacer" flexGrow={1} />,
       ...(view.time ? [<Box key="time" flexShrink={0}><Text dimColor>{view.time}</Text></Box>] : []),
       ...view.actions.map(action => (
-        <Button
-          key={action.key}
-          label={action.label}
-          onPress={async () => {
-            if (action.opensPlan) {
-              const path = snap?.run?.plan?.path
-              if (path) await openPlan($, path, snap?.run?.plan?.title ?? 'Plan')
-              return
-            }
-            if (action.command) await $.prompt.fill({ text: action.command })
-          }}
-        />
+        <Box key={`action-${action.key}`} flexShrink={0}>
+          <Button
+            key={action.key}
+            label={action.label}
+            onPress={async () => {
+              if (action.opensPlan) {
+                const path = snap?.run?.plan?.path
+                if (path) await openPlan($, path, snap?.run?.plan?.title ?? 'Plan')
+                return
+              }
+              if (action.command) await $.prompt.fill({ text: action.command })
+            }}
+          />
+        </Box>
       )),
     ]
 
