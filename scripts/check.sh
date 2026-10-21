@@ -17,8 +17,11 @@ if [[ -f "$deny_file" ]]; then
       exit 1
     fi
   fi
+elif [[ "${MY_AGENT_KIT_ALLOW_NO_DENY:-}" == "1" ]]; then
+  echo "Privacy check skipped: $deny_file not found (MY_AGENT_KIT_ALLOW_NO_DENY=1)" >&2
 else
-  echo "Privacy check skipped: $deny_file not found" >&2
+  echo "Privacy check failed: $deny_file not found. Create it, or set MY_AGENT_KIT_ALLOW_NO_DENY=1 on a machine without it." >&2
+  exit 1
 fi
 
 echo "check.sh: OK"
