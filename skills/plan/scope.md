@@ -64,7 +64,7 @@ Ask with the multiple-choice tool, following the question format, in batches of 
 About 4 questions for S, 8 for M, 12 for L. Never ask what research already answered.
 
 - Record each answer as a decision (`D<n>`, with date and reason).
-- **When the question tool is unavailable** (a non-interactive run), take the recommended option, record it as an assumption `A<n>` in the Decisions table, and continue.
+- **When the question tool is unavailable** (a non-interactive run), take each interview question's recommended option, record it as an assumption `A<n>` in the Decisions table, and continue.
 
 ### 5. Write the plan
 
@@ -86,7 +86,7 @@ It also names any question the user should have been asked. Fix what it finds. A
 
 ### 7. Gate: plan approval
 
-Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel. On cancel, delete the planning state file.
+Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel. On cancel, delete the planning state file. The approval is never assumed: without the question tool, stop here and set the state file to `needs_you` with reason "Plan approval"; a `--dry-run`, which sets up nothing, ends as today.
 
 ### 8. Set up the workspace
 
