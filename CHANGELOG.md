@@ -22,7 +22,7 @@ The kit asks when you can answer, shows you the files it wants you to read, trie
 
 - Every tool, client or command a plan relies on, or the kit hands you, runs once for real first, and its prerequisites (access, environment) and measured duration go into the plan or the message.
 - A test drives the real consumer (the client that will call the code), not only its handler; an intermittent defect is captured first (temporary instrumentation, a trace of the failing repetition); an audit's claim about behaviour is reproduced, or marked "text only" and fixed in text; the verification is sized to what changes. The executor prompt carries the consumer and capture clauses.
-- A check or a stop condition (the plan's, the round's, the coordinator's own) is never skipped, run less often or turned into a ticket without telling you, and one that fires goes to you. In `plan:round` a decision that relaxes one is a gate, and the executor stops when an item's `Stop if` holds. A check with a noisy result (an LLM judge, a model's choice) runs 2–3 times before it is called passed or failed.
+- A check or a stop condition (the plan's, the round's, the coordinator's own) is never skipped, run less often or turned into a ticket without your yes (a gate), and one that fires goes to you. In `plan:round` a decision that relaxes one is a gate, and the executor stops when an item's `Stop if` holds. A check with a noisy result (an LLM judge, a model's choice) runs 2–3 times before it is called passed or failed.
 
 ### Plans
 

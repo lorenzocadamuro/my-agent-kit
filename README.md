@@ -93,7 +93,7 @@ All skills share one set of rules, kept in [docs/principles.md](docs/principles.
 - humans decide at gates;
 - every option in a question carries its own labelled Pros and Cons, and a question in your answer gets an answer before any new question;
 - decisions are learned as kinds, and a kind is decided alone only after you hand it over;
-- verify before deciding, including the agent's own claims; the writer is never the reviewer; a check or a stop condition is never relaxed without telling you;
+- verify before deciding, including the agent's own claims; the writer is never the reviewer; a check or a stop condition is never relaxed without your yes;
 - what the kit relies on, or hands you, runs once for real first, and checks enter the bar only after their baseline is measured;
 - repository rules are loaded explicitly;
 - work happens in a worktree, unless the project profile says how you work there instead;
