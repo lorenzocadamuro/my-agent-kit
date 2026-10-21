@@ -1,8 +1,6 @@
 # <Title: what the change makes true, as a sentence>
 
-<!-- Sections are tagged [always], [M+] (medium and large) or [L] (large only).
-     Drop a tag's sections when the size is smaller, with one line saying so.
-     If the project profile names a plan style guide, follow its structure and keep these sections inside it. -->
+<!-- Section tags: [always], [M+] (medium and large), [L] (large only). -->
 
 Ticket: <id + url, or "none"> · Size: <S|M|L> · Type: <bug fix|feature|refactor|tool|infra>
 Repo: <owner/name> · Branch: <name> · Worktree: <path> · Base: origin/main @ <sha>
@@ -27,8 +25,6 @@ How it is checked, and what it costs:
 
 - Every round: <the quick check that decides whether a round worked, e.g. targeted tests, a screening run> (~<time or cost>)
 - Once, at the end: <the full proof that the change is done, e.g. the full suite, two independent A/B runs, a manual check> (~<time or cost>)
-
-Reviews stop when these hold. Anything else becomes a ticket.
 
 ## Gates [always]
 

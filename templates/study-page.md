@@ -1,7 +1,5 @@
 # <PR title> — <reviewer(s)>
 
-<!-- Written in the user's language. Budget: layer 0 ≤ 150 words; whole page ≤ ~1,800 words. -->
-
 PR: <owner/name#n> · Review date: <date> · Reading time: <~N min>
 
 ## Layer 0: what you need now
