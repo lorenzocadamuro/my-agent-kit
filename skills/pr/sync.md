@@ -2,9 +2,7 @@
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md` and `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`.
 
-Talk to the user in their language. Commit messages are in English.
-
-**Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.my-agent-kit`. Load the project profile `<data root>/projects/<owner-name>.md`. Without a profile, use only generic git steps, and say so.
+Load the project profile `<data root>/projects/<owner-name>.md`. Without a profile, use only generic git steps, and say so.
 
 ## Steps
 

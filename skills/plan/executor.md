@@ -38,4 +38,4 @@ When you stop, finish what is safe, commit it, and return the summary with your 
 
 ## Return
 
-Return the summary as text, in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`. Include one row for **every** item (done, checked, incomplete, skipped or stopped; `checked` is a verification-only item, with no commit and the command and result in the note), every decision taken alone with its flag, and the environment you left behind. Do not write report files; the coordinator writes them.
+Return the summary as text, in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`. Include one row for **every** item (done, checked, incomplete, skipped or stopped), every decision taken alone with its flag, and the environment you left behind. Do not write report files; the coordinator writes them.

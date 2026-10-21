@@ -30,7 +30,7 @@ Template: [templates/reviewer-profile.md](../templates/reviewer-profile.md). It 
 
 ## Suite log
 
-One entry per problem, in the format of [templates/log-entry.md](../templates/log-entry.md). Entries are appended and never deleted. A fixed entry keeps its text and gains a `fixed <version>` status. The digest may append `Evidence:` lines to an open entry, never change its other lines. Labels are in English; the reasoning is in the user's language.
+One entry per problem, in the format of [templates/log-entry.md](../templates/log-entry.md). Entries are appended and never deleted. A fixed entry keeps its text and gains a `fixed <version>` status. The digest may append `Evidence:` lines to an open entry, never change its other lines.
 
 ## State file
 

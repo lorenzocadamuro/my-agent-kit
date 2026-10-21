@@ -51,7 +51,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 
 - **Every round: a light conformance review** of that round's diff against the plan, by a fresh agent. The lenses are in [review-lenses.md](review-lenses.md).
 - **At milestones: the project's deep review tool,** named in the project profile. The milestones are before "ready for human review", and when drift exceeds the budget. The bar is passed in as the stop criterion.
-- **Every finding is labelled:** **block** (breaks the promise, an invariant, the boundary or the bar), **ticket** (real but out of scope) or **note**. Only block findings enter the next round.
+- **Every finding is labelled** block, ticket or note, by [review-lenses.md](review-lenses.md) § Grading a finding. Only block findings enter the next round.
 
 ## Repository rules are inputs, not assumptions
 
@@ -74,7 +74,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 ## Where files go
 
 - **Per-change files** (plans, rounds, summaries, comment triage) live in the worktree's git-ignored `.plans/` folder, and disappear with the worktree.
-- **Lasting personal material** lives in `~/.my-agent-kit/`, outside this repository. The layout is in [local-data.md](local-data.md).
+- **Lasting personal material** lives in the data root: `$MY_AGENT_KIT_HOME`, or a root the user names, otherwise `~/.my-agent-kit/`; never in this repository. The layout is in [local-data.md](local-data.md).
 - **Personal material stays private.** Study pages, readings, the glossary, reviewer profiles and the improvement log stay under the data root, never in a repository, artifact, doc or gist. They shape what the kit looks for, but nothing published (PR text, comments, replies, commits, messages) cites, quotes or names them.
 - **Throwaway files** go in the session scratchpad.
 - **Link only files the app can open.** The desktop app's file pane opens files inside the session's working directory and added folders, not the scratchpad. A file the user must read goes in the working directory (a git-ignored `.plans/`) or the data root. Before linking a file under the data root (`~/.my-agent-kit/` by default), add that folder to the session with the app's directory-request tool (`request_directory`), once per session. When the tool is missing, show the path as code, not as a link.
@@ -82,7 +82,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 
 ## Language
 
-- **Skills, prompts for other agents, plans and hand-off files are in English.** Signals and the reasoning in log entries are the exception.
+- **Skills, prompts for other agents, plans, hand-off files, commit messages, comment and reply drafts are in English.** Signals and the reasoning in log entries are the exception.
 - **Reasoning is in the user's language:** the conversation and its reports, study material, signals and the reasoning in log notes. Plain words, the why before the what.
 - **Vocabulary is never translated.** Repository terms (code names, domain nouns, flags, commands) and the kit's own terms (`bar for done`, `boundary`, `round`, states, ids, table headers) stay as they are in every language, so the user finds them in the code and in conversations with colleagues. The first time a term appears in a conversation, give its meaning in one plain line.
 

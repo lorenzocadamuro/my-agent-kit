@@ -17,4 +17,4 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`.
 | `run`                      | Rounds one after another until a gate              | [round.md](round.md) § Run |
 | none                       | `round` when a plan exists in the worktree; otherwise `scope`, said in one line |  |
 
-The sub-commands `/my:plan:scope`, `/my:plan:round` and `/my:plan:run` call this skill with the mode already set. Follow the mode's file; it holds every rule the mode needs.
+The sub-commands `/my:plan:scope`, `/my:plan:round` and `/my:plan:run` call this skill with the mode already set. Follow the mode's file; with the principles, it holds every rule the mode needs.

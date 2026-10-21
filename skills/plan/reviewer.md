@@ -28,7 +28,7 @@ Review `git diff <round start>..HEAD`, and the code it touches.
 ## Output
 
 - **Verdict against the bar:** met, or not met, with the reason.
-- **Findings,** each with its label (**block**, **ticket** or **note**, by the lenses doc), `file:line`, the evidence and a suggested fix. Never downgrade a broken promise because the base branch has the same flaw.
+- **Findings,** each with its label (**block**, **ticket** or **note**, by the lenses doc § Grading a finding), `file:line`, the evidence and a suggested fix.
 - **Stop when the bar is met.** Do not hunt beyond it; list anything else as a note.
 
 Change no files.

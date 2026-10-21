@@ -1,10 +1,6 @@
 # /my:pr:comments — what each comment means, and what to do about it
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, and `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` (the grading rules).
-
-Talk to the user in their language. Reply drafts are in English.
-
-**Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.my-agent-kit`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, and `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`.
 
 ## Arguments
 
@@ -29,7 +25,7 @@ Pasted comments work too, when `gh` is unavailable.
    - Read the code the comment points to, plus its callers and tests.
    - Classify the group as **real**, **duplicate** (of which group), **not a bug** (with evidence), **already fixed** (with the commit), or **out of scope** (outside the PR's plan or diff).
    - A real group that the plan, the research or a round's review should have caught is a signal (principles: closing step). Read the plan (`.plans/plan.md`, or the one the user names) to judge it.
-4. **Weigh and act.** Weight is block, ticket or note, as in the lenses doc. Pick a proportional action: fix, document, ticket, or reply only. A low-value style point on a local tool does not get an elaborate fix.
+4. **Weigh and act.** Weight each group by the lenses doc § Grading a finding. Pick a proportional action: fix, document, ticket, or reply only. A low-value style point on a local tool does not get an elaborate fix.
 5. **Draft the replies:** at most 3 sentences, factual, in English.
    - Fixed: "Addressed in `<sha>`: <how>."
    - Not a bug: the evidence, with `file:line`.

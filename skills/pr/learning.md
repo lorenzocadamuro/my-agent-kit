@@ -6,14 +6,9 @@ Use `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` to name reasoning moves and th
 
 ## Shared rules (learn and study)
 
-- **Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.my-agent-kit`.
-  - Readings go in `<data root>/reads/`.
-  - Study pages, `glossary.md` and the `README.md` index go in `<data root>/study/`.
-  - Reviewer profiles go in `<data root>/reviewers/`.
+- **Paths, under the data root:** readings in `reads/`; study pages, `glossary.md` and the `README.md` index in `study/`; reviewer profiles in `reviewers/`.
   - Use the file name the user gives, when they give one.
-- **Language:**
-  - Pages, glossary entries and the chat reply are in the user's language (the one they write to you in).
-  - Quotes and code stay in the original. File names are in English.
+- **Language:** quotes and code stay in the original; file names are in English.
 - **Budget:** layer 0 is at most 150 words; the whole page is at most about 1,800 words.
   - Before opening the page, count the words with `wc -w`, and cut until it fits.
   - Never cut code anchors or weights.

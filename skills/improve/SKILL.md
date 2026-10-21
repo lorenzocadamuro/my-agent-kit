@@ -12,7 +12,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md` and `${CLAUDE_PLUGIN_ROOT
 
 ## Paths
 
-- **Data root:** `$MY_AGENT_KIT_HOME` if set, or a data root the user names in the request; otherwise `~/.my-agent-kit`. The log is `<data root>/suite-log.md`. Create it with a `# Suite log` heading if missing. Signals live in `<data root>/signals/`.
+- **Log and signals:** the log is `<data root>/suite-log.md`. Create it with a `# Suite log` heading if missing. Signals live in `<data root>/signals/`.
 - **Kit source:** the git repository behind `${CLAUDE_PLUGIN_ROOT}`. Resolve it with `git -C "${CLAUDE_PLUGIN_ROOT}" rev-parse --show-toplevel`. If that fails (the plugin was installed from a marketplace cache), ask for the path of the user's clone. Never edit the cache.
 
 ## Old names
@@ -49,7 +49,7 @@ Goal: under a minute, no questions unless the text is empty.
    - current repository (`git rev-parse --show-toplevel`, remote slug), branch, and PR number (`gh pr view --json number -q .number`, if any);
    - the session id if known.
 3. **Fill the entry** from `${CLAUDE_PLUGIN_ROOT}/templates/log-entry.md`.
-   - The reasoning fields (what happened, why it was a problem, missing question, expected) are in the user's language; labels, ids, states and repository terms stay as they are (principles: language). Keep a short quote of the user's words when the exact meaning matters.
+   - The reasoning fields are what happened, why it was a problem, missing question and expected (principles: language). Keep a short quote of the user's words when the exact meaning matters.
    - The id is `YYYYMMDD-NN`: re-read the log right before appending, and take the next number after today's highest, starting at 01. Another session may have written since you last read it.
    - "What happened" and "Expected" are concrete: what was done or said, not an opinion. "Why it was a problem" says what it cost the user, in plain words. "Missing question" is a question someone should have asked at the start, not a fix; `unknown` when it is not clear.
    - "Suspected cause" names a step, principle, template or profile line when you can point to it; otherwise `unknown`. Do not investigate deeply here.
@@ -95,7 +95,7 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
    - **Place the fix,** in this order of preference: refine, generalise or move that rule; merge it with a neighbour; add a new rule only when none covers the cause. Never word a fix around one case.
    - **Project profile** (`<data root>/projects/<repo>.md`) only for a fact about one repository: propose the change like any other, and apply it only after approval, with no version bump.
    - **No change** when the kit behaved as designed: explain why, and propose `wontfix`.
-4. **Propose,** following the question format: one question per group, with up to four options, in the user's language.
+4. **Propose,** following the question format: one question per group, with up to four options.
    - Show the missing question and the rule first, then the concrete change, its pros and cons, and what it costs (skill length, extra steps).
    - Always offer "Defer" and "Won't fix".
    - **Prefer removing or merging a rule to adding one.** If the change makes a skill longer than about 200 lines, say so and propose what to cut.
@@ -127,4 +127,3 @@ Show every entry (or one skill's), open ones first, newest first within each gro
 
 - Never edit `CONSTITUTION.md`, and never write "Amend constitution" in a commit message unless the user asked for the amendment.
 - Never write employer, project, ticket or colleague names into the kit source. The log and the project profiles may hold them, because they live outside the repository.
-- Language follows the principles: kit source in English; conversation, signals and the reasoning in log entries in the user's language; terms never translated.

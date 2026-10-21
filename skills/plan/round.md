@@ -7,8 +7,6 @@ You are the coordinator. You stay in the user's session and hand the work to bac
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`.
 
-**Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.my-agent-kit`.
-
 ## Arguments
 
 | Argument        | Effect                                                                                                                                                                                          |
@@ -48,7 +46,7 @@ Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, whe
 
 - **Verify the claim against the code at HEAD,** and drop or rewrite what does not hold.
 - **List the callers covered, by path,** with the untruncated count.
-- **Name the owning code point,** and a test that fails without the fix and drives the production caller. A check-only item (it changes no code) names instead the commands it runs and the result that counts as passing.
+- **Name the owning code point,** and a test that fails without the fix and drives the production caller. A check-only item names instead the commands it runs and the result that counts as passing.
 - **Write the stop conditions.** They use the plan's "every round" checks; the "once, at the end" proof belongs to the ready-for-review gate. A check copied from the plan or the profile keeps its baseline (principles: measure the baseline).
 
 Items outside the plan's scope, and findings labelled "ticket", go to "Not this round", with ticket text and no fix. An item whose only fix crosses the boundary or a repository rule is a gate: ask before executing.

@@ -2,8 +2,6 @@
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md` and `${CLAUDE_PLUGIN_ROOT}/templates/plan.md`.
 
-Talk to the user in their language. Write the plan in English.
-
 ## Arguments
 
 | Argument               | Meaning                                                                                                                                                                                  |
@@ -12,8 +10,6 @@ Talk to the user in their language. Write the plan in English.
 | Free text              | The task description                                                                                                                                                                     |
 | `--adopt <branch\|PR>` | Plan for existing work: read its diff and description, and do not create a new branch                                                                                                    |
 | `--dry-run`            | Write the plan only. No worktree, no branch, no ticket change. Save it where the user says, or at `<data root>/plans/<slug>-<date>.md`                                                   |
-
-**Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.my-agent-kit`.
 
 **Status:** from step 1 to the approval, keep the state file current (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) with `state: "planning"`, the plan's title and `name` (session-title format) once known, and `step`: `research` (steps 1–3), `interview` (4), `write` (5), `review` (6), `approval` (7). The status line then shows the plan being made.
 
