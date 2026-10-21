@@ -66,7 +66,7 @@ Between gates, agents work in the background: `plan:run` starts the next round o
 
 | Command            | Stage       | What it does |
 | ------------------ | ----------- | ------------ |
-| `/my:plan:scope`   | Before code | Interviews you with multiple-choice questions and writes the plan: goal, boundary, invariants with tests, bar for done, size budget, reviewers, gates. Adapts its depth to the kind and size of the task. Never assumes your approval: without the question tool it stops at "Plan approval". |
+| `/my:plan:scope`   | Before code | Interviews you with multiple-choice questions, asking only what the plan and its first part need, and writes the plan: goal, boundary, invariants with tests, bar for done, size budget, reviewers, gates. Its research follows what the plan adds or changes: who writes and reads each new field, state, key or rule, saved data included. Adapts its depth to the kind and size of the task. Never assumes your approval: without the question tool it stops at "Plan approval". |
 | `/my:plan:round`   | During      | Runs one round: executes the work in the background (in the S lane, the session itself), checks the result against git, has a fresh agent review it against the plan, and reports in six lines, in your language, with a drift signal, the decisions taken alone and the lessons it logged. |
 | `/my:plan:run`     | During      | Runs rounds one after another while each succeeds, carrying block findings to the next round and ticking plan parts; stops at a gate (drift over budget among them) unless its kind is handed over and clearly fits, failed verification, conflicts with main, new PR comments, red CI, anything to publish, the bar, or 5 rounds; one summary at the end, in your language, with the decisions it took alone. |
 | `/my:pr:sync`      | During      | Brings the branch up to date with main: previews conflicts, leaves every design conflict to you (other PRs' text only builds the options), regenerates generated files, re-checks migrations and the dev database. Context you type yourself that says how to resolve, general or per file ("keep their approach, adapt ours"), is your decision for every design conflict it clearly covers, and it says in one line per file how it applies it; any other design conflict stays a question. Each option has its own Pros, Cons and Risk. |
@@ -91,14 +91,14 @@ All skills share one set of rules, kept in [docs/principles.md](docs/principles.
 - proportional rather than strict;
 - the plan as contract;
 - humans decide at gates;
-- every option in a question carries its own labelled Pros and Cons;
+- every option in a question carries its own labelled Pros and Cons, and a question in your answer gets an answer before any new question;
 - decisions are learned as kinds, and a kind is decided alone only after you hand it over;
-- verify before deciding, including the agent's own claims; the writer is never the reviewer;
-- checks enter the bar only after their baseline is measured;
+- verify before deciding, including the agent's own claims; the writer is never the reviewer; a check or a stop condition is never relaxed without telling you;
+- what the kit relies on, or hands you, runs once for real first, and checks enter the bar only after their baseline is measured;
 - repository rules are loaded explicitly;
 - work happens in a worktree, unless the project profile says how you work there instead;
 - a fresh session is named after the work, not the command;
-- links point only to files the app can open; nothing published cites your study pages, reviewer profiles or other personal material;
+- a file you must read opens in the app's pane, and a text you must approve is pasted in chat; nothing published cites your study pages, reviewer profiles or other personal material;
 - in the kit's own repository, work branches may be pushed, but `main` and tags move only at the release gate, after the full diff and your yes;
 - reasoning is in the user's language, and repository vocabulary is never translated;
 - the kit learns while it is used: every skill collects signals and digests them into notes;

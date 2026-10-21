@@ -4,6 +4,43 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [4.1.0] - 2026-10-21
+
+The kit asks when you can answer, shows you the files it wants you to read, tries what it relies on before relying on it, follows what a plan adds, keeps its own checks, and the status band shows only where the work stands. Minor: new behaviour, nothing you rely on changes incompatibly.
+
+### Questions
+
+- A free answer or a dismissal that holds a question or a doubt gets an answer in chat, and the turn ends there: no new question until you say it is clear.
+- A longer explanation goes in chat and ends the turn, because the question window covers the text above it; the short question comes after, carrying its own essential context.
+- A decision is asked only when the work needs it: `plan:scope` asks what the plan and its first part need, and a later part's choice becomes a gate or an open question of that part.
+
+### Files you must read
+
+- A file you must read opens in the app's file pane, by absolute path, after its folder is added to the session when it lies outside the working directory (the data root, a worktree entered later). When the pane cannot open it, the kit gives the absolute path as code and says why. A text you must approve before it is published is pasted in chat, always. `pr:learn`, `pr:study` and `pr:review` follow this instead of `open <file>` or a bare path.
+
+### Verification
+
+- Every tool, client or command a plan relies on, or the kit hands you, runs once for real first, and its prerequisites (access, environment) and measured duration go into the plan or the message.
+- A test drives the real consumer (the client that will call the code), not only its handler; an intermittent defect is captured first (temporary instrumentation, a trace of the failing repetition); an audit's claim about behaviour is reproduced, or marked "text only" and fixed in text; the verification is sized to what changes. The executor prompt carries the consumer and capture clauses.
+- A check or a stop condition (the plan's, the round's, the coordinator's own) is never skipped, run less often or turned into a ticket without telling you, and one that fires goes to you. In `plan:round` a decision that relaxes one is a gate, and the executor stops when an item's `Stop if` holds. A check with a noisy result (an LLM judge, a model's choice) runs 2–3 times before it is called passed or failed.
+
+### Plans
+
+- `plan:scope` research follows what the plan adds or changes: for each new or changed field, state, key or rule, who writes it and when, who reads it (data saved before the change included), its transitions (backwards too), and any other route it opens. The round triage, the triage check and the round template carry the same check for each item.
+
+### Status
+
+- The band shows no work name, plan title or PR label, which the chat and the branch already give: only the state, the tiles, the percent and the time left, a reason of two or three words for `needs_you` and `stopped`, and the buttons. `pr:*` modes and `improve run` show their mode. The status line reads `my: <state>[ · extras] · <n> kit notes`.
+- Nothing is cut with "…". The state and the first button always show; every other element is added whole, in a fixed order (the reason, the other buttons, the percent, the tiles, Open plan, the detail, the time), only while the band fits.
+- The state file and the activity sidecar no longer carry `name`: `plan:scope` and `plan:round` stop writing it, and a `name` left by 4.0.x is ignored.
+- Mod tests: 33 → 37.
+
+### Evals
+
+- New cases: `plan/free-answer-gets-an-answer` (fails on 4.0.0 in 3 of 3 runs, passes in 4 of 5 after) and `plan/tool-tried-first` (a guard: 4.0.0 already passes it). `pr/pr-explains-not-judges` and `pr/broken-promise` gain graders for the absolute path and against `open` (both fail on 4.0.0). The suite has 27 cases.
+- Following what a plan adds, and the coordinator keeping its own checks, have no case: the cases written for them passed on the text before the change (2 of 2 runs each), because a one-page fixture makes the consequence obvious, while the misses came from work spread over many rounds. They were not kept. `evals/README.md` gains the noisy-grader lesson.
+- Prose in `skills/`, `docs/` and `templates/` stays at 1,414 lines.
+
 ## [4.0.0] - 2026-10-21
 
 The kit now keeps its constitution (3.2.1): it never ships itself or takes a decision you have not handed over, its status is true and always visible, small work stays light, and it learns your decisions one kind at a time. Major, because behaviour you rely on changes: how `improve run` ships, how `pr:sync` handles design conflicts, and how S work runs.
