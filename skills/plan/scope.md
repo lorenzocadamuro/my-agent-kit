@@ -61,7 +61,7 @@ About 4 questions for S, 8 for M, 12 for L. Never ask what research already answ
 
 - **The method first:** read `<data root>/method.md` (principles: the method). A question whose kind is handed over and clearly fits is not asked: decide it by the kind's judgement and record it as `D<n>` with Chosen `decided alone (handed over: K<n>)`. After each answer, update its kind.
 - Record each answer as a decision (`D<n>`, with date and reason).
-- **When the question tool is unavailable** (a non-interactive run), take each interview question's recommended option, record it as an assumption `A<n>` in the Decisions table, with Chosen `assumed`, and continue.
+- **When the question tool is unavailable** (a non-interactive run), take each interview question's recommended option, record it as an assumption `A<n>` in the Decisions table, with Chosen `assumed` (it counts for no kind; principles: the method), and continue.
 
 ### 5. Write the plan
 

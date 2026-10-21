@@ -35,7 +35,7 @@ One entry per problem, in the format of [templates/log-entry.md](../templates/lo
 
 ## Method
 
-`method.md` holds the decision kinds of the principles' § The method, one row each in a table with the columns `Kind · Judgement · Class · Matches · State · Last matches · Hand-over`: `K<n>`; the judgement in one line, as the habitual choice ("For X, choose Y"); `work`, or `kept` for architecture, design, speaking for the user, plan approval, a boundary or rule crossing, anything published, ready for review, a release, someone else's code and moving the local stack; the matches in a row; `asked`, `proposed` or `handed over`; the dates of the last matches; the date of the last hand-over or take-back. At most 30 kinds. No repository, project, code or person names and no code: repository facts belong in the project profile. Re-read it, then rewrite it whole through a temp file and a rename.
+`method.md` holds the decision kinds of the principles' § The method, one row each in a table with the columns `Kind · Judgement · Class · Matches · State · Last matches · Hand-over`: `K<n>`; the judgement in one line, as the habitual choice ("For X, choose Y"); `kept` for architecture, design, speaking for the user, plan approval, a boundary or rule crossing, anything published, ready for review, a release, someone else's code and moving the local stack, and `work` for every kind not in that list; the matches in a row; `asked`, `proposed` or `handed over`; the dates of the last matches; the date of the last hand-over or take-back. At most 30 kinds. No repository, project, code or person names and no code: repository facts belong in the project profile. Re-read it, then rewrite it whole through a temp file and a rename.
 
 ## State file
 
