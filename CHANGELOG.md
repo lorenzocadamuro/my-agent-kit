@@ -40,6 +40,7 @@ The kit asks when you can answer, shows you the files it wants you to read, trie
 
 - New cases: `plan/free-answer-gets-an-answer` (fails on 4.0.0 in 3 of 3 runs, passes in 4 of 5 after) and `plan/tool-tried-first` (a guard: 4.0.0 already passes it). `pr/pr-explains-not-judges` and `pr/broken-promise` gain a grader for the absolute path (both fail on 4.0.0); `pr/pr-explains-not-judges` also gains two guards against `open` (4.0.0 already passes them). The suite has 27 cases.
 - Following what a plan adds, and the coordinator keeping its own checks, have no case: the cases written for them passed on the text before the change (2 of 2 runs each), because a one-page fixture makes the consequence obvious, while the misses came from work spread over many rounds. They were not kept. `evals/README.md` says how many runs a noisy grader needs.
+- `pr/sync-context-covers-one`: `pricing-decided` fails only on a gating word on the `pricing.py` line (it failed a correct run that wrote "user decision"), and `orders-gate` no longer takes "decided by" as a gate. 3 of 3 runs pass.
 - Prose in `skills/`, `docs/` and `templates/` stays at 1,414 lines.
 
 ## [4.0.0] - 2026-10-21
