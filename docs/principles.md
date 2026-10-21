@@ -55,7 +55,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 
 ## Repository rules are inputs, not assumptions
 
-- **Each repository has a local profile** in `~/.my-agent-kit/projects/<repo>.md`. It names the commands (tests, codegen, migrations, deep review, PR description), the guides to load, and the post-merge checks. The format is in [local-data.md](local-data.md).
+- **Each repository has a local profile** in `<data root>/projects/<repo>.md`. It names the commands (tests, codegen, migrations, deep review, PR description), the guides to load, and the post-merge checks. The format is in [local-data.md](local-data.md).
 - **Load the relevant rules explicitly.** Before work starts, find the guides that apply to the files being touched, and hand them to both the executor and the reviewer.
 - **When a fix suggested by a reviewer conflicts with a repository rule,** the rule wins until the user decides otherwise.
 
@@ -74,8 +74,8 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 ## Where files go
 
 - **Per-change files** (plans, rounds, summaries, comment triage) live in the worktree's git-ignored `.plans/` folder, and disappear with the worktree.
-- **Lasting personal material** lives in the data root: `$MY_AGENT_KIT_HOME`, or a root the user names, otherwise `~/.my-agent-kit/`; never in this repository. The layout is in [local-data.md](local-data.md).
-- **Personal material stays private.** Study pages, readings, the glossary, reviewer profiles and the improvement log stay under the data root, never in a repository, artifact, doc or gist. They shape what the kit looks for, but nothing published (PR text, comments, replies, commits, messages) cites, quotes or names them.
+- **Lasting personal material** lives in the data root: a root the user names, else `$MY_AGENT_KIT_HOME`, else `~/.my-agent-kit/`; never in this repository. The layout is in [local-data.md](local-data.md).
+- **Personal material stays private.** Study pages, readings, the glossary, reviewer profiles and the suite log stay under the data root, never in a repository, artifact, doc or gist. They shape what the kit looks for, but nothing published (PR text, comments, replies, commits, messages) cites, quotes or names them.
 - **Throwaway files** go in the session scratchpad.
 - **Link only files the app can open.** The desktop app's file pane opens files inside the session's working directory and added folders, not the scratchpad. A file the user must read goes in the working directory (a git-ignored `.plans/`) or the data root. Before linking a file under the data root (`~/.my-agent-kit/` by default), add that folder to the session with the app's directory-request tool (`request_directory`), once per session. When the tool is missing, show the path as code, not as a link.
 - **Nothing employer-specific enters this repository.**
@@ -83,7 +83,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 ## Language
 
 - **Skills, prompts for other agents, plans, hand-off files, commit messages, comment and reply drafts are in English.** Signals and the reasoning in log entries are the exception.
-- **Reasoning is in the user's language:** the conversation and its reports, study material, signals and the reasoning in log notes. Plain words, the why before the what.
+- **Reasoning is in the user's language:** the conversation and the reports shown to the user (files under `.plans/` stay in English), study material, signals and the reasoning in log notes. Plain words, the why before the what.
 - **Vocabulary is never translated.** Repository terms (code names, domain nouns, flags, commands) and the kit's own terms (`bar for done`, `boundary`, `round`, states, ids, table headers) stay as they are in every language, so the user finds them in the code and in conversations with colleagues. The first time a term appears in a conversation, give its meaning in one plain line.
 
 ## Name the session after the work

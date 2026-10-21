@@ -1,10 +1,10 @@
 # Local data
 
-Personal and employer-specific material lives outside this repository, in `~/.my-agent-kit/`. Skills create missing folders on first use. It is deliberately not under `~/.claude/`: Claude Code treats that folder as protected configuration, so every write there needs approval, and headless runs refuse it.
+Personal and employer-specific material lives outside this repository, in the data root (`~/.my-agent-kit/` by default; principles: where files go). Skills create missing folders on first use. It is deliberately not under `~/.claude/`: Claude Code treats that folder as protected configuration, so every write there needs approval, and headless runs refuse it.
 
 ```
-~/.my-agent-kit/
-  deny-words.txt          words that must never enter this repository (read by scripts/check.sh)
+<data root>/              ~/.my-agent-kit/ by default
+  deny-words.txt          words that must never enter this repository (read by scripts/check.sh; `$MY_AGENT_KIT_DENY` names another file)
   suite-log.md            problems with the kit, written by /my:improve note and digest
   signals/<owner-name>-<branch>.md  raw signals collected during the work, until /my:improve digest turns them into notes
   projects/<repo>.md      one profile per repository

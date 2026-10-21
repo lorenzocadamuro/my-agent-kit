@@ -3,7 +3,7 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
-deny_file="${MY_AGENT_KIT_DENY:-$HOME/.my-agent-kit/deny-words.txt}"
+deny_file="${MY_AGENT_KIT_DENY:-${MY_AGENT_KIT_HOME:-$HOME/.my-agent-kit}/deny-words.txt}"
 
 claude plugin validate "$root"
 
