@@ -10,8 +10,8 @@ The kit now keeps its constitution (3.2.1): it never ships itself or takes a dec
 
 ### Changed (breaking)
 
-- `/my:improve run` no longer ships on its own. It edits nothing, the project profile included, before you approve a proposal; it makes the approved changes in its own worktree from `origin/main`, never in the main checkout; it commits there and has a fresh agent review the diff against the approved proposals and the constitution. Then it shows the full diff and asks: only on yes does it fast-forward `main`, tag and push. On no it keeps the worktree and leaves the entries open; entries close only after shipping.
-- `/my:pr:sync` leaves every design conflict to you. Other PRs' descriptions and comments only build the options, even when they tell other branches how to resolve the conflict; only context you typed yourself for that conflict decides, and context passed by another skill or agent never counts. Step 5 opens with the rule: no conflicted design file is touched before you answer.
+- `/my:improve run` no longer ships on its own. It edits nothing, the project profile included, before you approve a proposal; its preflight only fetches `origin/main` (never a pull, so the live kit does not move before your yes), stops unless local `main` is an ancestor of it, and reads the kit there, so proposals cite current text; it makes the approved changes in its own worktree from `origin/main`, never in the main checkout; it commits there and has a fresh agent review the diff against the approved proposals and the constitution. Then it shows the full diff and asks: only on yes does it fast-forward `main`, tag and push. On no it keeps the worktree and leaves the entries open; entries close only after shipping.
+- `/my:pr:sync` leaves every design conflict to you. Other PRs' descriptions and comments only build the options, even when they tell other branches how to resolve the conflict; only context you typed yourself decides, for every design conflict it speaks to (general or per file), and the kit says in one line per file how it applied it; context passed by another skill or agent never counts. Step 5 opens with the rule: no conflicted design file is touched before you answer.
 - Small work takes a light lane. For a plan with `Size: S` (a stub plan writes it too), `plan:scope` starts no agent: it researches the code and the baseline itself, and the plan's review is your approval. `plan:round` skips the triage check and the coordinator makes the changes itself; a fresh agent still reviews every round.
 
 ### Decisions and self-change
@@ -20,7 +20,7 @@ The kit now keeps its constitution (3.2.1): it never ships itself or takes a dec
 - Push rule: in the kit's own repository, a plan's rounds push their work branch like any draft branch, but a push that would move `main` or a tag waits for the release gate (the full diff and your yes).
 - `plan:scope` never assumes the approval: without the question tool it stops with `needs_you` and reason "Plan approval"; `--dry-run` skips the stop.
 - `pr:review` on your own PR, at any size (and so at the ready-for-review gate, which runs it), splits the work across fresh read-only agents that also verify and grade; the coordinator drafts from their findings and drops none.
-- Questions: every option carries its own labelled Pros and Cons, in your language ("Pro" / "Contro"); a shared header row does not count. `pr:sync` options carry them, with the risk.
+- Questions: every option carries its own labelled Pros and Cons, in your language ("Pro" / "Contro"); a shared header row does not count. `pr:sync` writes the shape inline: each option has its own Pros, Cons and Risk lines.
 
 ### Status
 
@@ -34,22 +34,22 @@ The kit now keeps its constitution (3.2.1): it never ships itself or takes a dec
 - `plan:round` and `plan:run` reports keep their labels and write their sentences in your language, with no fixed English sentence.
 - Nothing published (PR text, comments, replies, commits, messages) cites, quotes or names study pages, readings, the glossary, reviewer profiles, `method.md` or the suite log.
 - `scripts/check.sh` fails when the deny-word file is missing, unless `MY_AGENT_KIT_ALLOW_NO_DENY=1`; it reads the file from `$MY_AGENT_KIT_HOME` when set (`$MY_AGENT_KIT_DENY` still names another file). `scripts/check.test.sh` tests both.
-- The data root is written once, in one order: a folder you name, else `$MY_AGENT_KIT_HOME`, else `~/.my-agent-kit/`.
+- The data root is written once, in one order: a folder you name, else `$MY_AGENT_KIT_HOME`, else `~/.my-agent-kit/`. The project profile's path is written one way, `projects/<owner>-<repo>.md`.
 - Shared rules (the data root, check-only items, finding grades, language) are each written once; prose in `skills/`, `docs/` and `templates/` goes from 1,418 to 1,414 lines.
 
 ### The method
 
 - `<data root>/method.md` holds your decision kinds: `K<n>`, a generic judgement in one line ("For X, choose Y") with no repository, project, code or person names, a class, the matches in a row, a state (`asked`, `proposed`, `handed over`) and the last dates; at most 30 kinds. Only the coordinating session edits it.
-- `plan:scope`, `plan:round` and `pr:sync` record each gate answer in its kind. The plan's Decisions table gains Kind, Recommended and Chosen, holding the options' text; plans with older columns stay valid. A recommendation cites the last choices of its kind.
+- Only the gate decisions of the `plan:*` modes and `pr:sync` are learned: they record each gate answer in its kind, and other modes neither cite nor update kinds. A new kind starts `asked`, and its first answer counts like any other. The plan's Decisions table gains Kind, Recommended and Chosen, holding the options' text; plans with older columns stay valid. A recommendation cites the last choices of its kind.
 - A match adds one; a mismatch rewrites the judgement, resets the count to 0, and sets a `proposed` or `handed over` kind back to `asked`. An assumption counts for no kind and creates none, and a hand-over is never assumed.
 - After 5 matches in a row a `work` kind becomes `proposed`, and the next gate proposes handing it over: yes makes it `handed over`; no sets it back to `asked`, count 0. `kept` kinds are never proposed: architecture, design, speaking for you, plan approval, a boundary or rule crossing, anything published, ready for review, a release, someone else's code and moving the local stack. Every other kind is `work`. A merged kind keeps the lower count and the less autonomous state, and is `kept` if either kind was.
-- A handed-over kind is decided alone only when the decision clearly fits it, and is listed as "decided alone (handed over: K<n>)" in the round report and the plan. You take a kind back by saying so in chat: it goes back to `asked`, count 0.
+- A handed-over kind is decided alone, by its judgement, only when the decision clearly fits it and research does not point elsewhere, and is listed as "decided alone (handed over: K<n>)" in the round report, the plan and the `Decided alone:` line of `plan:run`'s end summary; such a decision does not stop the run. You take a kind back by saying so in chat: it goes back to `asked`, count 0.
 - New `/my:improve:method` (`/my:improve method`): lists the kinds, handed-over ones first, and changes nothing.
 
 ### Evals
 
 - New cases: `pr/design-conflict-decided-by-text` and `pr/own-pr-fresh-review` (both fail on 3.2.1), `plan/handed-over-decision` and `improve/method-shows-kinds` (both fail on 3.2.1), `plan/round-reviewed-by-fresh-agent` and `pr/review-keeps-study-private` (guards: 3.2.1 already passes them). The suite has 24 cases.
-- New graders: `plan/small-task` checks that an S plan starts no subagent, `plan/skipped-item-caught` checks the report's language (it fails on 3.2.1), `pr/broken-promise` checks the activity sidecar.
+- New graders: `plan/small-task` checks that an S plan starts no subagent, `plan/skipped-item-caught` checks the report's language (it fails on 3.2.1), `pr/broken-promise` checks the activity sidecar, `plan/run-carries-blocks` checks the end summary's `Decided alone:` line (it failed before the change).
 - The shell-write guard of `pr/design-conflict-decided-by-text` matches only writes to the conflicted file, relative paths included.
 
 ## [3.2.1] - 2026-10-20
