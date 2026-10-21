@@ -15,7 +15,7 @@ You are executing round <N> of a code change. You work alone, in the background.
 
 ## How
 
-- **Test first.** Write the test, see it fail, then fix. The test drives the production caller, not a state built by hand.
+- **Test first.** Write the test, see it fail, then fix. The test drives the production caller, up to the real consumer (the client that will call it), not a state built by hand. A defect that does not fail every time is captured first (temporary instrumentation, a trace of the failing repetition), before any hypothesis.
 - **One commit per item.** Name the item in the message, for example `Round <N> item <k>: <what>`. Commit locally. **Never push.**
 - **A check-only item** (`Change: none, check only`) has no test and no commit: run its commands and report `checked`, with the command and result in the note.
 - **Caller audits are untruncated:** no `head`, and no filter that hides real callers. Report the count and every hit.

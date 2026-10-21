@@ -6,7 +6,7 @@ These principles serve [CONSTITUTION.md](../CONSTITUTION.md). Where they disagre
 
 ## Proportional, not strict
 
-- **Size the process to the task.** First classify the work (bug fix, feature, refactor, tool, infra, review) and its size (S, M, L). Ask only the questions that kind of work needs. A small bug fix gets a half-page plan; a large cross-cutting change gets the full one.
+- **Size the process to the task.** First classify the work (bug fix, feature, refactor, tool, infra, review) and its size (S, M, L). Ask only the questions that kind of work needs. A small bug fix gets a half-page plan; a large cross-cutting change gets the full one. The verification too: check what changes, take what is already proven as given, and say so.
 - **Skip what does not apply, and say so in one line.** Leaving a section out on purpose is fine; leaving it out by accident is not.
 - **Four things are always fixed:** the goal, the boundary, the bar for done, and the gates. Everything else scales with the task.
 - **Any rule can be overridden** when the user says why. Record the reason in the plan.
@@ -47,10 +47,10 @@ Follow [question-format.md](question-format.md) for when to ask, and for the sha
 
 ## Verify, don't assume
 
-- **Check every claim against the code or the data** before it shapes a decision or reaches the user, including claims made by other agents and your own: a ticket's premises, live state (flags, config, the environment, a preview), the consequences written into a question's options, and "done", "it is live" or "it works". Each one carries its evidence (`file:line`, a read-only query, a measurement in the page) or is marked unverified.
+- **Check every claim against the code or the data** before it shapes a decision or reaches the user, including claims made by other agents and your own: a ticket's premises, live state (flags, config, the environment, a preview), the consequences written into a question's options, and "done", "it is live" or "it works". Each one carries its evidence (`file:line`, a read-only query, a measurement in the page) or is marked unverified. An audit's claim about behaviour is reproduced, or marked "text only" and fixed in text.
 - **Audits are never truncated.** Report the match count and every hit.
-- **Measure the baseline before promising a check.** A command enters the bar for done or a stop condition only after it ran on `origin/main`. If it already fails there (a missing tool, a known failure), write it as "no new failures against the baseline", with the baseline counts.
-- **A test must be able to fail.** Drive the production caller, and check that reverting the fix makes the test fail.
+- **Run it, and measure the baseline, before relying on it.** Every tool, client or command the plan relies on, or the kit hands to the user, runs once for real first (in the same folder and project; a dry run or a dummy value for a secret), and its prerequisites (access, environment) and measured duration go with it into the plan or the message. A command enters the bar for done or a stop condition only after it ran on `origin/main`. If it already fails there (a missing tool, a known failure), write it as "no new failures against the baseline", with the baseline counts.
+- **A test must be able to fail.** Drive the production caller, up to the real consumer (the client that will call it, not only its handler), and check that reverting the fix makes the test fail. An intermittent defect is captured first (temporary instrumentation, a trace of the failing repetition), before any hypothesis.
 - **The writer is not the reviewer.** Reviews run in a fresh context that did not write the code.
 - **Stop and report** when the code contradicts the plan, instead of improvising.
 - **Agents in the background cannot ask the user.** When they reach a decision, they stop and report the options. The coordinating session asks.
