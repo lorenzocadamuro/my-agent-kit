@@ -102,7 +102,7 @@ Six lines, labels as shown and sentences in the user's language, and a desktop n
 Round N: <k done / c checked / m stopped / s skipped>  ·  HEAD <sha> (pushed | not pushed: why)
 Review: <verdict against the bar>; block <b>, ticket <t>, note <n>
 Drift: <lines>/<budget> lines, <files>/<budget> files; main <ahead/behind>
-Decisions taken alone: <count, or the flagged ones>; handed over: <"decided alone (handed over: K<n>)" for each, or none>
+Decisions taken alone: <each unflagged one (a flagged one is a gate), and each handed-over one as "decided alone (handed over: K<n>)"; or none>
 Lessons: <note ids from the digest | none | at the end of the run>
 Next: <Run plan | One round | Review comments | Merge main | a question | ready-for-review gate>
 ```
@@ -126,7 +126,7 @@ Follow the principles. In `round`, the digest already ran in step 9; run it agai
 - **A round succeeds** when verification passed, the push is done or disabled, and no question is open.
 - **After a round that succeeds,** start the next one at once: the block findings in `.plans/round-<N>-review.md` first, then the next unfinished part. Finishing a part does not stop the run, unless the plan puts a gate there.
 - **Stop the run** at the first of:
-  - a gate the plan or the principles name, and any decision for the user (boundary, a repository rule, someone else's code), unless its kind is handed over and the decision clearly fits it (decide it alone and list it);
+  - a gate the plan or the principles name, and any decision for the user (boundary, a repository rule, someone else's code), unless the method lets you decide it alone (principles: the method): then decide it and list it;
   - failed verification;
   - conflicts with main;
   - new PR comments not covered by the source (suggest "Review comments");
@@ -142,7 +142,7 @@ Follow the principles. In `round`, the digest already ran in step 9; run it agai
 ```
 Run: <r> rounds · <parts done>/<parts> parts · <elapsed>
 Rounds: <one line each: N, items done, verdict>
-Decided alone: <the executor decisions listed or flagged, and "decided alone (handed over: K<n>)" for each; or none>
+Decided alone: <as the round report's "Decisions taken alone" line, for the whole run>
 Stopped: <why, in one plain phrase, and what is needed from the user>
 Lessons: <note ids from the digest | none>
 Next: <the action that unblocks it>
