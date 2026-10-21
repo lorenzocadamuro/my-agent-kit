@@ -17,7 +17,7 @@ Every decision put to the user follows this format. A question the user cannot a
 - **Each option states:**
   - **Effect:** what changes for the user, or in behaviour, if this is chosen. Verified, or marked unverified (principles: verify).
   - **Today:** what happens now without the change, on the main branch or in production.
-  - **Pros** and **cons**, one short clause each. Every option has both; an option with only a con is incomplete.
+  - **Pros** and **Cons**, written as labels inside each option (in the user's language, for example "Pro" / "Contro"), one short clause each; a shared header row does not count. Every option has both; an option with only a con is incomplete.
   - **Severity** when there is risk: how likely, how bad, and how easy to undo.
 - **Keep terms as they are** (principles: language). The first time a repository or kit term, an internal id, an acronym, or an idea introduced earlier in this conversation appears, give its plain meaning in one line; never paraphrase it away.
 - **Show the case.** One concrete example beats an abstract description ("a user drags the batch while it loads"). For a structural or visual rule, show it: a small before/after (two trees, two rows, a mockup), and say in one line what it shows.

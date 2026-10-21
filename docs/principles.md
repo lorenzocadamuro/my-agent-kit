@@ -43,7 +43,7 @@ These principles serve [CONSTITUTION.md](../CONSTITUTION.md). Where they disagre
 
 ## Questions the user can answer
 
-Follow [question-format.md](question-format.md): multiple choice, recommended option first. Every option shows its effect, what happens today, its pros and cons, and how serious the issue is.
+Follow [question-format.md](question-format.md) for when to ask, and for the shape of every question and of each of its options.
 
 ## Verify, don't assume
 
