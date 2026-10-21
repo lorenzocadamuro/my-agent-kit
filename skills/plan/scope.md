@@ -37,6 +37,7 @@ State the classification and its reason in one line; the user can override it in
 For M and L, run up to three Explore agents in parallel. For S, do it yourself, and skip overlap and people and merge requirements. Collect:
 
 - **How the things the plan relies on really work:** for shared code it extends, its callers by path (untruncated count) and what each reads; for code or data it replaces, every field its readers use and every rule it applies (precedence, ordering, what it skips, what it shows or announces to users); for a tool that measures or verifies, the order it runs its steps and when it takes the measurement. Cite `file:line`, and check each against one scenario that runs today. A plan built from a name or a description breaks where the mechanism differs.
+- **The consequences of what the plan adds or changes:** for each new or changed field, state, key or rule, who writes it and when, who reads it (data saved before the change included), its transitions (backwards too), and any other route it opens. Cite `file:line`; what the plan must decide goes in the interview.
 - **New or existing behaviour:** for each behaviour the ticket or the user describes, find the test or code that pins it today. When the premise is false (the behaviour does not exist yet), it becomes scope, and you tell the user plainly.
 - **Overlap:** open PRs touching the same paths (`gh pr list --state open --json number,title,author,files --limit 100`, intersected with the paths), and the owners' recent work there.
 - **People and merge requirements:**

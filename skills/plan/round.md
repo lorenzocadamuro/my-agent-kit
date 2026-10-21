@@ -46,7 +46,7 @@ At the end of a round or a run, set `state`: `done` when the bar is met (the rea
 Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, where N is the next unused number, and copy its `Comments read until` time into the state file's `commentsReadUntil` (`none` leaves the field as it was). For every item:
 
 - **Verify the claim against the code at HEAD,** and drop or rewrite what does not hold.
-- **List the callers covered, by path,** with the untruncated count.
+- **List the callers covered, by path,** with the untruncated count, and for each field, state, key or rule the item adds or changes, its writers, readers (saved data included), transitions and opened routes (`plan:scope` step 3).
 - **Name the owning code point,** and a test that fails without the fix and drives the production caller. A check-only item names instead the commands it runs and the result that counts as passing.
 - **Write the stop conditions.** They use the plan's "every round" checks; the "once, at the end" proof belongs to the ready-for-review gate. A check copied from the plan or the profile keeps its baseline (principles: measure the baseline).
 
