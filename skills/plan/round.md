@@ -12,7 +12,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 | Argument        | Effect                                                                                                                                                                                          |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | source          | `part B` of the plan; a file (`.plans/comments-<date>.md`, a review file); or a list in plain words. By default, the open block findings of the last review (`.plans/round-<N>-review.md`), or else the next unfinished plan part. In `run`, the first round starts there and the next ones follow the plan |
-| `--triage-only` | Build and check the triage, then stop and show it. Refused with `run`                                                                                                                         |
+| `--triage-only` | Build (and, above S, check) the triage, then stop and show it. Refused with `run`                                                                                                             |
 | `--verify N`    | Skip to step 6 for round N, when its executor has already finished. In `run`, resume there and then loop                                                                                       |
 | `--deep`        | Also run the deep review: this round; in `run`, when a part finishes and at the ready-for-review gate                                                                                         |
 | `--no-push`     | Do not push                                                                                                                                                                                     |
@@ -27,7 +27,7 @@ At the end of a round or a run, set `state`: `done` when the bar is met (the rea
 
 ### 1. Load
 
-- **The plan:** `<worktree>/.plans/plan.md`. If it is missing, offer `/my:plan:scope --adopt`. For a tiny task, the user may prefer three questions (goal, boundary, bar) and a stub plan instead.
+- **The plan:** `<worktree>/.plans/plan.md`. If it is missing, offer `/my:plan:scope --adopt`. For a tiny task, the user may prefer three questions (goal, boundary, bar) and a stub plan instead; a stub plan writes `Size: S` and takes the S lane.
 - **The project profile:** commands, the guides to load for the touched paths, the deep review tool.
 - **New PR comments:** those created since the previous round (its `Comments read until` line), read with the query of `pr:comments` step 1 but without touching its state file. A real comment that the plan, the research or the last review should have caught is a signal (principles: closing step). When comments need work, suggest `/my:pr:comments` to turn them into this round's source. Comments a `pr:comments` file covers count as read when that file is the source: move `Comments read until` past them.
 - **CI:** read it through the app's PR status tool when one is available. Never poll.
@@ -53,16 +53,16 @@ Items outside the plan's scope, and findings labelled "ticket", go to "Not this 
 
 ### 4. Independent triage check
 
-In the S lane, skip this check and write `Triage check: skipped (size S)` in the round file. Otherwise, run a fresh agent with [triage-check.md](triage-check.md) and fix what it finds. Anything that needs the user becomes a gate question. With `--triage-only`, stop here and show the triage.
+In the S lane, skip this check and write `Triage check: skipped (size S)` in the round file. Otherwise, run a fresh agent with [triage-check.md](triage-check.md) and fix what it finds. Anything that needs the user becomes a gate question. In both lanes, `--triage-only` stops here and shows the triage.
 
 ### 5. Execute
 
 - Mark a session chapter `Round N · <goal>` with the app's chapter tool; skip it when the tool is missing.
-- **S lane:** make the changes yourself, following [executor.md](executor.md) § How and § Stop and report, except that you ask the user (a gate) where it says to stop. After each item, update `items` in the state file (no progress sidecar); at the end, write `.plans/round-<N>-summary.md` in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`.
-- **Full lane:** launch a **background** general-purpose agent with [executor.md](executor.md), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
 - Tell the user in one line, in their language, that round N started with k items and that they will hear from you at a gate or at the end. In `run`, say it for the first round only.
-- **When the agent stops with questions,** ask the user (gate, with a notification), then continue the same agent with `SendMessage`.
-- **When it finishes,** write its returned summary to `.plans/round-<N>-summary.md`.
+- **S lane:** make the changes yourself, following [executor.md](executor.md) § How, except its Progress line, and § Stop and report, except that you ask the user (a gate) where it says to stop. After each item, update `items` in the state file (no progress sidecar); at the end, write `.plans/round-<N>-summary.md` in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`.
+- **Full lane:** launch a **background** general-purpose agent with [executor.md](executor.md), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
+  - **When the agent stops with questions,** ask the user (gate, with a notification), then continue the same agent with `SendMessage`.
+  - **When it finishes,** write its returned summary to `.plans/round-<N>-summary.md`.
 
 ### 6. Verify
 

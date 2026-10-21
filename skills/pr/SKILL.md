@@ -21,4 +21,4 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`.
 
 The sub-commands `/my:pr:learn`, `/my:pr:study`, `/my:pr:review`, `/my:pr:comments` and `/my:pr:sync` call this skill with the mode already set. Follow the mode's file; with the principles, it holds every rule the mode needs, except the shared rule below. The rules of `learning.md` apply to `learn` and `study` only.
 
-**Activity (every mode):** write the activity sidecar (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) under the mode's data root: `running` as the first step, `needs_you` while waiting for the user (a posting gate, a design conflict), `done` at every exit, stops included.
+**Activity (every mode):** write the activity sidecar (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) under the mode's data root: `running` as the first step and again when the user answers, `needs_you` while waiting for the user (a posting gate, a design conflict), `done` at every exit, stops included.

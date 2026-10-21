@@ -36,7 +36,7 @@ State the classification and its reason in one line; the user can override it in
 
 For M and L, run up to three Explore agents in parallel. For S, do it yourself, and skip overlap and people and merge requirements. Collect:
 
-- **How the things the plan relies on really work:** for shared code it extends, its callers by path (untruncated count) and what each reads; for code or data it replaces, every field its readers use and every rule it applies (precedence, ordering, what it skips, labels a screen reader announces); for a tool that measures or verifies, the order it runs its steps and when it takes the measurement. Cite `file:line`, and check each against one scenario that runs today. A plan built from a name or a description breaks where the mechanism differs.
+- **How the things the plan relies on really work:** for shared code it extends, its callers by path (untruncated count) and what each reads; for code or data it replaces, every field its readers use and every rule it applies (precedence, ordering, what it skips, what it shows or announces to users); for a tool that measures or verifies, the order it runs its steps and when it takes the measurement. Cite `file:line`, and check each against one scenario that runs today. A plan built from a name or a description breaks where the mechanism differs.
 - **New or existing behaviour:** for each behaviour the ticket or the user describes, find the test or code that pins it today. When the premise is false (the behaviour does not exist yet), it becomes scope, and you tell the user plainly.
 - **Overlap:** open PRs touching the same paths (`gh pr list --state open --json number,title,author,files --limit 100`, intersected with the paths), and the owners' recent work there.
 - **People and merge requirements:**
@@ -82,7 +82,7 @@ It also names any question the user should have been asked. Fix what it finds. A
 
 ### 7. Gate: plan approval
 
-Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel. On cancel, delete the planning state file. The approval is never assumed: without the question tool, stop here and set the state file to `needs_you` with reason "Plan approval"; a `--dry-run`, which sets up nothing, ends as today.
+Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel. On cancel, delete the planning state file. The approval is never assumed: without the question tool, stop here and set the state file to `needs_you` with reason "Plan approval"; a `--dry-run` skips this stop and goes on to step 8, which it skips.
 
 ### 8. Set up the workspace
 
