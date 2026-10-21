@@ -44,7 +44,7 @@ At the end of a round or a run, set `state`: `done` when the bar is met (the rea
 
 ### 3. Triage
 
-Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, where N is the next unused number. For every item:
+Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, where N is the next unused number, and copy its `Comments read until` time into the state file's `commentsReadUntil` (`none` leaves the field as it was). For every item:
 
 - **Verify the claim against the code at HEAD,** and drop or rewrite what does not hold.
 - **List the callers covered, by path,** with the untruncated count.
