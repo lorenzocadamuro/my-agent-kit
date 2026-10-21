@@ -128,7 +128,7 @@ claude plugin marketplace add "<path to your clone>"
 claude plugin install my-status@my-agent-kit
 ```
 
-Edits to `mods/my-status` reach a session with `/reload-plugins`.
+The installed copy is kept by version, so a change to `mods/my-status` reaches it only with a version bump: once that version is in your clone, run `claude plugin marketplace update my-agent-kit && claude plugin update my-status@my-agent-kit`, then restart.
 
 ## Improving the kit
 

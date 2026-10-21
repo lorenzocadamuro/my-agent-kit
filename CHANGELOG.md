@@ -34,6 +34,7 @@ The kit asks when you can answer, shows you the files it wants you to read, trie
 - Nothing is cut with "…". The state and the first button always show; every other element is added whole, in a fixed order (the reason, the other buttons, the percent, the tiles, Open plan, the detail, the time), only while the band fits.
 - The state file and the activity sidecar no longer carry `name`: `plan:scope` and `plan:round` stop writing it, and a `name` left by 4.0.x is ignored.
 - Mod tests: 33 → 37.
+- `my-status` is versioned 0.2.0 (it stayed 0.1.0 through 4.0.0): the installed mod is a copy kept by version, so without the bump an installed copy never received the 4.0.0 and 4.1.0 band. The README says how to update it.
 
 ### Evals
 
