@@ -34,7 +34,7 @@ Pasted comments work too, when `gh` is unavailable.
    - **Chat:** a table with one row per group: comment(s), plain explanation (2 lines), class, weight, action.
    - **File:** `<worktree>/.plans/comments-<date>.md` (or the scratchpad), holding the table, the evidence and the reply drafts. Items marked "fix" are written as `### <k>. <claim>` entries, so `/my:plan:round` and `/my:plan:run` can take the file as their input.
    - **State file:** update it.
-7. **Gate.** Ask which replies to post (all, a selection, or none) and whether to resolve the answered threads. Post with `gh api repos/<o>/<r>/pulls/<n>/comments -X POST -f body=… -F in_reply_to=<id>`, and resolve with the GraphQL `resolveReviewThread` mutation, only for what the user approved. Never resolve a thread whose fix is not yet pushed.
+7. **Gate.** Paste the reply drafts in chat, and ask which to post (all, a selection, or none) and whether to resolve the answered threads. Post with `gh api repos/<o>/<r>/pulls/<n>/comments -X POST -f body=… -F in_reply_to=<id>`, and resolve with the GraphQL `resolveReviewThread` mutation, only for what the user approved. Never resolve a thread whose fix is not yet pushed.
 8. **Suggest the next step:**
    - `/my:plan:run <comments file>` when fixes are pending;
    - the repository's own comment resolver, when the project profile names one, as an alternative.

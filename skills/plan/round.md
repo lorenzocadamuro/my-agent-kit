@@ -90,7 +90,7 @@ When the round's verification needs a manual check in the browser, follow the pr
 ### 8. Push
 
 - If verification passed and `--no-push` is not set, run `git push`, fast-forward only.
-- **No PR yet:** the first push asks once whether to open a **draft** PR, because that is published text. Build its body with the profile's PR description tool when there is one.
+- **No PR yet:** the first push asks once whether to open a **draft** PR, because that is published text. Build its body with the profile's PR description tool when there is one, and paste it in chat with the question.
 
 ### 9. Report
 
@@ -113,7 +113,7 @@ When the review says the bar is met and no block finding remains:
 
 1. Run the plan's "once, at the end" checks. If one fails, the bar is not met: its failures become the next round's items, and the state stays `ready` (or `needs_you` when the fix is a decision). Then run `/my:pr:review` on the PR in `local` mode and the deep review, if this round did not already.
 2. Write a one-page retrospective to `<data root>/retros/<repo>-<branch>.md`: rounds, rework and its causes, decision reversals, drift, and what the reviewers asked.
-3. Ask the user, one question each: mark the PR ready, update the description, notify the reviewers (all of these are publishing).
+3. Ask the user, one question each: mark the PR ready, update the description (the new text pasted in chat), notify the reviewers (all of these are publishing).
 
 ### 11. Closing step
 

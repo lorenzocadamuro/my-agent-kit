@@ -16,7 +16,7 @@ The kit asks when you can answer, shows you the files it wants you to read, trie
 
 ### Files you must read
 
-- A file you must read opens in the app's file pane, by absolute path, after its folder is added to the session when it lies outside the working directory (the data root, a worktree entered later). When the pane cannot open it, the kit gives the absolute path as code and says why. A text you must approve before it is published is pasted in chat, always. `pr:learn`, `pr:study` and `pr:review` follow this instead of `open <file>` or a bare path.
+- A file you must read opens in the app's file pane, by absolute path, after its folder is added to the session when it lies outside the working directory (the data root, a worktree entered later). When the pane cannot open it, the kit gives the absolute path as code and says why. A text you must approve before it is published is pasted in chat, always. `pr:learn`, `pr:study` and `pr:review` follow this instead of `open <file>` or a bare path; `pr:comments` pastes its reply drafts, and `plan:round` the draft-PR body and the description update, with the question.
 
 ### Verification
 
