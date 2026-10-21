@@ -15,7 +15,7 @@ Talk to the user in their language. Write the plan in English.
 
 **Data root:** `$MY_AGENT_KIT_HOME`, or a root the user names; otherwise `~/.my-agent-kit`.
 
-**Status:** from step 1 to the approval, keep the state file current (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) with `state: "planning"`, the plan's title once known, and `step`: `research` (steps 1–3), `interview` (4), `write` (5), `review` (6), `approval` (7). The status line then shows the plan being made.
+**Status:** from step 1 to the approval, keep the state file current (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) with `state: "planning"`, the plan's title and `name` (session-title format) once known, and `step`: `research` (steps 1–3), `interview` (4), `write` (5), `review` (6), `approval` (7). The status line then shows the plan being made.
 
 ## Steps
 

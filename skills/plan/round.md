@@ -21,7 +21,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 
 ## The state file
 
-Write the state file (name and shape in `${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) at the start of each round, at each step below, at each gate and its answer, and at the end. Write a temp file and rename it, so a reader never sees half a file. It feeds the optional status mod; nothing in the kit reads it except a resuming run.
+Write the state file (name and shape in `${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) at the start of each round, at each step below, at each gate and its answer, and at the end. Write a temp file and rename it, so a reader never sees half a file. It feeds the optional status mod, and a resuming run reads it. A `reason` is two or three words (`Tests failing`).
 
 At the end of a round or a run, set `state`: `done` when the bar is met (the ready-for-review gate); `needs_you` with a `reason` when a gate or a question waits for the user; `stopped` with a `reason` when verification failed or the run hit its cap; otherwise `ready`, waiting for the next round.
 
@@ -60,7 +60,7 @@ Run a fresh agent with [triage-check.md](triage-check.md). Fix what it finds. An
 ### 5. Execute
 
 - Mark a session chapter `Round N · <goal>` with the app's chapter tool; skip it when the tool is missing.
-- Launch a **background** general-purpose agent with [executor.md](executor.md), filled in: the worktree path, the round file, the guides, the commands.
+- Launch a **background** general-purpose agent with [executor.md](executor.md), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
 - Tell the user in one line: `Round N started: k items. I'll notify you at a gate or when it ends.` In `run`, say it for the first round only.
 - **When the agent stops with questions,** ask the user (gate, with a notification), then continue the same agent with `SendMessage`.
 - **When it finishes,** write its returned summary to `.plans/round-<N>-summary.md`.

@@ -15,6 +15,7 @@ Personal and employer-specific material lives outside this repository, in `~/.my
   plans/                  plans written by /my:plan:scope --dry-run
   retros/                 one-page retrospective per finished change
   state/<owner>-<repo>-<branch>.json  where a change stands, written by /my:plan:scope, /my:plan:round and /my:plan:run, read by the status mod
+  state/<same base>.progress.json, .activity.json  sidecars: a round's item progress; what a pr:* mode or improve run is doing
 ```
 
 ## Project profile
@@ -33,10 +34,10 @@ One entry per problem, in the format of [templates/log-entry.md](../templates/lo
 
 ## State file
 
-One file per change and folder, rewritten whole through a temp file and a rename. `/my:plan:scope` (from its first step), `/my:plan:round` and `/my:plan:run` write it; the optional status mod reads it. A run resuming after compaction reads it too.
+One file per change and folder, rewritten whole through a temp file and a rename, like its sidecars; every file has one writer. `/my:plan:scope` (from its first step), `/my:plan:round` and `/my:plan:run` write it; the optional status mod reads it and merges the sidecars. A run resuming after compaction reads it too.
 
-- **Name:** `state/<owner>-<repo>-<branch>.json`, computed from the folder the session works in, never from the project profile's name: `<owner>-<repo>` from `git remote get-url origin` (`git@github.com:acme/shop.git` gives `acme-shop`), or `none-<name of the repository's top-level folder>` when there is no remote; `<branch>` from `git branch --show-current`, `/` becoming `-` (`detached` when empty). The status mod computes it the same way.
-- **The file follows the work:** `plan:scope` writes it for the folder it runs in while planning; at approval it writes the worktree branch's file and deletes the planning one. The status mod ignores a `planning` file not updated for 6 hours.
+- **Name:** `state/<owner>-<repo>-<branch>.json`, computed from the folder the session works in, never from the project profile's name: `<owner>-<repo>` from `git remote get-url origin` (`git@github.com:acme/shop.git` gives `acme-shop`), or `none-<name of the repository's top-level folder>` when there is no remote; `<branch>` from `git branch --show-current`, `/` becoming `-` (`detached` when empty). When git cannot answer (no repository, or a sandbox), use the repository and branch the user named; with neither, `none-<folder>-detached`. The status mod computes it the same way.
+- **The file follows the work:** `plan:scope` writes it for the folder it runs in while planning; at approval it writes the worktree branch's file and deletes the planning one. The status mod ignores a `planning` or `running` file, or an activity, not updated for 6 hours.
 
 ```json
 {
@@ -46,6 +47,7 @@ One file per change and folder, rewritten whole through a temp file and a rename
   "session": "<session id or unknown>",
   "updatedAt": "2026-01-10T09:40:00Z",
   "mode": "run",
+  "name": "PR 456 Auth middleware",
   "plan": { "title": "…", "path": "/abs/path/.plans/plan.md" },
   "parts": [ { "title": "Part A: …", "status": "done", "done": 3, "total": 3 } ],
   "round": 3,
@@ -62,3 +64,6 @@ One file per change and folder, rewritten whole through a temp file and a rename
 - `step`: `triage`, `check`, `execute`, `verify`, `review`, `push`, `report`.
 - `state`: `planning` (`/my:plan:scope` is at work; `step` is `research`, `interview`, `write`, `review` or `approval`), `ready` (the plan is approved, or a round ended and the next one can start), `running`, `needs_you` (a gate is waiting, `reason` says which), `stopped` (failed or capped, `reason` says why), `done` (the bar is met).
 - `parts[].status`: `todo`, `running`, `done`; a plan without parts has one part, the plan itself.
+- `name`: two or three words in the session-title format (principles: name the session), written by `plan:scope`; `reason`: two or three words (`Plan approval`). A file without `name` stays valid: readers use the plan title.
+- **Progress sidecar** `<same base>.progress.json`: `{ "round": 3, "items": { "done": 4, "total": 6 }, "updatedAt": "…" }`, written only by the round's executor after each item, at the path the coordinator gives it.
+- **Activity sidecar** `<base>.activity.json`, `<base>` computed as above: `{ "mode": "pr:review", "name": "PR 9 Charge retries", "state": "running", "updatedAt": "…" }`, `state` being `running`, `needs_you` or `done`; written by the `pr:*` modes and `improve run`, each by the rule in its skill.

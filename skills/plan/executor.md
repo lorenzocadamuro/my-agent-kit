@@ -20,6 +20,7 @@ You are executing round <N> of a code change. You work alone, in the background.
 - **A check-only item** (`Change: none, check only`) has no test and no commit: run its commands and report `checked`, with the command and result in the note.
 - **Caller audits are untruncated:** no `head`, and no filter that hides real callers. Report the count and every hit.
 - **Commands:** targeted tests `<cmd>`, lint `<cmd>`, codegen `<cmd>`. Do not run `<slow suites>` locally.
+- **Progress:** after each item, write `<progress sidecar path>` through a temp file and a rename: `{ "round": <N>, "items": { "done": <done>, "total": <total> }, "updatedAt": "<UTC now>" }`. Write no other state file.
 - **Do the chores yourself:** restart services, clean up containers you started, rerun flaky suites once.
 
 ## Stop and report instead of deciding

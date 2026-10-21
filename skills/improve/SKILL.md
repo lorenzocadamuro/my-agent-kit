@@ -84,6 +84,8 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
 
 ## Run
 
+**Activity:** write the activity sidecar (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file), mode `improve:run`: `running` at the start, `needs_you` while waiting at a proposal or the ship question, `done` at every exit, stops included.
+
 1. **Preflight the kit source** (the main checkout; no worktree yet). Clean tree, on `main`, `git pull --ff-only`. Stop if any of these fails. With `--propose-only`, skip the preflight, and stop after step 4 without the closing step.
 2. **Select entries:** all open ones, or those matching the given skill or ids. Read each affected skill, the principles and templates, and any session or file an entry points to.
 3. **Find the upstream lesson.** Group the notes by upstream cause, not by surface event. For each group:
