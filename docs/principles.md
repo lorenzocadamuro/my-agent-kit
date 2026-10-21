@@ -29,7 +29,7 @@ These principles serve [CONSTITUTION.md](../CONSTITUTION.md). Where they disagre
   - marking a change ready for human review;
   - anything published: PR text, review comments, replies, messages, ticket changes beyond the agreed ones.
 - **Between gates, agents work alone.** No relaying messages between sessions, no babysitting.
-- **Pushing to a draft branch is not a gate.** A round that passed verification pushes on its own, so CI and backup happen early. A user can turn this off per run.
+- **Pushing to a draft branch is not a gate.** A round that passed verification pushes on its own, so CI and backup happen early. A user can turn this off per run. In the kit's own repository (the one behind `${CLAUDE_PLUGIN_ROOT}`), work branches are pushed too, but a push that would move its `main` or a tag waits for the release gate (the full diff and the user's yes), whatever branch the work is on.
 - **Chores never land on the user.** Restarting services, cleaning containers and rerunning suites belong to the agent doing the work.
 - **Notify at gates.** When the work stops for a decision, or a long round ends, send a short desktop notification and put the summary in chat.
 
