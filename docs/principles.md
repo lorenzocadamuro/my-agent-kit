@@ -82,7 +82,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 ## Language
 
 - **Skills, prompts for other agents, plans and hand-off files are in English.** Signals and the reasoning in log entries are the exception.
-- **Reasoning is in the user's language:** the conversation, study material, signals and the reasoning in log notes. Plain words, the why before the what.
+- **Reasoning is in the user's language:** the conversation and its reports, study material, signals and the reasoning in log notes. Plain words, the why before the what.
 - **Vocabulary is never translated.** Repository terms (code names, domain nouns, flags, commands) and the kit's own terms (`bar for done`, `boundary`, `round`, states, ids, table headers) stay as they are in every language, so the user finds them in the code and in conversations with colleagues. The first time a term appears in a conversation, give its meaning in one plain line.
 
 ## Name the session after the work
