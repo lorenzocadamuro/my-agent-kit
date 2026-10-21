@@ -21,7 +21,7 @@ Every decision put to the user follows this format. A question the user cannot a
   - **Severity** when there is risk: how likely, how bad, and how easy to undo.
 - **Keep terms as they are** (principles: language). The first time a repository or kit term, an internal id, an acronym, or an idea introduced earlier in this conversation appears, give its plain meaning in one line; never paraphrase it away.
 - **Show the case.** One concrete example beats an abstract description ("a user drags the batch while it loads"). For a structural or visual rule, show it: a small before/after (two trees, two rows, a mockup), and say in one line what it shows.
-- **Say why the recommended option is recommended:** the principle it rests on, and what the user chose the last times for its kind ("the last 3 times you chose …"; principles: the method). When the only reason is "it keeps today's behaviour", say so, and name any product principle that points the other way.
+- **Say why the recommended option is recommended:** the principle it rests on, and what the user chose the last times for its kind, when it has one ("the last 3 times you chose …"; principles: the method). When the only reason is "it keeps today's behaviour", say so, and name any product principle that points the other way.
 
 ## When the user dismisses the questions
 
@@ -29,6 +29,6 @@ A dismissed batch, or an answer like "I don't understand", means "explain first"
 
 ## After the answer
 
-- **Record the decision** in the plan's Decisions table (date, kind, recommended and chosen option, one line of reasoning), and update its kind (principles: the method).
+- **Record the decision** in the plan's Decisions table (date, kind, recommended and chosen option, one line of reasoning) and, in the modes the method names, update its kind (principles: the method).
 - **If the answer reframes the question, or makes a pending one stale,** restate the new understanding in one line, and drop or rewrite the stale question before asking it.
 - **A free answer, a dismissal, or a question asked twice is a signal** (principles: closing step). Record it, then carry on.
