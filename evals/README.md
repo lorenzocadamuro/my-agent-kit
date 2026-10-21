@@ -67,3 +67,4 @@ focus:
 - LLM judges fail on long artifacts, even with a trivial rubric. Check facts with `regex` graders (`target: {source: file, path}`, `flags: is`), and keep `llm` graders for short files or the last message.
 - `input_match` matches the whole tool input, content included. Anchor it on the field you mean, for example `"file_path":\s*"[^"]*/skills/`.
 - A case must be able to fail. Write it against the problem first, then fix the skill.
+- A case with a noisy grader (an LLM judge, a model's choice) runs 2–3 times before it is called green or red.

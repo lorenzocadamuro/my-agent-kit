@@ -27,7 +27,7 @@ You are executing round <N> of a code change. You work alone, in the background.
 
 Stop and report when:
 
-- the code contradicts the round file or the plan;
+- the code contradicts the round file or the plan, or an item's `Stop if` holds;
 - an item would change behaviour covered by the boundary, or not on the intentional-changes list;
 - an item would break a repository rule from the guides;
 - an item would change code another person owns or is changing in an open PR;

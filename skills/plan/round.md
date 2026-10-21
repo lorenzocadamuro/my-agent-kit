@@ -71,7 +71,7 @@ When the round's verification needs a manual check in the browser, follow the pr
 
 - Run `${CLAUDE_PLUGIN_ROOT}/scripts/verify-round.sh .plans <N>`. A missing item, a fake commit or a dirty tree fails the round: report it, and never paper over it.
 - **Check the summary's claims yourself:** audit counts, test results, and every decision taken alone.
-  - A decision flagged boundary, rule or someone else's code is a gate.
+  - A decision flagged boundary, rule or someone else's code, or one that relaxes a check or a stop condition, is a gate.
   - Any other decision is listed in the report.
 - **Tick the plan:** for each verified item that implements a step of a plan part, tick its checkbox in `plan.md`. A part is done when all its boxes are ticked; a plan without parts counts as one part.
 - **Record signals** (principles: closing step) for rework, stopped items, and reversed decisions.

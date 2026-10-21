@@ -52,7 +52,7 @@ Follow [question-format.md](question-format.md) for when to ask, and for the sha
 - **Run it, and measure the baseline, before relying on it.** Every tool, client or command the plan relies on, or the kit hands to the user, runs once for real first (in the same folder and project; a dry run or a dummy value for a secret), and its prerequisites (access, environment) and measured duration go with it into the plan or the message. A command enters the bar for done or a stop condition only after it ran on `origin/main`. If it already fails there (a missing tool, a known failure), write it as "no new failures against the baseline", with the baseline counts.
 - **A test must be able to fail.** Drive the production caller, up to the real consumer (the client that will call it, not only its handler), and check that reverting the fix makes the test fail. An intermittent defect is captured first (temporary instrumentation, a trace of the failing repetition), before any hypothesis.
 - **The writer is not the reviewer.** Reviews run in a fresh context that did not write the code.
-- **Stop and report** when the code contradicts the plan, instead of improvising.
+- **Stop and report** when the code contradicts the plan, instead of improvising. Never relax a check or a stop condition (the plan's, the round's, your own) without telling the user: skipped, run less often or turned into a ticket; one that fires goes to the user. A check with a noisy result (an LLM judge, a model's choice) runs 2–3 times before it is called passed or failed.
 - **Agents in the background cannot ask the user.** When they reach a decision, they stop and report the options. The coordinating session asks.
 
 ## Review depth follows the stakes
