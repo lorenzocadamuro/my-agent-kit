@@ -126,9 +126,8 @@ Follow the principles. In `round`, the digest already ran in step 9; run it agai
 - **A round succeeds** when verification passed, the push is done or disabled, and no question is open.
 - **After a round that succeeds,** start the next one at once: the block findings in `.plans/round-<N>-review.md` first, then the next unfinished part. Finishing a part does not stop the run, unless the plan puts a gate there.
 - **Stop the run** at the first of:
-  - a gate the plan or the principles name, and any decision for the user (boundary, a repository rule, someone else's code);
+  - a gate the plan or the principles name, and any decision for the user (boundary, a repository rule, someone else's code), unless its kind is handed over and the decision clearly fits it (decide it alone and list it);
   - failed verification;
-  - drift over budget;
   - conflicts with main;
   - new PR comments not covered by the source (suggest "Review comments");
   - red CI known at round start;
@@ -143,6 +142,7 @@ Follow the principles. In `round`, the digest already ran in step 9; run it agai
 ```
 Run: <r> rounds · <parts done>/<parts> parts · <elapsed>
 Rounds: <one line each: N, items done, verdict>
+Decided alone: <the executor decisions listed or flagged, and "decided alone (handed over: K<n>)" for each; or none>
 Stopped: <why, in one plain phrase, and what is needed from the user>
 Lessons: <note ids from the digest | none>
 Next: <the action that unblocks it>
