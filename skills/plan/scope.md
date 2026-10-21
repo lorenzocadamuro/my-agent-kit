@@ -38,7 +38,7 @@ State the classification and its reason in one line; the user can override it in
 
 ### 3. Research before asking
 
-For M and L, run up to three Explore agents in parallel. For S, do it yourself. Collect:
+For M and L, run up to three Explore agents in parallel. For S, do it yourself, and skip overlap and people and merge requirements. Collect:
 
 - **How the things the plan relies on really work:** for shared code it extends, its callers by path (untruncated count) and what each reads; for code or data it replaces, every field its readers use and every rule it applies (precedence, ordering, what it skips, labels a screen reader announces); for a tool that measures or verifies, the order it runs its steps and when it takes the measurement. Cite `file:line`, and check each against one scenario that runs today. A plan built from a name or a description breaks where the mechanism differs.
 - **New or existing behaviour:** for each behaviour the ticket or the user describes, find the test or code that pins it today. When the premise is false (the behaviour does not exist yet), it becomes scope, and you tell the user plainly.
@@ -49,7 +49,7 @@ For M and L, run up to three Explore agents in parallel. For S, do it yourself. 
 - **Rules to load:** the guides the profile maps to these paths.
 - **Baseline:** run the profile's check commands for these paths on `origin/main`, and note pass, fail or missing tool (principles: measure the baseline).
 
-Keep research notes in the scratchpad. They feed both the plan and the independent review.
+Keep research notes in the scratchpad. They feed the plan and, for M and L, the independent review.
 
 ### 4. Interview
 
@@ -69,12 +69,12 @@ About 4 questions for S, 8 for M, 12 for L. Never ask what research already answ
 ### 5. Write the plan
 
 - Use `templates/plan.md`. If the profile names a plan style guide, follow its structure and keep the template's sections inside it.
-- Drop the sections that do not apply to the size, all in one line and without their headings: `Dropped for size S: Invariants, Existing vs new behaviour, Size budget, People, Rollout, Parts.` Content they would have held goes in a section the size keeps (an S plan's steps go in Verification).
+- Drop the sections that do not apply to the size, all in one line and without their headings: `Dropped for size S: Invariants, Existing vs new behaviour, Size budget, People, Rollout, Parts; research skipped: overlap, people and merge requirements.` Content they would have held goes in a section the size keeps (an S plan's steps go in Verification).
 - An S plan fits on about one page.
 
 ### 6. Independent review
 
-Hand the plan, the research notes and the principles to a fresh general-purpose agent. It checks that:
+For S, start no agent: confirm that the goal, the boundary, the bar and the gates are present; the user's approval at step 7 is the plan's review. For M and L, hand the plan, the research notes and the principles to a fresh general-purpose agent. It checks that:
 
 - the boundary and the bar are checkable;
 - every invariant names where it holds and a test that can fail;
