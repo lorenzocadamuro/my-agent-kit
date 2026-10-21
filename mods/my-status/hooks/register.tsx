@@ -229,10 +229,10 @@ export const register: Register = on => {
     }
 
     const children = [
-      ...(view.title ? [<Box key="title" flexShrink={1}><Text dimColor wrap="truncate-end">{view.title}</Text></Box>] : []),
       ...(view.tiles.length > 0 ? [<Box key="tiles" flexDirection="row" gap={1} flexShrink={0}>{view.tiles.map(tile)}</Box>] : []),
       ...view.badges.map(badge),
-      ...(view.detail ? [<Box key="detail" flexShrink={1}><Text dimColor wrap="truncate-end">{view.detail}</Text></Box>] : []),
+      ...(view.reason ? [<Box key="reason" flexShrink={0}><Text>{view.reason}</Text></Box>] : []),
+      ...(view.detail ? [<Box key="detail" flexShrink={0}><Text dimColor>{view.detail}</Text></Box>] : []),
       <Box key="spacer" flexGrow={1} />,
       ...(view.time ? [<Box key="time" flexShrink={0}><Text dimColor>{view.time}</Text></Box>] : []),
       ...view.actions.map(action => (

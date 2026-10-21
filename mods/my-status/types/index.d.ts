@@ -18,6 +18,7 @@ export type MyStatusRun = {
   worktree?: string
   updatedAt?: string
   mode?: string
+  /** Written by 4.0.x; no longer written, and never shown. */
   name?: string
   plan?: { title: string; path: string }
   parts?: MyStatusPart[]
@@ -39,6 +40,7 @@ export type MyStatusProgress = {
 
 export type MyStatusActivity = {
   mode?: string
+  /** Written by 4.0.x; no longer written, and never shown. */
   name?: string
   state?: 'running' | 'needs_you' | 'done'
   updatedAt?: string

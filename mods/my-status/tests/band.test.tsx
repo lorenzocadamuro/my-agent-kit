@@ -3,7 +3,7 @@ import { expect, test } from 'claude-code/testing'
 import type { Engine } from 'claude-code/testing'
 
 import type { MyStatusActivity, MyStatusProgress, MyStatusRun } from '../types'
-import { NAMED, NEEDS_YOU, OLD_NEEDS_YOU, READY, RUNNING, WITH_PR } from './fixtures'
+import { LONG_REASON, NAMED, NEEDS_YOU, OLD_NEEDS_YOU, READY, RUNNING, WITH_PR } from './fixtures'
 
 const SURFACES = ['terminal', 'desktop'] as const
 const STATE_FILE = '/home/u/.my-agent-kit/state/acme-shop-feature.json'
@@ -93,7 +93,7 @@ async function refresh($: Engine): Promise<void> {
   await poll($)
 }
 
-async function shown($: Engine, columns = 120): Promise<{ state?: string; comments?: string; conflicts?: string; title?: string; detail?: string; open: boolean; band: boolean }> {
+async function shown($: Engine, columns = 120): Promise<{ state?: string; comments?: string; conflicts?: string; title?: string; reason?: string; detail?: string; time?: string; percent?: string; open: boolean; band: boolean }> {
   const ui = await $.ui.mount({ plugin: 'my-status', surface: 'terminal', ...band(columns) })
   const text = async (key: string) => (await ui.find({ key }))?.text
   const view = {
@@ -101,7 +101,10 @@ async function shown($: Engine, columns = 120): Promise<{ state?: string; commen
     comments: await text('comments'),
     conflicts: await text('conflicts'),
     title: await text('title'),
+    reason: await text('reason'),
     detail: await text('detail'),
+    time: await text('time'),
+    percent: await text('percent'),
     open: (await ui.find({ key: 'open' })) !== undefined,
     band: (await ui.find({ key: 'band' })) !== undefined,
   }
@@ -137,7 +140,8 @@ test('a gate shows Needs you and its reason', async ($, on) => {
   await refresh($)
   const ui = await $.ui.mount({ plugin: 'my-status', surface: 'terminal', ...band(120) })
   expect((await ui.find({ key: 'state' }))?.text).toMatch(/Needs you/)
-  expect((await ui.find({ key: 'detail' }))?.text).toMatch(/item 4/)
+  expect((await ui.find({ key: 'reason' }))?.text).toMatch(/item 4/)
+  expect(await ui.find({ key: 'title' })).toBe(undefined)
   await ui.unmount()
 })
 
@@ -178,28 +182,30 @@ test('with no state file the band stays empty', async ($, on) => {
   await ui.unmount()
 })
 
-test('a narrow band keeps the state and its only button, and cuts the title with …', async ($, on) => {
-  world(on, { run: { ...RUNNING, plan: { title: 'Learn from use', path: '' } } })
+test('a narrow band keeps the state and its only button, shows no title, and drops whole elements', async ($, on) => {
+  world(on, { run: NAMED })
   await refresh($)
-  const ui = await $.ui.mount({ plugin: 'my-status', surface: 'terminal', ...band(60) })
-  expect((await ui.find({ key: 'state' }))?.text).toMatch(/Running/)
-  expect((await ui.find({ key: 'percent' }))?.text).toMatch(/50%/)
-  expect(await ui.find({ key: 'open' })).toBeDefined()
-  expect((await ui.find({ key: 'title' }))?.text).toBe('Learn…')
-  expect(await ui.find({ key: 'detail' })).toBe(undefined)
-  await ui.unmount()
+  const view = await shown($, 60)
+  expect(view.state).toMatch(/Running/)
+  expect(view.percent).toMatch(/50%/)
+  expect(view.open).toBe(true)
+  expect(view.title).toBe(undefined)
+  expect(view.detail).toBe(undefined)
+  expect(view.time).toMatch(/^~\d+–\d+ min$/)
 })
 
-test('a 3.2.x state file with a long reason shows, cut with …, and keeps its button', async ($, on) => {
+test('a 3.2.x state file with a long reason shows it whole when it fits, else drops it, and keeps its button', async ($, on) => {
   world(on, { run: OLD_NEEDS_YOU })
   await refresh($)
   for (const surface of SURFACES) {
-    const ui = await $.ui.mount({ plugin: 'my-status', surface, ...band(80) })
-    expect((await ui.find({ key: 'state' }))?.text).toMatch(/Needs you/)
-    expect((await ui.find({ key: 'title' }))?.text).toBe('Make checkout charg…')
-    expect((await ui.find({ key: 'detail' }))?.text).toBe('Verification failed…')
-    expect(await ui.find({ key: 'open' })).toBeDefined()
-    await ui.unmount()
+    for (const [columns, reason] of [[120, LONG_REASON], [80, undefined]] as const) {
+      const ui = await $.ui.mount({ plugin: 'my-status', surface, ...band(columns) })
+      expect((await ui.find({ key: 'state' }))?.text).toMatch(/Needs you/)
+      expect(await ui.find({ key: 'title' })).toBe(undefined)
+      expect((await ui.find({ key: 'reason' }))?.text).toBe(reason)
+      expect(await ui.find({ key: 'open' })).toBeDefined()
+      await ui.unmount()
+    }
   }
 })
 
@@ -217,7 +223,7 @@ test('the executor progress sidecar moves the percent during the round', async (
   await ui.unmount()
 })
 
-test('pr and improve activity shows Running or Needs you with its name; a done one draws nothing', async ($, on) => {
+test('pr and improve activity shows Running or Needs you with its mode, not its name; a done one draws nothing', async ($, on) => {
   const w: World = {}
   world(on, w)
   for (const [state, label] of [['running', 'Running'], ['needs_you', 'Needs you'], ['done', undefined]] as const) {
@@ -225,7 +231,8 @@ test('pr and improve activity shows Running or Needs you with its name; a done o
     await refresh($)
     const view = await shown($)
     expect(view.state).toBe(label === undefined ? undefined : ` ${label} `)
-    expect(view.title).toBe(label === undefined ? undefined : 'PR 9 Charge retries')
+    expect(view.title).toBe(undefined)
+    expect(view.detail).toBe(label === undefined ? undefined : 'pr:review')
   }
 })
 

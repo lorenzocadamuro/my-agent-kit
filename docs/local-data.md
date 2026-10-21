@@ -52,7 +52,6 @@ One file per change and folder, rewritten whole through a temp file and a rename
   "session": "<session id or unknown>",
   "updatedAt": "2026-01-10T09:40:00Z",
   "mode": "run",
-  "name": "PR 456 Auth middleware",
   "plan": { "title": "…", "path": "/abs/path/.plans/plan.md" },
   "parts": [ { "title": "Part A: …", "status": "done", "done": 3, "total": 3 } ],
   "round": 3,
@@ -69,6 +68,6 @@ One file per change and folder, rewritten whole through a temp file and a rename
 - `step`: `triage`, `check`, `execute`, `verify`, `review`, `push`, `report`.
 - `state`: `planning` (`/my:plan:scope` is at work; `step` is `research`, `interview`, `write`, `review` or `approval`), `ready` (the plan is approved, or a round ended and the next one can start), `running`, `needs_you` (a gate is waiting, `reason` says which), `stopped` (failed or capped, `reason` says why), `done` (the bar is met).
 - `parts[].status`: `todo`, `running`, `done`; a plan without parts has one part, the plan itself.
-- `name`: two or three words in the session-title format (principles: name the session), written by `plan:scope`; `reason`: two or three words (`Plan approval`). A file without `name` stays valid: readers use the plan title.
+- `reason`: two or three words (`Plan approval`). The status mod shows no work name or plan title; a `name` left by an older version is ignored.
 - **Progress sidecar** `<same base>.progress.json`: `{ "round": 3, "items": { "done": 4, "total": 6 }, "updatedAt": "…" }`, written only by the round's executor after each item, at the path the coordinator gives it.
-- **Activity sidecar** `<base>.activity.json`, `<base>` computed as above once, when the mode starts, from the session's folder, and kept for every later write of that mode: `{ "mode": "pr:review", "name": "PR 9 Charge retries", "state": "running", "updatedAt": "…" }`, `state` being `running`, `needs_you` or `done`; written by the `pr:*` modes and `improve run`, each by the rule in its skill.
+- **Activity sidecar** `<base>.activity.json`, `<base>` computed as above once, when the mode starts, from the session's folder, and kept for every later write of that mode: `{ "mode": "pr:review", "state": "running", "updatedAt": "…" }`, `state` being `running`, `needs_you` or `done`; written by the `pr:*` modes and `improve run`, each by the rule in its skill.

@@ -74,6 +74,13 @@ export const OLD_NEEDS_YOU: MyStatusRun = { ...NEEDS_YOU, plan: { title: LONG_TI
 
 export const NAMED: MyStatusRun = { ...RUNNING, name: 'Webhook retries', updatedAt: '2026-01-10T09:20:00Z' }
 
+export const GATE: MyStatusRun = { ...NAMED, state: 'needs_you', reason: 'Plan approval' }
+
+export const ACTIVITY = { mode: 'pr:review', name: 'PR 9 Charge retries', state: 'running' as const }
+
+/** Texts about the work that the band and the status line never show. */
+export const WORK_TEXTS = ['Learn from use', 'Webhook retries', 'PR 9', 'Charge retries', 'Discounts on carts', 'PR 456', 'Make checkout']
+
 export const STOPPED: MyStatusRun = { ...RUNNING, state: 'stopped', reason: 'Tests failing' }
 
 export const AFTER_ROUND: MyStatusRun = { ...RUNNING, state: 'ready', step: 'report' }

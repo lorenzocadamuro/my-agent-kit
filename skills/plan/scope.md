@@ -11,7 +11,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 | `--adopt <branch\|PR>` | Plan for existing work: read its diff and description, and do not create a new branch                                                                                                    |
 | `--dry-run`            | Write the plan only. No worktree, no branch, no ticket change. Save it where the user says, or at `<data root>/plans/<slug>-<date>.md`                                                   |
 
-**Status:** from step 1 to the approval, keep the state file current (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) with `state: "planning"`, the plan's title and `name` (session-title format) once known, and `step`: `research` (steps 1–3), `interview` (4), `write` (5), `review` (6), `approval` (7). The status line then shows the plan being made.
+**Status:** from step 1 to the approval, keep the state file current (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) with `state: "planning"`, the plan's title once known, and `step`: `research` (steps 1–3), `interview` (4), `write` (5), `review` (6), `approval` (7). The status line then shows the plan being made.
 
 ## Steps
 
@@ -95,7 +95,7 @@ Skip this step for `--dry-run`, and delete the planning state file: there is not
    - If the branch already exists locally or remotely, stop and offer `--adopt`; set the planning state file to `needs_you` with that reason.
    - With `--adopt`, reuse the existing worktree, or add one for the existing branch.
 3. **Setup:** run the profile's setup command, in the background when it is slow.
-4. **Plan file:** write it to `<worktree>/.plans/plan.md`. Then write the worktree branch's state file with `state: "ready"`, its `repo`, `branch`, `worktree` and `name`, the plan's title and path, and its parts; and delete the planning file of the folder this skill ran in. The bar then shows in any session working in the worktree: this one if it moves there (step 6), or the one the user opens there.
+4. **Plan file:** write it to `<worktree>/.plans/plan.md`. Then write the worktree branch's state file with `state: "ready"`, its `repo`, `branch` and `worktree`, the plan's title and path, and its parts; and delete the planning file of the folder this skill ran in. The bar then shows in any session working in the worktree: this one if it moves there (step 6), or the one the user opens there.
    - If `.plans/` is not ignored (`git check-ignore -q .plans/`), add it to `.git/info/exclude`, never to a tracked `.gitignore`.
 5. **Ticket:** move it to the profile's start status (Linear `save_issue` with `state`), and say so in the summary. This is the only ticket change allowed without asking.
 6. **Move the session:** when the profile says the session follows the worktree, switch this session into it with the EnterWorktree tool (`path` set to the worktree). The tool accepts worktrees under the repository's `.claude/worktrees/`. Otherwise, tell the user to open the worktree in a new session.
