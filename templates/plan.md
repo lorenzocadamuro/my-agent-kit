@@ -82,7 +82,7 @@ Flags, deploy order, data migrations, backfills, monitoring, how to turn it off.
 
 | #   | Date | Kind | Recommended | Chosen | Why |
 | --- | ---- | ---- | ----------- | ------ | --- |
-| D1  |      | K<n> |             | <the user's option, or "decided alone (handed over: K<n>)"> |     |
+| D1  |      | K<n> | <the recommended option's text, not its letter> | <the chosen option's text, "decided alone (handed over: K<n>)", or "assumed"> |     |
 
 ## Open questions
 

@@ -83,7 +83,7 @@ Follow [question-format.md](question-format.md): multiple choice, recommended op
 
 - **Per-change files** (plans, rounds, summaries, comment triage) live in the worktree's git-ignored `.plans/` folder, and disappear with the worktree.
 - **Lasting personal material** lives in the data root: a root the user names, else `$MY_AGENT_KIT_HOME`, else `~/.my-agent-kit/`; never in this repository. The layout is in [local-data.md](local-data.md).
-- **Personal material stays private.** Study pages, readings, the glossary, reviewer profiles and the suite log stay under the data root, never in a repository, artifact, doc or gist. They shape what the kit looks for, but nothing published (PR text, comments, replies, commits, messages) cites, quotes or names them.
+- **Personal material stays private.** Study pages, readings, the glossary, reviewer profiles, `method.md` and the suite log stay under the data root, never in a repository, artifact, doc or gist. They shape what the kit looks for, but nothing published (PR text, comments, replies, commits, messages) cites, quotes or names them.
 - **Throwaway files** go in the session scratchpad.
 - **Link only files the app can open.** The desktop app's file pane opens files inside the session's working directory and added folders, not the scratchpad. A file the user must read goes in the working directory (a git-ignored `.plans/`) or the data root. Before linking a file under the data root (`~/.my-agent-kit/` by default), add that folder to the session with the app's directory-request tool (`request_directory`), once per session. When the tool is missing, show the path as code, not as a link.
 - **Nothing employer-specific enters this repository.**

@@ -102,7 +102,7 @@ Six lines, labels as shown and sentences in the user's language, and a desktop n
 Round N: <k done / c checked / m stopped / s skipped>  ·  HEAD <sha> (pushed | not pushed: why)
 Review: <verdict against the bar>; block <b>, ticket <t>, note <n>
 Drift: <lines>/<budget> lines, <files>/<budget> files; main <ahead/behind>
-Decisions taken alone: <count, or the flagged ones>; handed over: <K<n> decided alone, or none>
+Decisions taken alone: <count, or the flagged ones>; handed over: <"decided alone (handed over: K<n>)" for each, or none>
 Lessons: <note ids from the digest | none | at the end of the run>
 Next: <Run plan | One round | Review comments | Merge main | a question | ready-for-review gate>
 ```
