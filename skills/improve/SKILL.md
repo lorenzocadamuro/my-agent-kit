@@ -17,13 +17,14 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md` and `${CLAUDE_PLUGIN_ROOT
 
 ## Old names
 
-Entries and signals written before 3.0.0 name skills that are now modes. Read them as their new names everywhere: in List and Log views, in Run selection, and in Digest. Show only the new names, in tables and in prose alike; the old ones never reach the user, not even to explain the rename. A filter on a skill (`log plan`) matches every mode of it.
+Entries and signals written before 3.0.0 name skills that are now modes, and before 5.0.0 a mode now part of another. Read them as their new names everywhere: in List and Log views, in Run selection, and in Digest. Show only the new names, in tables and in prose alike; the old ones never reach the user, not even to explain the rename. A filter on a skill (`log plan`) matches every mode of it.
 
 | Old         | New           |
 | ----------- | ------------- |
 | `scope-plan` | `plan:scope` |
 | `pr-round`  | `plan:round`  |
-| `learn`     | `pr:learn` when the entry is about a PR reading, `pr:study` when it is about a review study |
+| `learn`     | `pr:learn`    |
+| `pr:study`  | `pr:learn`    |
 | `review-lens` | `pr:review` |
 | `explain-comment` | `pr:comments` |
 | `merge-main` | `pr:sync`    |

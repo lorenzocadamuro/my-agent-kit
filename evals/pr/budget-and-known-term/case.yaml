@@ -6,7 +6,7 @@ execution:
   max_turns: 30
   allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill]
   prompt: |
-    /my:pr:study Usa ./kit-data come data root e salva la pagina come kit-data/study/page.md. Non c'è accesso a GitHub: ecco la review di "dana" sulla PR acme/orders#42 (CHANGES_REQUESTED), incollata qui.
+    /my:pr:learn acme/orders#42 comments — Usa ./kit-data come data root e salva la pagina come kit-data/study/page.md. Non c'è accesso a GitHub: ecco la review di "dana" sulla PR acme/orders#42 (CHANGES_REQUESTED), incollata qui.
     
     1. (blocking) `submit_order` retries the payment call on timeout, but the retry is not idempotent: a slow success followed by a retry charges the customer twice. Pass an idempotency key.
     2. (blocking) The order is marked `paid` before the payment provider confirms. If the worker restarts in between, we ship unpaid orders.

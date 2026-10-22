@@ -1,10 +1,10 @@
-# Learning rules — shared by /my:pr:learn and /my:pr:study
+# Learning rules — /my:pr:learn
 
-The goal is learning, not summarising. Every page connects words to the real code, makes the reasoning repeatable, and fits a reading budget. These rules apply to `learn` and `study` only.
+The goal is learning, not summarising. Every page connects words to the real code, makes the reasoning repeatable, and fits a reading budget. These rules apply to `learn` only: to the reading of a PR and to the study of its review comments.
 
 Use `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` to name reasoning moves and the questions worth asking.
 
-## Shared rules (learn and study)
+## Rules
 
 - **Paths, under the data root:** readings in `reads/`; study pages, `glossary.md` and the `README.md` index in `study/`; reviewer profiles in `reviewers/`.
   - Use the file name the user gives, when they give one.
@@ -24,9 +24,9 @@ Use `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` to name reasoning moves and th
 - **Glossary:**
   - A term already in `study/glossary.md` gets a link, never a second explanation; add only a "Seen in" line to it.
   - Add at most 5 new terms per page, as `### <Term> — <meaning>`, followed by "In general", "In the code", "Seen in".
-- **Memory:** each of the two modes records what it has covered, so a re-run covers only what is new (see the mode file).
+- **Memory:** the reading and the study each record what they have covered, so a re-run covers only what is new (see `learn.md`).
 - **Finish:**
   - Present the page (principles: where files go).
   - Reply in chat in at most 8 lines: the path, layer 0 in brief, and one question that checks the user understood.
-  - Then offer the natural next step: after `learn`, `/my:pr:review <n>`; after `study`, `/my:pr:comments <n>` when replies are owed.
+  - Then offer the natural next step: after a reading, `/my:pr:review <n>`; after a study of comments, `/my:pr:comments <n>` when replies are owed.
 - **Closing step:** follow the principles.
