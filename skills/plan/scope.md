@@ -84,7 +84,7 @@ It also names any question the user should have been asked. Fix what it finds. A
 
 ### 7. Gate: plan approval
 
-Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel, and propose here each kind due for hand-over (principles: the method). On cancel, delete the planning state file. The approval is never assumed: without the question tool, stop here and set the state file to `needs_you` with reason "Plan approval"; a `--dry-run` skips this stop and goes on to step 8, which it skips.
+Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel, and propose here each kind due for hand-over (principles: the method). On cancel, delete the planning state file. The approval is never assumed: without the question tool, stop here and set the planning state file to `needs_you` with reason "Plan approval"; a `--dry-run` skips this stop and goes on to step 8, which it skips.
 
 ### 8. Set up the workspace
 
