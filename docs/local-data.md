@@ -12,7 +12,7 @@ Personal and employer-specific material lives outside this repository, in the da
   reviewers/<handle>.md   how a reviewer thinks, written by /my:pr:learn (comment focus), read by /my:pr:review
   reads/                  PR readings written by /my:pr:learn (header records the head commit)
   study/                  study pages, glossary.md and README.md (the index, with the comment ids studied)
-  reviews/                review drafts written by /my:pr:review
+  reviews/                analyses and drafts written by /my:pr:review, read again by its next review of the PR
   plans/                  plans written by /my:plan:scope --dry-run
   retros/                 one-page retrospective per finished change
   state/<owner>-<repo>-<branch>.json  where a change stands (state/session-<session id>.json while planning outside a worktree), written by /my:plan:scope, /my:plan:round and /my:plan:run, read by the status mod
