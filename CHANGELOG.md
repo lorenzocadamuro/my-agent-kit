@@ -4,6 +4,33 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [5.0.0] - 2026-10-22
+
+A review gives its judgement first and writes for GitHub only once you agree with it; one command explains a PR or the review it received; planning research checks the premises of its recommendations. Major: `/my:pr:study` is removed.
+
+### Breaking
+
+- `/my:pr:study` is removed: use `/my:pr:learn <PR> <comment id or URL | reviewer | comments [all]>`, or paste the comments after it. It studies the review comments as before (study page, glossary, reviewer profiles, only comments not studied yet). Without a focus, `/my:pr:learn` explains the whole PR as before. `/my:improve` reads `pr:study` in old log entries as `pr:learn`.
+
+### Review
+
+- `pr:review` first shows a private analysis in chat, in your language: ready to merge or not and why; the PR's main scenario followed end to end through every piece; one section per question that matters, each with its answer and nature (architecture or design, lines to fix, a nit). "Nothing worth adding" is a valid outcome: no quota of questions or findings. The questions to the author, the inline comments and the summary come only once you agree with the analysis (in chat, or already in your instructions), then the publishing gate as before. Without your agreement and with no way to ask, it stops after the analysis.
+- Before calling a shape wrong or proposing a refactor, the review finds why the code is shaped that way; a deliberate design is not a finding. Collection reads review bodies and general comments as well as inline ones.
+- The review lenses start from the promise (its main scenario, end to end, before the other lenses) and gain a Coherence lens: one value computed from different inputs, texts a model reads that disagree, a condition wider than its intent. Evidence asks whether the description is still true at the head. Severity weighs reach and impact (who can trigger it, what it costs); "the main branch has the same problem" is still no reason to downgrade a broken promise. The questions for the author have no fixed count. The round reviewer starts from the plan's main scenario too.
+
+### Plans
+
+- A recommendation's premise is checked like any other claim: a production volume or frequency it depends on is measured with a read-only query before the interview, or the recommendation says it is unverified and which measure would decide it.
+- For shared code the change extends, `plan:scope` research reports the rule each caller applies (tolerances, exceptions, what it skips), not only what it reads, and checks each rule against the change.
+- An out-of-scope item you accept as it is can carry its reason in the plan with no ticket ("none: accepted, <reason>" in the Ticket column), the recommended option when it concerns only a non-production environment. A ticket is one option, not the rule.
+
+### Evals
+
+- New case `pr/nothing-worth-adding` (a pure rename with nothing to raise): fails on 4.2.0 in 3 of 3 runs (questions and findings to fill the review), passes 4 of 4 after on the chat verdict (2 runs on an earlier fixture whose formatting bug drew an out-of-scope ticket, 2 on the final one). A grader on the review file's question count was dropped: its judge passed a three-question file on 4.2.0 and failed a zero-question file after.
+- New case `plan/research-checks-premises`: its staging-only item gets a ticket on 4.2.0 in 2 of 2 runs and "none: accepted" after in 2 of 2. Its volume and caller-rule graders already pass on 4.2.0 (the prose principle and the fixture's profile were enough): they guard the new text.
+- `pr/broken-promise`, `pr/own-pr-fresh-review` and `pr/review-keeps-study-private` now say in the prompt that the drafts need not wait for agreement, since evals cannot answer. `pr/budget-and-known-term` runs through `/my:pr:learn acme/orders#42 comments`; it already passes on 4.2.0, where the model adapted, so it guards the merge rather than proving it. The suite has 30 cases.
+- Prose in `skills/`, `docs/` and `templates/`: 1,418 → 1,414 lines.
+
 ## [4.2.0] - 2026-10-22
 
 The kit speaks your language even when everything it read is in English, introduces its questions in chat before asking them, plans in the change's worktree from the start, puts in the bar only checks that can fail, and its release updates the plugins you have installed. Minor: new behaviour, nothing you rely on changes incompatibly.
