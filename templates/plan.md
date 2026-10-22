@@ -52,6 +52,7 @@ Differences from today that this change means to make, for everyone or behind th
 
 | Item | Why not now | Ticket |
 | ---- | ----------- | ------ |
+| <item> | <reason> | <ticket, or "none: accepted, <reason>"> |
 
 ## Size budget [M+]
 
