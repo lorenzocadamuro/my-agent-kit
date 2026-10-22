@@ -3,7 +3,7 @@ import { expect, test } from 'claude-code/testing'
 import type { Engine } from 'claude-code/testing'
 
 import type { MyStatusActivity, MyStatusProgress, MyStatusRun } from '../types'
-import { LONG_REASON, NAMED, NEEDS_YOU, OLD_NEEDS_YOU, READY, RUNNING, WITH_PR } from './fixtures'
+import { LONG_REASON, NAMED, NEEDS_YOU, OLD_NEEDS_YOU, PLANNING, READY, RUNNING, WITH_PR } from './fixtures'
 
 const SURFACES = ['terminal', 'desktop'] as const
 const STATE_FILE = '/home/u/.my-agent-kit/state/acme-shop-feature.json'
@@ -23,6 +23,10 @@ type World = {
   log?: string
   now?: string
   otherName?: string
+  /** This chat's session id; null when the engine cannot tell it. */
+  sessionId?: string | null
+  /** Other files in the state folder, by name. */
+  files?: Record<string, object>
 }
 
 function rows(cmd: string, list: Row[]): string {
@@ -41,6 +45,7 @@ function band(bodyColumns: number) {
 function world(on: On, w: World, ran: string[] = []): void {
   const out = (stdout: string, exitCode = 0) => ({ value: { exitCode, stdout, stderr: '', isStdoutTruncated: false, isStderrTruncated: false } })
   on('session.cwd', () => ({ value: '/work' }))
+  on('session.id', () => (w.sessionId === null ? { deny: 'no session id' } : { value: w.sessionId ?? 'chat-a' }))
   on('clock.now', () => ({ value: Date.parse(w.now ?? '2026-01-10T09:25:00Z') }))
   on('ui.status', () => ({ value: undefined }))
   on('ui.open', () => ({ value: { isPlaced: true as const } }))
@@ -69,11 +74,13 @@ function world(on: On, w: World, ran: string[] = []): void {
     if (e.path === STATE_FILE.replace('.json', '.progress.json') && w.progress) return { value: JSON.stringify(w.progress) }
     if (e.path === STATE_FILE.replace('.json', '.activity.json') && w.activity) return { value: JSON.stringify(w.activity) }
     if (w.otherName && e.path === `/home/u/.my-agent-kit/state/${w.otherName}` && w.run) return { value: JSON.stringify(w.run) }
+    const extra = w.files?.[e.path.replace('/home/u/.my-agent-kit/state/', '')]
+    if (extra) return { value: JSON.stringify(extra) }
     if (e.path.endsWith('/suite-log.md') && w.log) return { value: w.log }
     return { deny: `no file ${e.path}` }
   })
   on('fs.list', () => ({
-    value: (w.otherName ? [w.otherName] : w.run ? ['acme-shop-feature.json'] : []).map(name => ({ name, kind: 'file' as const, size: 1, mtimeMs: 0, isLink: false })),
+    value: [...(w.otherName ? [w.otherName] : w.run ? ['acme-shop-feature.json'] : []), ...Object.keys(w.files ?? {})].map(name => ({ name, kind: 'file' as const, size: 1, mtimeMs: 0, isLink: false })),
   }))
   on('ui.render', ($, e) => {
     const { Box } = $.ui.resolve(e)
@@ -300,4 +307,56 @@ test('the mod only reads: git and gh calls are read-only or a fetch', async ($, 
   const writes = ran.filter(cmd => /^git (commit|push|merge |rebase|reset|checkout|switch|add|stash|tag)|^gh (pr|issue) (create|edit|comment|merge)/.test(cmd))
   expect(writes).toEqual([])
   expect(ran.some(cmd => cmd.startsWith('git fetch'))).toBe(true)
+})
+
+const AT = '2026-01-10T09:20:00Z'
+const PLAN_A: MyStatusRun = { ...PLANNING, worktree: '/work', step: 'research', updatedAt: AT }
+const PLAN_B: MyStatusRun = { ...PLANNING, worktree: '/work', step: 'approval', updatedAt: '2026-01-10T09:22:00Z' }
+const CHATS = { 'session-chat-a.json': PLAN_A, 'session-chat-b.json': PLAN_B }
+
+test('two chats planning in the same folder each see only their own plan; a third sees none', async ($, on) => {
+  const w: World = { files: CHATS }
+  world(on, w)
+  for (const [chat, detail] of [['chat-a', 'Research'], ['chat-b', 'Waiting for approval'], ['chat-c', undefined]] as const) {
+    w.sessionId = chat
+    await refresh($)
+    const view = await shown($)
+    expect(view.band).toBe(detail !== undefined)
+    expect(view.detail).toBe(detail)
+  }
+})
+
+test('a chat shows its own activity, never another chat\'s', async ($, on) => {
+  const w: World = {
+    files: {
+      'session-chat-a.activity.json': { mode: 'pr:review', state: 'running', updatedAt: AT },
+      'session-chat-b.activity.json': { mode: 'improve:run', state: 'needs_you', updatedAt: AT },
+    },
+  }
+  world(on, w)
+  for (const [chat, detail] of [['chat-a', 'pr:review'], ['chat-b', 'improve:run'], ['chat-c', undefined]] as const) {
+    w.sessionId = chat
+    await refresh($)
+    expect((await shown($)).detail).toBe(detail)
+  }
+})
+
+test('a folder-named planning file still shows, without a session id too; the chat\'s own session file comes first', async ($, on) => {
+  const w: World = { run: { ...PLANNING, step: 'interview', updatedAt: AT } }
+  world(on, w)
+  for (const id of ['chat-c', null]) {
+    w.sessionId = id
+    await refresh($)
+    expect((await shown($)).detail).toBe('Interview')
+  }
+  w.sessionId = 'chat-a'
+  w.files = CHATS
+  await refresh($)
+  expect((await shown($)).detail).toBe('Research')
+})
+
+test('a session planning file untouched for 7 hours draws no band', async ($, on) => {
+  world(on, { files: CHATS, now: '2026-01-10T16:30:00Z' })
+  await refresh($)
+  expect((await shown($)).band).toBe(false)
 })
