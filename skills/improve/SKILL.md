@@ -113,10 +113,10 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
 6. **Record:**
    - **README:** update the skills table and any text the change makes untrue.
    - **CHANGELOG:** add an entry under the new version.
-   - **Version** in `.claude-plugin/plugin.json`: patch for wording and fixes, minor for new behaviour or a new skill, major when a command or its arguments, or behaviour the user relies on, change incompatibly (README § Versioning).
+   - **Version** in `.claude-plugin/plugin.json`: patch for wording and fixes, minor for new behaviour or a new skill, major when a command or its arguments, or behaviour the user relies on, change incompatibly (README § Versioning). Every other plugin of the repository whose files changed (`mods/<name>/`) gets its own bump too: installed copies are kept by version.
    - The README must agree with the change before you go on.
    - **Commit** in `<kit worktree>` (`Improve <skill>: <what>`). Then a fresh agent that did not write the change reviews `git diff origin/main..HEAD` there against the approved proposals and the constitution. Fix its block findings in a new commit, then rerun the 5.3 gates.
-7. **Ship:** show the full diff (`git diff origin/main..HEAD`) and ask, saying how many commits of `main..origin/main` the fast-forward also brings. Only on yes: fast-forward `main` in the main checkout to the worktree's branch, tag `v<version>`, push with tags, then remove the worktree and delete its branch. On no, keep the worktree, say where it is, and leave the entries open.
+7. **Ship:** show the full diff (`git diff origin/main..HEAD`) and ask, saying how many commits of `main..origin/main` the fast-forward also brings. Only on yes: fast-forward `main` in the main checkout to the worktree's branch, tag `v<version>`, push with tags, then remove the worktree and delete its branch. Then update each installed copy of a plugin whose version changed (`claude plugin list` shows them): `claude plugin marketplace update <marketplace>`, then `claude plugin update <plugin>@<marketplace>`; check that the installed copy holds the new version's code, and tell the user to restart. On no, keep the worktree, say where it is, and leave the entries open.
 8. **Close the entries,** only after shipping (or at once when no change was approved). Set each to `fixed <version> (<short sha>)`, `wontfix: <reason>` or `deferred: <reason>`. Never delete an entry.
 9. **Tell the user** what changed, and that it takes effect from the next session. Then the closing step (principles).
 
