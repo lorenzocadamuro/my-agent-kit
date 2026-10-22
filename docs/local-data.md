@@ -15,7 +15,7 @@ Personal and employer-specific material lives outside this repository, in the da
   reviews/                review drafts written by /my:pr:review
   plans/                  plans written by /my:plan:scope --dry-run
   retros/                 one-page retrospective per finished change
-  state/<owner>-<repo>-<branch>.json  where a change stands (state/session-<session id>.json while planning), written by /my:plan:scope, /my:plan:round and /my:plan:run, read by the status mod
+  state/<owner>-<repo>-<branch>.json  where a change stands (state/session-<session id>.json while planning outside a worktree), written by /my:plan:scope, /my:plan:round and /my:plan:run, read by the status mod
   state/<same base>.progress.json, .activity.json  sidecars: a round's item progress; what a pr:* mode or improve run is doing
 ```
 
@@ -42,7 +42,7 @@ One entry per problem, in the format of [templates/log-entry.md](../templates/lo
 One file per change and folder, rewritten whole through a temp file and a rename, like its sidecars; one writer at a time per file. `/my:plan:scope` (from its first step), `/my:plan:round` and `/my:plan:run` write it; the optional status mod reads it and merges the sidecars. A run resuming after compaction reads it too.
 
 - **Name:** `state/<owner>-<repo>-<branch>.json`, computed from the folder the session works in, never from the project profile's name: `<owner>-<repo>` from `git remote get-url origin` (`git@github.com:acme/shop.git` gives `acme-shop`), or `none-<name of the repository's top-level folder>` when there is no remote; `<branch>` from `git branch --show-current`, `/` becoming `-` (`detached` when empty). When git cannot answer (no repository, or a sandbox), use the repository and branch the user named; a missing repository becomes `none-<folder>`, a missing branch `detached`. The status mod computes it the same way, and shows nothing outside git.
-- **The file follows the work:** while planning, a chat's work belongs to the chat, not the folder: `plan:scope` writes `state/session-<session id>.json` (the id from `$CLAUDE_CODE_SESSION_ID`; when it is empty, or has a character outside `[A-Za-z0-9_-]`, the folder's name above); at approval it writes the worktree branch's file and deletes its session file. The status mod reads the chat's own session files first, then the folder's, never another chat's, and ignores a `planning` or `running` file, or an activity, not updated for 6 hours.
+- **The file follows the work:** `plan:scope` plans in the worktree branch's file once its session works in the worktree it opened. Before that, in a dry run, or when the session stays outside the worktree, the work belongs to the chat: it writes `state/session-<session id>.json` (the id from `$CLAUDE_CODE_SESSION_ID`; when it is empty, or has a character outside `[A-Za-z0-9_-]`, the folder's name above), and deletes it when the session moves into the worktree or at approval, when it writes the branch's file. The status mod reads the chat's own session files first, then the folder's, never another chat's, and ignores a `planning` or `running` file, or an activity, not updated for 6 hours.
 
 ```json
 {

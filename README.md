@@ -50,7 +50,7 @@ Between gates, agents work in the background: `plan:run` starts the next round o
 ## A change, end to end
 
 ```text
-/my:plan:scope ABC-123     interview → plan → worktree + branch from origin/main → ticket In Progress
+/my:plan:scope ABC-123     worktree + branch from origin/main → interview → plan in its .plans/ → ticket In Progress
 /my:plan:run               rounds one after another: triage → check → execute → verify → review → push,
                            until a gate, new PR comments, conflicts with main, the bar, or 5 rounds
 /my:plan:round             one round and a 6-line report, when you want to watch each step
@@ -66,7 +66,7 @@ Between gates, agents work in the background: `plan:run` starts the next round o
 
 | Command            | Stage       | What it does |
 | ------------------ | ----------- | ------------ |
-| `/my:plan:scope`   | Before code | Interviews you with multiple-choice questions, asking only what the plan and its first part need, and writes the plan: goal, boundary, invariants with tests, bar for done, size budget, reviewers, gates. Its research follows what the plan adds or changes: who writes and reads each new field, state, key or rule, saved data included. Adapts its depth to the kind and size of the task. Never assumes your approval: without the question tool it stops at "Plan approval". |
+| `/my:plan:scope`   | Before code | Opens the change's worktree from `origin/main` as soon as the ticket is read, so the plan is made where it will run. Interviews you with multiple-choice questions, asking only what the plan and its first part need, and writes the plan: goal, boundary, invariants with tests, bar for done, size budget, reviewers, gates. Its research follows what the plan adds or changes: who writes and reads each new field, state, key or rule, saved data included. Adapts its depth to the kind and size of the task. Never assumes your approval: without the question tool it stops at "Plan approval". |
 | `/my:plan:round`   | During      | Runs one round: executes the work in the background (in the S lane, the session itself), checks the result against git, has a fresh agent review it against the plan, and reports in six lines, in your language, with a drift signal, the decisions taken alone and the lessons it logged. |
 | `/my:plan:run`     | During      | Runs rounds one after another while each succeeds, carrying block findings to the next round and ticking plan parts; stops at a gate (drift over budget among them) unless its kind is handed over and clearly fits, failed verification, conflicts with main, new PR comments, red CI, anything to publish, the bar, or 5 rounds; one summary at the end, in your language, with the decisions it took alone. |
 | `/my:pr:sync`      | During      | Brings the branch up to date with main: previews conflicts, leaves every design conflict to you (other PRs' text only builds the options), regenerates generated files, re-checks migrations and the dev database. Context you type yourself that says how to resolve, general or per file ("keep their approach, adapt ours"), is your decision for every design conflict it clearly covers, and it says in one line per file how it applies it; any other design conflict stays a question. Each option has its own Pros, Cons and Risk. |

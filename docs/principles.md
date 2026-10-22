@@ -75,7 +75,7 @@ Follow [question-format.md](question-format.md) for when to ask, and for the sha
 
 ## Always in a worktree
 
-- **Work happens in the worktree of the change, never in the main checkout,** unless the project profile says how the user works there instead (for example "work on `main`, no worktree" in a single-thread repository). Every skill checks the worktree (or what the profile names), branch, HEAD and clean tree at start, and stops if they are wrong.
+- **Work happens in the worktree of the change, never in the main checkout,** planning included, unless the project profile says how the user works there instead (for example "work on `main`, no worktree" in a single-thread repository). Every skill checks the worktree (or what the profile names), branch, HEAD and clean tree at start, and stops if they are wrong.
 - **New branches start from `origin/main`,** never from whatever branch happens to be checked out.
 - **One writer per worktree at a time.**
 

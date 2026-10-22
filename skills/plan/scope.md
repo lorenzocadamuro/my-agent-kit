@@ -11,7 +11,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 | `--adopt <branch\|PR>` | Plan for existing work: read its diff and description, and do not create a new branch                                                                                                    |
 | `--dry-run`            | Write the plan only. No worktree, no branch, no ticket change. Save it where the user says, or at `<data root>/plans/<slug>-<date>.md`                                                   |
 
-**Status:** from step 1 to the approval, keep this session's planning state file current (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file: `session-<session id>.json`) with `state: "planning"`, the plan's title once known, and `step`: `research` (steps 1–3), `interview` (4), `write` (5), `review` (6), `approval` (7). The status line then shows the plan being made.
+**Status:** from step 1 to the approval, keep the planning state file current (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file: the worktree branch's file once this session works in the worktree, else `session-<session id>.json`) with `state: "planning"`, the plan's title once known, and `step`: `research` (steps 1–3), `interview` (4), `write` (5), `review` (6), `approval` (7). The status line then shows the plan being made.
 
 ## Steps
 
@@ -31,6 +31,14 @@ Read the ticket, its links and related issues. Then classify:
   - **M:** everything in between.
 
 State the classification and its reason in one line; the user can override it in the first question batch.
+
+**Then open the worktree,** so the plan is made where it will run (principles: always in a worktree). Skip it for `--dry-run`, which creates nothing.
+
+1. **Branch name:** the ticket's `gitBranchName`, or else the profile's naming rule.
+2. **Worktree:** `git fetch origin main`, then `git worktree add <profile worktree root>/<branch> -b <branch> origin/main`. If `.plans/` is not ignored there (`git check-ignore -q .plans/`), add it to `.git/info/exclude`, never to a tracked `.gitignore`.
+   - If the branch already exists locally or remotely, stop and offer `--adopt`; set the planning state file to `needs_you` with that reason.
+   - With `--adopt`, reuse the existing worktree, or add one for the existing branch.
+3. **Move the session:** when the profile says the session follows the worktree, switch this session into it with the EnterWorktree tool (`path` set to the worktree; it accepts worktrees under the repository's `.claude/worktrees/`); from then on keep the worktree branch's state file, and delete this session's. Otherwise keep the session file, and plan from the worktree's files.
 
 ### 3. Research before asking
 
@@ -66,7 +74,7 @@ About 4 questions for S, 8 for M, 12 for L. Never ask what research already answ
 
 ### 5. Write the plan
 
-- Use `templates/plan.md`. If the profile names a plan style guide, follow its structure and keep the template's sections inside it.
+- Write it to `<worktree>/.plans/plan.md` (for `--dry-run`, where the Arguments say), from `templates/plan.md`. If the profile names a plan style guide, follow its structure and keep the template's sections inside it.
 - Drop the sections that do not apply to the size, all in one line and without their headings: `Dropped for size S: Invariants, Existing vs new behaviour, Size budget, People, Rollout, Parts; research skipped: overlap, people and merge requirements.` Content they would have held goes in a section the size keeps (an S plan's steps go in Verification).
 - An S plan fits on about one page.
 
@@ -84,23 +92,17 @@ It also names any question the user should have been asked. Fix what it finds. A
 
 ### 7. Gate: plan approval
 
-Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel, and propose here each kind due for hand-over (principles: the method). On cancel, delete the planning state file. The approval is never assumed: without the question tool, stop here and set the planning state file to `needs_you` with reason "Plan approval"; a `--dry-run` skips this stop and goes on to step 8, which it skips.
+Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel, and propose here each kind due for hand-over (principles: the method). On cancel, delete the planning state file, and offer to remove the worktree and its branch when they hold no commit. The approval is never assumed: without the question tool, stop here and set the planning state file to `needs_you` with reason "Plan approval"; a `--dry-run` skips this stop and goes on to step 8, which it skips.
 
-### 8. Set up the workspace
+### 8. Finish the workspace
 
-Skip this step for `--dry-run`, and delete the planning state file: there is nothing to run.
+Skip this step for `--dry-run`, and delete the planning state file: there is nothing to run. The worktree exists since step 2; only this is left:
 
-1. **Branch name:** the ticket's `gitBranchName`, or else the profile's naming rule.
-2. **Worktree:** `git fetch origin main`, then `git worktree add <profile worktree root>/<branch> -b <branch> origin/main`.
-   - If the branch already exists locally or remotely, stop and offer `--adopt`; set the planning state file to `needs_you` with that reason.
-   - With `--adopt`, reuse the existing worktree, or add one for the existing branch.
-3. **Setup:** run the profile's setup command, in the background when it is slow.
-4. **Plan file:** write it to `<worktree>/.plans/plan.md`. Then write the worktree branch's state file with `state: "ready"`, its `repo`, `branch` and `worktree`, the plan's title and path, and its parts; and delete this session's planning file. The bar then shows in any session working in the worktree: this one if it moves there (step 6), or the one the user opens there.
-   - If `.plans/` is not ignored (`git check-ignore -q .plans/`), add it to `.git/info/exclude`, never to a tracked `.gitignore`.
-5. **Ticket:** move it to the profile's start status (Linear `save_issue` with `state`), and say so in the summary. This is the only ticket change allowed without asking.
-6. **Move the session:** when the profile says the session follows the worktree, switch this session into it with the EnterWorktree tool (`path` set to the worktree). The tool accepts worktrees under the repository's `.claude/worktrees/`. Otherwise, tell the user to open the worktree in a new session.
-7. **Report:**
-   - the worktree path and branch;
+1. **Setup:** run the profile's setup command, in the background when it is slow.
+2. **State:** write the worktree branch's state file with `state: "ready"`, its `repo`, `branch` and `worktree`, the plan's title and path, and its parts, and delete this session's planning file if there is one. The bar then shows in any session working in the worktree.
+3. **Ticket:** move it to the profile's start status (Linear `save_issue` with `state`), and say so in the summary. This is the only ticket change allowed without asking.
+4. **Report:**
+   - the worktree path and branch, and, when this session did not move there, that the run starts in a new session opened in the worktree;
    - the plan path;
    - the next step: `/my:plan:run` (or `/my:plan:round` to watch each round). From here the plan runs only through them (principles: the kit carries the plan it made).
 
