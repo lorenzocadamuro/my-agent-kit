@@ -4,6 +4,37 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [4.2.0] - 2026-10-22
+
+The kit speaks your language even when everything it read is in English, introduces its questions in chat before asking them, plans in the change's worktree from the start, puts in the bar only checks that can fail, and its release updates the plugins you have installed. Minor: new behaviour, nothing you rely on changes incompatibly.
+
+### Language and what you see
+
+- The chat is in your language even when the skills, plans and agents' reports it read are in English; an agent's report reaches you translated and summarised, never forwarded as it is.
+- When you say what you see (the chat's language, a missing explanation, a screen), the kit checks it against the session record (transcript, files, screenshots) before answering, and never contradicts you from memory.
+
+### Questions
+
+- Right before a batch of questions, in the same message and in your language, the chat introduces them: the situation, what the kit prescribes and why it asks, and what the choice changes. The questions and each option's Effect, Today, Pros, Cons and Severity then stay short, a few words each. This replaces the 4.1.0 rule that a longer explanation goes in chat and ends the turn: the separate turn stays only when you dismiss the questions or ask back.
+
+### Plans
+
+- `plan:scope` opens the change's worktree from `origin/main` as soon as the ticket or request is read (the branch name known), moves the session there when the profile says so, writes the plan in its `.plans/`, and plans in the branch's state file once the session works there (the session file stays for a dry run, or a session that stays outside the worktree). At approval only the setup, the ready state and the ticket move are left; on cancel it offers to remove the worktree. `--dry-run` still creates nothing.
+- A check enters the bar for done only after it was seen failing on the change's likeliest wrong input (or its code shows it checks that); otherwise the plan says it cannot fail and looks for one that can. `plan:scope` tries each bar check that way in its baseline.
+- A condition that happens only after the merge (a deploy, a sync, a rollout) is proposed as a separate verification ticket, its text in the plan: the interview's bar topic and the template's new "After the merge" line.
+
+### Release
+
+- `improve run` bumps the version of every plugin of the repository whose files changed, and after the yes and the push updates the installed copies (`claude plugin marketplace update`, then `claude plugin update`), checks they hold the new code, and tells you to restart. The principles' release gate says the same. Reviewed only: the eval sandbox has no installed plugins.
+
+### Evals
+
+- New case `plan/post-merge-check-ticket`: fails on 4.1.1 (2 of 2 runs: the sync stays on the ticket as "the user confirms after the deploy"), passes 2 of 2 after. The suite has 28 cases.
+- `plan/run-stops-before-publishing` gains `introduction` (an introduction in Italian before the draft-PR question): 4.1.1 fails it in 1 of 4 runs and passes 3, because without the question tool (headless evals cannot open it, even when allowed) the context already lands in chat; 3 of 3 pass after.
+- `plan/skipped-item-caught` gains `chat-language` (the last message is in Italian, the executor's English summary not pasted): a guard, since 4.1.1 already speaks Italian in this one-round case (one judge failure was on a fully Italian message). Both language graders now allow item titles and tool output quoted from the files.
+- The check that a bar check can fail has no case: on a one-file fixture 4.1.1 already said, in 2 of 2 runs, that the validation script could not catch a wrong name; the miss came from a hook whose code was not read. Opening the worktree at the start has none either: evals have no working git, and the dry-run cases guard that `--dry-run` creates nothing.
+- Prose in `skills/`, `docs/` and `templates/`: 1,414 → 1,420 lines.
+
 ## [4.1.1] - 2026-10-22
 
 While planning, the state belongs to the chat, not the folder: two chats planning in the same folder no longer overwrite each other, and a third chat there no longer shows their plan. Patch: a fix, nothing you rely on changes.
