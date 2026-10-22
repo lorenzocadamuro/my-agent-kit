@@ -6,4 +6,4 @@ execution:
   max_turns: 30
   allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
   prompt: |
-    /my:pr:review Nessun accesso a GitHub: la PR è descritta in ./pr.md e il codice è in ./payments. La PR è mia: l'utente gh autenticato è in ./gh-user.txt. La review arriva dal gate ready-for-review di una sessione /my:plan:round che ha guidato il lavoro. Modalità local: niente su GitHub. Data root ./kit-data, salva la review in ./review.md.
+    /my:pr:review Nessun accesso a GitHub: la PR è descritta in ./pr.md e il codice è in ./payments. La PR è mia: l'utente gh autenticato è in ./gh-user.txt. La review arriva dal gate ready-for-review di una sessione /my:plan:round che ha guidato il lavoro. Modalità local: niente su GitHub. Data root ./kit-data, salva la review in ./review.md. Non serve aspettare il mio accordo sull'analisi: scrivi anche le bozze.
