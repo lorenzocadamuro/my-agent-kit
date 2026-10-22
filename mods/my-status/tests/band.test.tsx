@@ -360,3 +360,22 @@ test('a session planning file untouched for 7 hours draws no band', async ($, on
   await refresh($)
   expect((await shown($)).band).toBe(false)
 })
+
+test('a leftover session planning file older than the folder\'s running file does not hide the run; a newer one still shows', async ($, on) => {
+  const live: MyStatusRun = { ...RUNNING, plan: { title: 'Learn from use', path: '' }, updatedAt: '2026-01-10T09:20:00Z' }
+  const leftovers: MyStatusRun[] = [
+    { ...PLANNING, step: 'research', updatedAt: '2026-01-10T09:10:00Z' },
+    { ...PLANNING, state: 'needs_you', reason: 'Plan approval', updatedAt: '2026-01-10T09:10:00Z' },
+    { ...PLANNING, step: 'research' },
+  ]
+  const w: World = { run: live }
+  world(on, w)
+  for (const leftover of leftovers) {
+    w.files = { 'session-chat-a.json': leftover }
+    await refresh($)
+    expect((await shown($)).percent).toMatch(/50%/)
+  }
+  w.files = { 'session-chat-a.json': { ...PLANNING, step: 'approval', updatedAt: '2026-01-10T09:22:00Z' } }
+  await refresh($)
+  expect((await shown($)).detail).toBe('Waiting for approval')
+})

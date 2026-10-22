@@ -109,19 +109,27 @@ async function sessionId($: EngineInterface): Promise<string | null> {
   }
 }
 
-/** The chat's own planning file first, then the folder and branch file, then an older name with this worktree; another chat's files never. */
-async function findRun($: EngineInterface, root: string, own: string | null, file: string, top: string): Promise<{ run: MyStatusRun; file: string } | null> {
-  for (const path of own ? [`${own}.json`, file] : [file]) {
-    const exact = parseJson<MyStatusRun>(await readText($, path))
-    if (exact) return { run: exact, file: path }
-  }
+type Found = { run: MyStatusRun; file: string }
+
+/** The newer of the chat's own planning file and the folder's file (on a tie, the chat's own); a missing date counts as oldest. */
+async function findRun($: EngineInterface, root: string, own: string | null, file: string, top: string): Promise<Found | null> {
+  const mine = own ? parseJson<MyStatusRun>(await readText($, `${own}.json`)) : null
+  const folder = await findFolderRun($, root, file, top)
+  if (mine && (!folder || (mine.updatedAt ?? '') >= (folder.run.updatedAt ?? ''))) return { run: mine, file: `${own}.json` }
+  return folder
+}
+
+/** The folder and branch file, then an older name with this worktree; another chat's session files never. */
+async function findFolderRun($: EngineInterface, root: string, file: string, top: string): Promise<Found | null> {
+  const exact = parseJson<MyStatusRun>(await readText($, file))
+  if (exact) return { run: exact, file }
   let names: string[] = []
   try {
     names = (await $.fs.list(`${root}/state`)).filter(entry => entry.kind === 'file' && entry.name.endsWith('.json') && !SIDECAR.test(entry.name) && !entry.name.startsWith('session-')).map(entry => entry.name)
   } catch {
     return null
   }
-  let best: { run: MyStatusRun; file: string } | null = null
+  let best: Found | null = null
   for (const name of names) {
     const path = `${root}/state/${name}`
     const run = parseJson<MyStatusRun>(await readText($, path))
