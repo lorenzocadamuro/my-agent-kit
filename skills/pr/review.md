@@ -52,7 +52,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
    - an inline comment of at most 4 sentences per kept finding, phrased as a question when uncertain, with a concrete suggestion when there is one; for a point with an open thread, at most a reply in it with something new, which the user posts there (it is not part of the pending review);
    - a review summary of at most 6 lines.
 
-   Add them to the file. Unless the mode is `local`, paste the summary and the comments to publish in chat. Then the gate: ask whether to create the pending review as drafted, switch the mode, or edit first.
+   Add them to the file and paste them in chat, in every mode (principles: present a file). In `local` mode they are for the user only, with no gate. Otherwise the gate: ask whether to create the pending review as drafted, switch the mode, or edit first.
 
 8. **Publish only after a yes.**
    - **`pending`:** `gh api repos/<o>/<r>/pulls/<n>/reviews -X POST --input <payload.json>`, with `commit_id` set to the head, `body` set to the summary, and `comments` as a list of `{path, line, side: "RIGHT", body}`. **Omit `event`, so the review stays pending.** Check first that every line is inside the diff; move any comment that is not into the body. Give the user the link: they submit it from GitHub.

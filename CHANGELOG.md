@@ -10,6 +10,7 @@ A review gives its judgement first and writes for GitHub only once you agree wit
 
 ### Breaking
 
+- `pr:review` in `local` mode pastes the drafts in chat too, as in the other modes (the skill said both yes and no).
 - `/my:pr:study` is removed: use `/my:pr:learn <PR> <comment id or URL | reviewer | comments [all]>`, or paste the comments after it. It studies the review comments as before (study page, glossary, reviewer profiles, only comments not studied yet). Without a focus, `/my:pr:learn` explains the whole PR as before. `/my:improve` reads `pr:study` in old log entries as `pr:learn`.
 
 ### Review
