@@ -47,3 +47,11 @@ PR: <owner/name#n> · Author: <handle> · Head: <sha> · Read on: <date> · Read
 - <...>
 
 </details>
+
+## Review comments so far
+
+<!-- Only when the PR has review comments: one line per reviewer, at most 5. -->
+
+- @<reviewer> (<review state>): <what they asked, in a few words> · <still open: which | all resolved>
+
+To study them: `/my:pr:learn <n> comments`.

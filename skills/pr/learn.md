@@ -12,13 +12,13 @@ This mode explains; it does not judge. Write hypotheses as questions, never as f
 ## Reading the PR
 
 1. **Check for an earlier reading:** `reads/<repo>-pr<n>.md`. Its header records the head commit it was written at.
-   - If it exists and the head is unchanged, link it and stop.
+   - If it exists and the head is unchanged, link it and stop; when the review comments changed, refresh only its overview of them first.
    - If the head moved, read only the commits since that SHA (`gh api repos/<o>/<r>/compare/<old>...<new>`). Add a "What changed since <date>" section at the top of the same file, and update the header.
 2. **Collect:**
    - `gh pr view <n> --json title,body,author,files,headRefOid,baseRefName,url,reviewRequests`;
    - `gh pr diff <n>`;
    - linked tickets;
-   - the existing reviews, only for their state, not to study them;
+   - the existing reviews and their comments, with each thread's state, for the overview at the end, not to study them;
    - the project profile, for the guides to load.
 
    When the profile names a repository tool that explains PRs, you may use its output as a source. Never use its publish options.
@@ -42,6 +42,7 @@ This mode explains; it does not judge. Write hypotheses as questions, never as f
      - what the PR deliberately does not do (from the description or the code);
      - how it is tested.
    - **Questions to keep in mind:** 3–6 questions from the lenses that this PR makes relevant, for example "who else writes this record?" or "what happens on a restart between X and Y?". These are open questions, not verdicts.
+   - **Review comments so far,** last, after layer 2, when the PR has any: who said what, one line per reviewer (at most 5 lines), which threads are still open, and `/my:pr:learn <n> comments` to study them.
 5. **Update the glossary.** Readings do not touch reviewer profiles.
 6. **Ask in chat:** "Do you want me to go deeper into a part, or start `/my:pr:review <n>`?"
 
