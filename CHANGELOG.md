@@ -22,14 +22,15 @@ A review gives its judgement first and writes for GitHub only once you agree wit
 
 - A recommendation's premise is checked like any other claim: a production volume or frequency it depends on is measured with a read-only query before the interview, or the recommendation says it is unverified and which measure would decide it.
 - For shared code the change extends, `plan:scope` research reports the rule each caller applies (tolerances, exceptions, what it skips), not only what it reads, and checks each rule against the change.
-- An out-of-scope item you accept as it is can carry its reason in the plan with no ticket ("none: accepted, <reason>" in the Ticket column), the recommended option when it concerns only a non-production environment. A ticket is one option, not the rule.
+- An out-of-scope item you accept as it is can carry its reason in the plan with no ticket ("none: accepted (D<n> or A<n>), <reason>" in the Ticket column; a review grading a finding `ticket` offers the same), the recommended option when it concerns only a non-production environment. A ticket is one option, not the rule.
 
 ### Evals
 
-- New case `pr/nothing-worth-adding` (a pure rename with nothing to raise): fails on 4.2.0 in 3 of 3 runs (questions and findings to fill the review), passes 4 of 4 after on the chat verdict (2 runs on an earlier fixture whose formatting bug drew an out-of-scope ticket, 2 on the final one). A grader on the review file's question count was dropped: its judge passed a three-question file on 4.2.0 and failed a zero-question file after.
+- New case `pr/nothing-worth-adding` (a pure rename with nothing to raise): fails on 4.2.0 in 3 of 3 runs (questions and findings to fill the review), passes after on the chat verdict, 2 of 2 on an earlier fixture (whose formatting bug drew an out-of-scope ticket) and 2 of 2 on the final one. A grader on the review file's question count was dropped: its judge passed a three-question file on 4.2.0 and failed a zero-question file after.
+- New case `pr/drafts-wait-for-agreement` (the broken-promise PR, with no agreement in the prompt): `review.md` holds English draft sections on 4.2.0 (1 of 1 run) and none after (2 of 2). An LLM grader on the reply was dropped: it passed 4.2.0's reply and failed two correct replies that asked whether the analysis holds.
 - New case `plan/research-checks-premises`: its staging-only item gets a ticket on 4.2.0 in 2 of 2 runs and "none: accepted" after in 2 of 2. Its volume and caller-rule graders already pass on 4.2.0 (the prose principle and the fixture's profile were enough): they guard the new text.
-- `pr/broken-promise`, `pr/own-pr-fresh-review` and `pr/review-keeps-study-private` now say in the prompt that the drafts need not wait for agreement, since evals cannot answer. `pr/budget-and-known-term` runs through `/my:pr:learn acme/orders#42 comments`; it already passes on 4.2.0, where the model adapted, so it guards the merge rather than proving it. The suite has 30 cases.
-- Prose in `skills/`, `docs/` and `templates/`: 1,418 → 1,414 lines.
+- `pr/broken-promise`, `pr/own-pr-fresh-review` and `pr/review-keeps-study-private` now say in the prompt that the drafts need not wait for agreement, since evals cannot answer. `pr/budget-and-known-term` runs through `/my:pr:learn acme/orders#42 comments`; it already passes on 4.2.0 (3 of 3 runs), where the model adapted, so it guards the merge rather than proving it; after, 5 of 7 runs pass (3 of 4 on the final text), the two failures being split judge votes on the glossary and the page. The suite has 31 cases.
+- Prose in `skills/`, `docs/` and `templates/`: 1,418 → 1,413 lines (17,556 → 18,092 words).
 
 ## [4.2.0] - 2026-10-22
 

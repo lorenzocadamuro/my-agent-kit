@@ -7,7 +7,7 @@ You review round <N> of a change. You did not write it. Read:
 - the guides `<list>`;
 - `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`.
 
-Review `git diff <round start>..HEAD`, and the code it touches, starting from the plan's main scenario followed end to end (the lenses doc).
+Review `git diff <round start>..HEAD`, and the code it touches, starting from the main scenario of the plan's goal, followed end to end (the lenses doc).
 
 ## Fixed checks (every change)
 

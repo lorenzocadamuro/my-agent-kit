@@ -5,7 +5,7 @@ Input:
 - a PR number or URL (by default, the PR of the current branch);
 - optionally, a focus:
   - an area, in plain words: the reading below goes deeper there;
-  - **review comments:** a comment id or URL, reviewer handles (a word naming one of the PR's reviewers), `comments` (every human comment not studied yet), `comments all`, or pasted comment text. Then follow § Studying review comments instead of the reading.
+  - **review comments:** a comment id or URL, reviewer handles (a word naming one of the PR's reviewers), `comments` (every human comment), or pasted comment text, each followed by `all` to take comments already studied again. Then follow § Studying review comments instead of the reading.
 
 This mode explains; it does not judge. Write hypotheses as questions, never as findings. Judging is `/my:pr:review`, which reuses this reading.
 
@@ -48,9 +48,8 @@ This mode explains; it does not judge. Write hypotheses as questions, never as f
 ## Studying review comments
 
 1. **Choose the comments.**
-   - With `comments`, take the human reviews and inline comments on the current head **that are not in the index yet** (`study/README.md`, column "comments studied").
-   - With `comments all`, take every human comment again.
-   - With reviewer handles, take only theirs; with a comment id or URL, only that comment and its thread.
+   - Take the human reviews and inline comments on the current head **that are not in the index yet** (`study/README.md`, column "comments studied"); `all` takes them again.
+   - Reviewer handles narrow them to theirs; a comment id or URL takes only that comment and its thread.
    - Include bot comments only when a human cites them.
    - If nothing new is left, say so, link the existing pages, and stop.
 2. **Collect** into the scratchpad:

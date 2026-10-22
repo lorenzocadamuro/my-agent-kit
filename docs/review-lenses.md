@@ -24,10 +24,10 @@ Shared by `/my:pr:review`, the review step of `/my:plan:round` and `/my:plan:run
 ## Grading a finding
 
 - **block:** breaks the promise, an invariant, the boundary or the bar for done.
-- **ticket:** real, but outside the plan's scope. Write the ticket text and do not fix it in this change.
+- **ticket:** real, but outside the plan's scope. Write the ticket text and do not fix it in this change; the user may accept it instead, its reason in the plan (principles: out of scope is a list).
 - **note:** style, naming, optional improvements.
 
-**Weigh reach and impact:** who can trigger it (every user, one API client, an operator) and what it costs when they do. A flaw only a rare caller can reach, with a contained cost, is a note unless it breaks the promise.
+**Weigh reach and impact:** who can trigger it (every user, one API client, an operator) and what it costs when they do. A flaw only a rare caller can reach, with a contained cost, is a note unless it breaks the promise, an invariant, the boundary or the bar for done.
 
 **"The main branch has the same problem" is not a reason to downgrade.** If the finding breaks a guarantee this change advertises, it is a block.
 
