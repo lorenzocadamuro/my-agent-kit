@@ -27,7 +27,7 @@ How it is checked, and what it costs:
 - Once, at the end: <the full proof that the change is done, e.g. the full suite, two independent A/B runs, a manual check> (~<time or cost>)
 - After the merge: <a condition that happens only after the merge (a deploy, a sync, a rollout), as a separate verification ticket: its text, what to check, where and when | none>
 
-Each check above was seen failing on the change's likeliest wrong input, or says why it cannot fail.
+Each check run every round or at the end was seen failing on the change's likeliest wrong input, or says why it cannot fail.
 
 ## Gates [always]
 

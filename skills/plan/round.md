@@ -28,7 +28,7 @@ At the end of a round or a run, set `state`: `done` when the bar is met (the rea
 
 ### 1. Load
 
-- **The plan:** `<worktree>/.plans/plan.md`. If it is missing, offer `/my:plan:scope --adopt`. For a tiny task, the user may prefer three questions (goal, boundary, bar) and a stub plan instead; a stub plan writes `Size: S` and takes the S lane.
+- **The plan:** `<worktree>/.plans/plan.md`. If it is missing, offer `/my:plan:scope --adopt`; if it is not approved yet (its state file is `planning`, or `needs_you` for "Plan approval"), offer to finish `/my:plan:scope` instead, and run nothing. For a tiny task, the user may prefer three questions (goal, boundary, bar) and a stub plan instead; a stub plan writes `Size: S` and takes the S lane.
 - **The project profile:** commands, the guides to load for the touched paths, the deep review tool.
 - **New PR comments:** those created since the previous round (its `Comments read until` line), read with the query of `pr:comments` step 1 but without touching its state file. A real comment that the plan, the research or the last review should have caught is a signal (principles: closing step). When comments need work, suggest `/my:pr:comments` to turn them into this round's source. Comments a `pr:comments` file covers count as read when that file is the source: move `Comments read until` past them.
 - **CI:** read it through the app's PR status tool when one is available. Never poll.
