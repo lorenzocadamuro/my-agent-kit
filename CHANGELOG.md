@@ -22,7 +22,7 @@ The kit speaks your language even when everything it read is in English, introdu
 - `plan:scope` opens the change's worktree from `origin/main` as soon as the ticket or request is read (the branch name known), moves the session there when the profile says so, writes the plan in its `.plans/`, and plans in the branch's state file once the session works there (the session file stays for a dry run, or a session that stays outside the worktree). The profile's setup command starts there in the background, so the baseline runs on a ready worktree. At approval only the ready state and the ticket move are left; on cancel it offers to remove the worktree. `--dry-run` still creates nothing, and neither does a profile where you work without a worktree.
 - Since an unapproved plan now sits in the worktree, `plan:round` and `plan:run` refuse a plan whose state file is still `planning` (or `needs_you` for "Plan approval"), and offer to finish `plan:scope` instead.
 - A check enters the bar for done only after it was seen failing on the change's likeliest wrong input (or its code shows it checks that); otherwise the plan says it cannot fail and looks for one that can. `plan:scope` tries each bar check that way in its baseline.
-- A condition that happens only after the merge (a deploy, a sync, a rollout) is proposed as a separate verification ticket, its text in the plan: the interview's bar topic and the template's new "After the merge" line.
+- A condition that happens only after the merge (a deploy, a sync, a rollout) is proposed as a separate verification ticket, its text in the plan: the interview's bar topic and the template's "After the merge" line, written only when there is one. Each bar check in the template names the wrong input it was seen failing on, in its own line, so a small plan stays short.
 
 ### Release
 
@@ -30,11 +30,11 @@ The kit speaks your language even when everything it read is in English, introdu
 
 ### Evals
 
-- New case `plan/post-merge-check-ticket`: fails on 4.1.1 (2 of 2 runs: the sync stays on the ticket as "the user confirms after the deploy"), passes 2 of 2 after. The suite has 28 cases.
-- `plan/run-stops-before-publishing` gains `introduction` (an introduction in Italian before the draft-PR question): 4.1.1 fails it in 1 of 4 runs and passes 3, because without the question tool (headless evals cannot open it, even when allowed) the context already lands in chat; 3 of 3 pass after.
+- New case `plan/post-merge-check-ticket`: fails on 4.1.1 (2 of 2 runs: the sync stays on the ticket as "the user confirms after the deploy"), passes 3 of 3 after. The suite has 28 cases.
+- The introduction before questions has no case: a grader for it on `plan/run-stops-before-publishing` failed 1 of 4 runs on 4.1.1 and 1 of 5 after, because without the question tool (headless evals cannot open it, even when allowed) the context already lands in chat; the noise was not kept in a gate case.
 - `plan/skipped-item-caught` gains `chat-language` (the last message is in Italian, the executor's English summary not pasted): a guard, since 4.1.1 already speaks Italian in this one-round case (one judge failure was on a fully Italian message). Both language graders now allow item titles and tool output quoted from the files.
 - The check that a bar check can fail has no case: on a one-file fixture 4.1.1 already said, in 2 of 2 runs, that the validation script could not catch a wrong name; the miss came from a hook whose code was not read. Opening the worktree at the start has none either: evals have no working git, and the dry-run cases guard that `--dry-run` creates nothing.
-- Prose in `skills/`, `docs/` and `templates/`: 1,414 → 1,420 lines.
+- Prose in `skills/`, `docs/` and `templates/`: 1,414 → 1,418 lines.
 
 ## [4.1.1] - 2026-10-22
 

@@ -23,11 +23,9 @@ The change is ready to merge when:
 
 How it is checked, and what it costs:
 
-- Every round: <the quick check that decides whether a round worked, e.g. targeted tests, a screening run> (~<time or cost>)
-- Once, at the end: <the full proof that the change is done, e.g. the full suite, two independent A/B runs, a manual check> (~<time or cost>)
-- After the merge: <a condition that happens only after the merge (a deploy, a sync, a rollout), as a separate verification ticket: its text, what to check, where and when | none>
-
-Each check run every round or at the end was seen failing on the change's likeliest wrong input, or says why it cannot fail.
+- Every round: <the quick check that decides whether a round worked, e.g. targeted tests, a screening run> (~<time or cost>; fails on: <the likeliest wrong input it was seen failing on>)
+- Once, at the end: <the full proof that the change is done, e.g. the full suite, two independent A/B runs, a manual check> (~<time or cost>; fails on: <…>)
+- After the merge, only when a condition happens then (a deploy, a sync): <a separate verification ticket, its text: what to check, where and when>
 
 ## Gates [always]
 
