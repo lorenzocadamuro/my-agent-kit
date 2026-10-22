@@ -52,7 +52,7 @@ For M and L, run up to three Explore agents in parallel. For S, do it yourself, 
   - CODEOWNERS entries for the paths;
   - branch rules (`gh api repos/<o>/<r>/rules/branches/main`), covering required reviews, code owners, checks and thread resolution.
 - **Rules to load:** the guides the profile maps to these paths.
-- **Baseline:** run the profile's check commands for these paths on `origin/main`, and note pass, fail or missing tool (principles: measure the baseline).
+- **Baseline:** run the profile's check commands for these paths on `origin/main`, and note pass, fail or missing tool (principles: measure the baseline). For each check the bar will use, try it once on the change's likeliest wrong input, or read its code, and note whether it can fail (principles: a test or a check must be able to fail).
 
 Keep research notes in the scratchpad. They feed the plan and, for M and L, the independent review.
 
@@ -62,7 +62,7 @@ Ask with the multiple-choice tool, following the question format, in batches of 
 
 | Size       | Topics                                                                                                                                             |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Every size | goal confirmation, boundary, bar for done (what is checked every round, and what once at the end)                                                                                                          |
+| Every size | goal confirmation, boundary, bar for done (what is checked every round, what once at the end, and a condition that happens only after the merge, such as a deploy or a sync, proposed as a separate verification ticket) |
 | M and L    | invariants, existing versus new behaviour (only where research found a question), out of scope, intentional changes, size budget and split trigger |
 | L          | people and what they are building next, rollout (flags, deploy order, migrations, backfills), extra gates and stop conditions                      |
 
