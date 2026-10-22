@@ -93,14 +93,14 @@ All skills share one set of rules, kept in [docs/principles.md](docs/principles.
 - humans decide at gates;
 - every option in a question carries its own labelled Pros and Cons, and a question in your answer gets an answer before any new question;
 - decisions are learned as kinds, and a kind is decided alone only after you hand it over;
-- verify before deciding, including the agent's own claims; the writer is never the reviewer; a check or a stop condition is never relaxed without your yes;
+- verify before deciding, including the agent's own claims, and check what you say you see against the session record instead of contradicting you from memory; the writer is never the reviewer; a check or a stop condition is never relaxed without your yes;
 - what the kit relies on, or hands you, runs once for real first, and checks enter the bar only after their baseline is measured;
 - repository rules are loaded explicitly;
 - work happens in a worktree, unless the project profile says how you work there instead;
 - a fresh session is named after the work, not the command;
 - a file you must read opens in the app's pane, and a text you must approve is pasted in chat; nothing published cites your study pages, reviewer profiles or other personal material;
 - in the kit's own repository, work branches may be pushed, but `main` and tags move only at the release gate, after the full diff and your yes;
-- reasoning is in the user's language, and repository vocabulary is never translated;
+- reasoning is in the user's language, even when everything the kit read is in English (an agent's report reaches you translated and summarised), and repository vocabulary is never translated;
 - the kit learns while it is used: every skill collects signals and digests them into notes;
 - an approved plan runs only through `plan:run` or `plan:round`, so the status line is always true; leaving the kit is your call.
 
