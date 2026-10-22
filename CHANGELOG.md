@@ -11,13 +11,13 @@ While planning, the state belongs to the chat, not the folder: two chats plannin
 ### Status
 
 - `plan:scope` writes its planning state to `state/session-<session id>.json` (the id from `$CLAUDE_CODE_SESSION_ID`) and deletes it at approval, when it writes the worktree branch's file as before. The activity sidecar of `pr:*` modes and `improve run` is `state/session-<session id>.activity.json`. Without a session id, the folder's name stays.
-- `my-status` reads the chat's own session files first (`$.session.id()`), then the folder and branch file as before; its fallback by worktree skips session files, so a chat never shows another chat's planning or activity. The 6-hour rule covers session files, and folder-named planning files written by 4.1.0 still show.
-- Mod tests: 37 → 41 (three fail on 4.1.0; the stale guard passes already).
+- `my-status` reads the chat's own session file (`$.session.id()`) and the folder and branch file, and shows the newer of the two (a missing date counts as oldest), so a leftover planning file never hides a live run; its fallback by worktree skips session files. A chat never shows another chat's planning or activity when both have a session id; folder-named files (written by 4.1.0, or by a chat without an id) still show in every chat of that folder, as the README says. The 6-hour rule covers session files.
+- Mod tests: 37 → 42 (four fail on 4.1.0; the stale guard passes already).
 - `my-status` is versioned 0.2.1, so installed copies update.
 
 ### Evals
 
-- `plan/small-task` (`planning-state`) and `pr/broken-promise` (`activity`) now require the session name: both fail on 4.1.0 (1 of 1 run each) and pass after (2 of 2 runs each).
+- `plan/small-task` (`planning-state`) and `pr/broken-promise` (`activity`) now require the session name, with an id of at least one character and no unexpanded variable: both fail on 4.1.0 (1 of 1 run each); after, `activity` passes 3 of 3 runs and `planning-state` 2 of 3 (the third run showed the name only as `session-$CLAUDE_CODE_SESSION_ID.json`).
 - Prose in `skills/`, `docs/` and `templates/` stays at 1,414 lines.
 
 ## [4.1.0] - 2026-10-21
