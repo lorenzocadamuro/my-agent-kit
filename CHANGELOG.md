@@ -4,6 +4,22 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [4.1.1] - 2026-10-22
+
+While planning, the state belongs to the chat, not the folder: two chats planning in the same folder no longer overwrite each other, and a third chat there no longer shows their plan. Patch: a fix, nothing you rely on changes.
+
+### Status
+
+- `plan:scope` writes its planning state to `state/session-<session id>.json` (the id from `$CLAUDE_CODE_SESSION_ID`) and deletes it at approval, when it writes the worktree branch's file as before. The activity sidecar of `pr:*` modes and `improve run` is `state/session-<session id>.activity.json`. Without a session id, the folder's name stays.
+- `my-status` reads the chat's own session files first (`$.session.id()`), then the folder and branch file as before; its fallback by worktree skips session files, so a chat never shows another chat's planning or activity. The 6-hour rule covers session files, and folder-named planning files written by 4.1.0 still show.
+- Mod tests: 37 → 41 (three fail on 4.1.0; the stale guard passes already).
+- `my-status` is versioned 0.2.1, so installed copies update.
+
+### Evals
+
+- `plan/small-task` (`planning-state`) and `pr/broken-promise` (`activity`) now require the session name: both fail on 4.1.0 (1 of 1 run each) and pass after (2 of 2 runs each).
+- Prose in `skills/`, `docs/` and `templates/` stays at 1,414 lines.
+
 ## [4.1.0] - 2026-10-21
 
 The kit asks when you can answer, shows you the files it wants you to read, tries what it relies on before relying on it, follows what a plan adds, keeps its own checks, and the status band shows only where the work stands. Minor: new behaviour, nothing you rely on changes incompatibly.
