@@ -12,8 +12,8 @@ This mode explains; it does not judge. Write hypotheses as questions, never as f
 ## Reading the PR
 
 1. **Check for an earlier reading:** `reads/<repo>-pr<n>.md`. Its header records the head commit it was written at.
-   - If it exists and the head is unchanged, link it and stop; when the review comments changed, refresh only its overview of them first.
-   - If the head moved, read only the commits since that SHA (`gh api repos/<o>/<r>/compare/<old>...<new>`). Add a "What changed since <date>" section at the top of the same file, and update the header.
+   - If it exists and the head is unchanged, rewrite only its review comments overview (step 2's comments, step 4's format), link it and stop.
+   - If the head moved, read only the commits since that SHA (`gh api repos/<o>/<r>/compare/<old>...<new>`). Add a "What changed since <date>" section at the top of the same file, and update the header and the review comments overview.
 2. **Collect:**
    - `gh pr view <n> --json title,body,author,files,headRefOid,baseRefName,url,reviewRequests`;
    - `gh pr diff <n>`;
