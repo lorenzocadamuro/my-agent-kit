@@ -99,12 +99,25 @@ function parseJson<T>(text: string | null): T | null {
 
 const SIDECAR = /\.(progress|activity)\.json$/
 
-async function findRun($: EngineInterface, root: string, file: string, top: string): Promise<{ run: MyStatusRun; file: string } | null> {
-  const exact = parseJson<MyStatusRun>(await readText($, file))
-  if (exact) return { run: exact, file }
+/** This chat's id, or null when the engine cannot tell it (then only the folder's files count). */
+async function sessionId($: EngineInterface): Promise<string | null> {
+  try {
+    const id = await $.session.id()
+    return /^[\w-]+$/.test(id) ? id : null
+  } catch {
+    return null
+  }
+}
+
+/** The chat's own planning file first, then the folder and branch file, then an older name with this worktree; another chat's files never. */
+async function findRun($: EngineInterface, root: string, own: string | null, file: string, top: string): Promise<{ run: MyStatusRun; file: string } | null> {
+  for (const path of own ? [`${own}.json`, file] : [file]) {
+    const exact = parseJson<MyStatusRun>(await readText($, path))
+    if (exact) return { run: exact, file: path }
+  }
   let names: string[] = []
   try {
-    names = (await $.fs.list(`${root}/state`)).filter(entry => entry.kind === 'file' && entry.name.endsWith('.json') && !SIDECAR.test(entry.name)).map(entry => entry.name)
+    names = (await $.fs.list(`${root}/state`)).filter(entry => entry.kind === 'file' && entry.name.endsWith('.json') && !SIDECAR.test(entry.name) && !entry.name.startsWith('session-')).map(entry => entry.name)
   } catch {
     return null
   }
@@ -142,10 +155,13 @@ async function refresh($: EngineInterface): Promise<void> {
     const branch = (await sh($, ['git', 'branch', '--show-current'], top)) || 'detached'
     const remote = await sh($, ['git', 'remote', 'get-url', 'origin'], top)
     const base = `${root}/state/${ownerName(remote, top)}-${branch.replace(/\//g, '-')}`
-    const found = await findRun($, root, `${base}.json`, top)
+    const session = await sessionId($)
+    const own = session ? `${root}/state/session-${session}` : null
+    const found = await findRun($, root, own, `${base}.json`, top)
     const run = found?.run ?? null
     const progress = found ? parseJson<MyStatusProgress>(await readText($, found.file.replace(/\.json$/, '.progress.json'))) : null
-    const activity = parseJson<MyStatusActivity>(await readText($, `${base}.activity.json`))
+    const activity =
+      (own ? parseJson<MyStatusActivity>(await readText($, `${own}.activity.json`)) : null) ?? parseJson<MyStatusActivity>(await readText($, `${base}.activity.json`))
     const now = await $.clock.now()
     let net: Network | undefined
     if (run?.pr) {
