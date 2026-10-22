@@ -1,5 +1,5 @@
 ---
 type: file_exists
-path: kit-data/state/acme-pay-review-9.activity.json
+path: kit-data/state/session-*.activity.json
 weight: 1
 ---
