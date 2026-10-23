@@ -10,4 +10,4 @@
 - Suspected cause: <skill step, principle, template, project profile, or "unknown">
 - Signal: <decision reversed | question re-asked | free answer | question dismissed | reviewer correction | rework | surprise gate | review found unplanned issue | unplanned stop | other>
 <!-- Zero or more lines, appended by the digest only, never by hand:
-- Evidence: <date> · <skill> · <what happened> · <source> -->
+- Evidence: <date> · <skill> · <what happened> · <source> · kit <the signal's version, left out when the signal has none> -->

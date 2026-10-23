@@ -3,6 +3,19 @@ mkdir -p kit-data
 cat > kit-data/suite-log.md <<'P'
 # Suite log
 
+## 20261020-03 · plan:scope · open
+
+- When: 2026-10-20 16:30
+- Kit: 4.0.0
+- Where: acme/mobile · feature-g · session unknown
+- What happened: At the budget question, plan:scope proposed one size budget of 300 lines for the whole change, tests included, though the plan asked for about 200 lines of guard tests; the budget was spent before the code started.
+- Why it was a problem: I had to raise the budget by hand at the first round, and the plan's size class was wrong.
+- Missing question: "How many of these lines are production code, and how many are the tests the plan asks for?"
+- Expected: The budget is stated in production lines; tests are estimated and reported apart.
+- Suspected cause: plan:scope's interview, budget topic, sizes the change in total lines.
+- Signal: decision reversed
+- Evidence: 2026-10-23 15:20 · plan:scope · the budget question again offered one total that included the guard tests, and I raised it by hand at the first round · signals/dana-feature-h.md · kit 5.1.0
+
 ## 20261021-04 · plan:round · open
 
 - When: 2026-10-21 18:00

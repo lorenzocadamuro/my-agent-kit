@@ -31,7 +31,7 @@ Template: [templates/reviewer-profile.md](../templates/reviewer-profile.md). It 
 
 ## Suite log
 
-One entry per problem, in the format of [templates/log-entry.md](../templates/log-entry.md); entries written before 5.2.0 have no `Kit:` line and stay valid. Entries are appended and never deleted. A fixed entry keeps its text and gains a `fixed <version>` status. The digest may append `Evidence:` lines to an open entry, never change its other lines.
+One entry per problem, in the format of [templates/log-entry.md](../templates/log-entry.md); entries written before 5.2.0 have no `Kit:` line nor a version on their `Evidence:` lines, and stay valid. Entries are appended and never deleted. A fixed entry keeps its text and gains a `fixed <version>` status. The digest may append `Evidence:` lines to an open entry, never change its other lines.
 
 ## Method
 
