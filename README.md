@@ -165,7 +165,8 @@ templates/           plan, project profile, round, round summary, log entry, rev
 scripts/check.sh     validation and privacy check, run by the pre-commit hook
 scripts/check.test.sh  tests that the privacy check fails without its deny-word file
 scripts/verify-round.sh  checks a round summary against git
-scripts/drift.sh     size versus budget, distance from main, conflict preview
+scripts/drift.sh     size versus budget (production code; tests reported apart), distance from main, conflict preview
+scripts/drift.test.sh  tests that the budget counts production code, not tests
 .githooks/pre-commit runs scripts/check.sh
 .githooks/commit-msg blocks a commit touching CONSTITUTION.md without "Amend constitution"
 .claude/CLAUDE.md    instructions for agents editing this repository
@@ -188,6 +189,7 @@ This repository holds only generic, reusable material. Anything tied to an emplo
 git config core.hooksPath .githooks   # once per clone
 scripts/check.sh                      # validate the plugin and run the privacy check
 bash scripts/check.test.sh            # test that the privacy check fails without its deny-word file
+bash scripts/drift.test.sh            # test that the size budget counts production code, not tests
 ```
 
 `git config core.hooksPath .githooks` enables both hooks: `pre-commit` runs `scripts/check.sh`, and `commit-msg` blocks a commit that touches `CONSTITUTION.md` unless its message contains "Amend constitution" (merges pass).
