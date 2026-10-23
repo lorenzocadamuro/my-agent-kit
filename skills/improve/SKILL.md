@@ -55,7 +55,7 @@ Goal: under a minute, no questions unless the text is empty.
    - The id is `YYYYMMDD-NN`: re-read the log right before appending, and take the next number after today's highest, starting at 01. Another session may have written since you last read it.
    - "What happened" and "Expected" are concrete: what was done or said, not an opinion. "Why it was a problem" says what it cost the user, in plain words. "Missing question" is a question someone should have asked at the start, not a fix; `unknown` when it is not clear.
    - "Suspected cause" names a step, principle, template or profile line when you can point to it; otherwise `unknown`. Do not investigate deeply here.
-4. **Append** the entry to the log. Change nothing else: no skill, doc, template or profile.
+4. **Append** the entry to the log, then re-read it: if another entry has the same id, give the entry just written the next free number of that day, changing only its header. Change nothing else: no skill, doc, template or profile.
 5. **Confirm in exactly one line,** and nothing else: `Logged <id> · <skill> · <n> open`. Missing context goes in the entry as `unknown`; do not explain it in the reply.
 
 ## Digest
@@ -67,7 +67,7 @@ Run at the end of every other skill (principles: closing step), or by the user. 
 3. **Group by upstream cause:** the missing question or directive behind the signals, not the surface event. A session usually yields one to three groups.
 4. **For each group,** re-read the log first.
    - If an open entry has the same cause, append one `- Evidence: <date> · <skill> · <what happened> · <source> · kit <version>` line per signal at its end, the version copied from the signal (none when it has none). Never change its other lines.
-   - Otherwise write a new entry as in Note, with the signals as Evidence lines. Its "Where" comes from the signals file's heading, its `Kit:` from the newest version its signals carry (else the digest's own).
+   - Otherwise write a new entry as in Note steps 3–4 (its id checked again after appending, so the marks of step 5 below carry the final one), with the signals as Evidence lines. Its "Where" comes from the signals file's heading, its `Kit:` from the newest version its signals carry (else the digest's own).
 5. **Mark each digested signal** `→ <entry id>`.
 6. **Reply in one line:** `Digested <k> signals → <ids>`. With no pending signals, reply nothing.
 
