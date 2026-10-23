@@ -4,6 +4,22 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [5.1.0] - 2026-10-23
+
+The size budget and its split trigger count production code, not tests, so the guard tests a plan asks for no longer stop a run at "drift over budget". Minor: new behaviour, nothing you rely on changes incompatibly.
+
+### Plans
+
+- `scripts/drift.sh` splits the change's size into production and tests and prints both, after the total `size:` line, which stays. The `--lines` and `--files` budgets compare production only; test lines and files are reported and never put a change over budget. Test files by default: paths with a `test`, `tests`, `__tests__`, `spec` or `specs` folder, and files named `*_test.*`, `*.test.*`, `*.spec.*`, `test_*.*`, `*_spec.*` or `conftest.py`; a file moved across is classed by its new path. `--tests <pathspec>…` replaces the default, and the `--` excludes work as before.
+- The principles, `plan:scope` (the S and L size classes, the interview's budget topic), the plan template and `plan:round` (the `drift.sh` call and the report's Drift line, with test lines apart) state the budget in production lines and files; tests are estimated and reported apart. A plan written before reads its numbers as production lines.
+- The project profile gains an optional "Test paths" line, passed to `drift.sh` as `--tests`.
+
+### Tests and evals
+
+- New `scripts/drift.test.sh`, in a temporary repository: fails on 5.0.0's `drift.sh` in 9 of 11 checks (test lines push a change over a budget its production code meets; `--tests` is unknown), passes 11 of 11 after. It replaces an eval case: evals have no working git.
+- `plan/round-reviewed-by-fresh-agent`'s fixture shows the new `production:` and `tests:` lines in its `drift.sh` output; it passes 2 of 2 (one run before the fixture change, one after). `plan/run-carries-blocks` passes 1 of 1. `plan/small-task` passes 1 of 2: the failed run lost the plan judge and did not write the planning state; the second passed both. `plan/skipped-item-caught` passes 1 of 3 on its language graders (its catch grader 3 of 3): one run wrote `report.md` in English, one fully Italian run drew FAIL votes; 5.0.0's prose, run once for comparison, passed. The language judge is noisy here, and the one text change these cases read is the report's Drift line.
+- Prose in `skills/`, `docs/` and `templates/`: 1,424 → 1,425 lines.
+
 ## [5.0.0] - 2026-10-22
 
 A review gives its judgement first and writes for GitHub only once you agree with it; one command explains a PR or the review it received; planning research checks the premises of its recommendations. Major: `/my:pr:study` is removed.
