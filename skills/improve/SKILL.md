@@ -47,7 +47,7 @@ Goal: under a minute, no questions unless the text is empty.
 
 1. **Identify the skill and mode,** written `skill:mode` (`plan:scope`, `plan:run`, `pr:review`, `improve:run`): from the text, or else from the most recent `/my:` command used in this session, or else `general`. Use `principles`, `templates`, `scripts`, `mod` or `profile:<repo>` when the problem is there.
 2. **Collect context without asking:**
-   - date and time;
+   - date and time, and the kit version (the template's `Kit:` line);
    - current repository (`git rev-parse --show-toplevel`, remote slug), branch, and PR number (`gh pr view --json number -q .number`, if any);
    - the session id if known.
 3. **Fill the entry** from `${CLAUDE_PLUGIN_ROOT}/templates/log-entry.md`.
@@ -67,7 +67,7 @@ Run at the end of every other skill (principles: closing step), or by the user. 
 3. **Group by upstream cause:** the missing question or directive behind the signals, not the surface event. A session usually yields one to three groups.
 4. **For each group,** re-read the log first.
    - If an open entry has the same cause, append one `- Evidence: <date> · <skill> · <what happened> · <source>` line per signal at its end. Never change its other lines.
-   - Otherwise write a new entry as in Note, with the signals as Evidence lines. Its "Where" comes from the signals file's heading.
+   - Otherwise write a new entry as in Note, with the signals as Evidence lines. Its "Where" comes from the signals file's heading, its `Kit:` from the newest version its signals carry (else the digest's own).
 5. **Mark each digested signal** `→ <entry id>`.
 6. **Reply in one line:** `Digested <k> signals → <ids>`. With no pending signals, reply nothing.
 
@@ -75,7 +75,7 @@ Never change a skill, doc, template or profile.
 
 ## Showing entries
 
-List and Log share one view. Each entry shows its id, skill, state as a coloured badge, and the problem in one line, written in the user's language from "Why it was a problem" (or "What happened" in older entries). Its detail (what happened, why it was a problem, missing question, expected, suspected cause, where, evidence) opens on demand. Labels follow the principles: states, ids and headers in English, the problem and the detail in the user's language.
+List and Log share one view. Each entry shows its id, skill, state as a coloured badge, and the problem in one line, written in the user's language from "Why it was a problem" (or "What happened" in older entries). Its detail (what happened, why it was a problem, missing question, expected, suspected cause, where, evidence) opens on demand. Labels follow the principles: states, ids and headers in English, the problem and the detail in the user's language. An open entry from a version older than the current one (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`) carries a short marker next to its state, in English like the states: `from <version>` (`from ~<version>` when approximate): its version is its `Kit:` line, or else, approximately, the latest release dated before its `When` (`git -C <kit source> tag --sort=creatordate --format='%(creatordate:iso) %(refname:short)'`, or without git the CHANGELOG's release dates); none found, no marker.
 
 - **With the app's visual widget tool** (`show_widget`, after its `read_me` with the `interactive` module): render one widget. Each entry is a collapsible row; badges are green for `open`, grey for `fixed` and `wontfix`, amber for `deferred`. Closed entries sit in one more collapsible section, closed by default.
 - **Without it:** a Markdown table with the columns `Id · Skill · State · Problem`, states as `🟢 open`, `✅ fixed`, `⏸ deferred`, `⚪ wontfix`. Closed entries follow the open ones in a separate table under `Closed (<n>)`.
@@ -90,6 +90,7 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
 
 1. **Preflight the kit source.** With `--propose-only`, skip it: steps 2–4 read the files under `${CLAUDE_PLUGIN_ROOT}`, and the run stops after step 4 without the closing step. Otherwise, in the main checkout (no worktree yet): clean tree, on `main`, `git fetch origin main` (never a pull: the live kit does not move before a yes). Stop if any of these fails, or if local `main` is not an ancestor of `origin/main` (`git merge-base --is-ancestor main origin/main`). Steps 2–4 then read the kit at `origin/main` (`git show origin/main:<path>`), so proposals cite current text.
 2. **Select entries:** all open ones, or those matching the given skill or ids. Read each affected skill, the principles and templates, and any session or file an entry points to.
+   - **Entries from an older version** (§ Showing entries; the current version is where steps 2–4 read the kit): flag each one with its marker and the current version, read what changed since that version where its suspected cause points (the CHANGELOG entries, `git log v<version>..origin/main -- <paths>`; without git, the CHANGELOG), and classify it: still valid, already fixed (by which version), or obsolete (that part was rewritten). Only still-valid entries go on to step 3. Each other one gets one line with its reason and a proposed closing, `fixed <version> (already)` or `wontfix: obsolete since <version>`, asked in step 4 and applied in step 8 only on the user's yes.
 3. **Find the upstream lesson.** Group the notes by upstream cause, not by surface event. For each group:
    - **Check it against the constitution first.** Read `CONSTITUTION.md` where steps 2–4 read the kit (at `origin/main`, or the plugin files with `--propose-only`), and check each note and each proposal against it. When a note asks for something the constitution forbids, or a proposal would contradict it, do not propose that change: say which clause it contradicts, and that only the user can amend the constitution, by hand or on explicit request. For the cause behind the note, propose only what the constitution allows.
    - **Name the missing question:** what should have been asked or checked at the start.

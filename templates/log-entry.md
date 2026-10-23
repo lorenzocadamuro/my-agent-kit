@@ -1,6 +1,7 @@
 ## <id: YYYYMMDD-NN> · <skill> · open
 
 - When: <date time>
+- Kit: <`version` in ${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json, read when the writing skill started (the version the session follows), or "unknown">
 - Where: <repo> · <branch or PR> · session <id if known>
 - What happened: <one to three sentences, concrete>
 - Why it was a problem: <what it cost the user, in plain words: time lost, a wrong decision, a question asked again>
