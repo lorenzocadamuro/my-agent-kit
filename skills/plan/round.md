@@ -61,7 +61,7 @@ In the S lane, skip this check and write `Triage check: skipped (size S)` in the
 
 - Mark a session chapter `Round N · <goal>` with the app's chapter tool; skip it when the tool is missing.
 - Tell the user in one line, in their language, that round N started with k items and that they will hear from you at a gate or at the end. In `run`, say it for the first round only.
-- **S lane:** make the changes yourself, following [executor.md](executor.md) § How, except its Progress line, and § Stop and report, except that you ask the user (a gate) where it says to stop. After each item, update `items` in the state file (no progress sidecar); at the end, write `.plans/round-<N>-summary.md` in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`.
+- **S lane:** make the changes yourself, following [executor.md](executor.md) § How, except its Progress line, and § Stop and report, except that you ask the user (a gate) where it says to stop. After each item, update `items` in the state file (no progress sidecar); at the end, write `.plans/round-<N>-summary.md` in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`. Steps 6–8 follow as in the full lane: a change you make yourself, however small or directly asked, gets step 7's fresh review before the push.
 - **Full lane:** launch a **background** general-purpose agent with [executor.md](executor.md), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
   - **When the agent stops with questions,** ask the user (gate, with a notification), then continue the same agent with `SendMessage`.
   - **When it finishes,** write its returned summary to `.plans/round-<N>-summary.md`.
@@ -90,7 +90,7 @@ When the round's verification needs a manual check in the browser, follow the pr
 
 ### 8. Push
 
-- If verification passed and `--no-push` is not set, run `git push`, fast-forward only.
+- If verification passed, step 7's review ran, and `--no-push` is not set, run `git push`, fast-forward only.
 - **No PR yet:** the first push asks once whether to open a **draft** PR, because that is published text. Build its body with the profile's PR description tool when there is one, and paste it in chat with the question.
 
 ### 9. Report
