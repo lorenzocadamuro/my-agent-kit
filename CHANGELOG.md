@@ -4,6 +4,36 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [5.3.0] - 2026-10-23
+
+Plans look ahead (a cost check for hot paths, the round's size estimated before it runs, a decision applied everywhere the plan repeats it), comment triage and reviews rely only on what was tried, every change gets a fresh review, and the log never holds two notes with one id. Minor: new behaviour, nothing you rely on changes incompatibly.
+
+### Plans
+
+- `plan:scope` step 3: when the change adds work to a hot path (per operation, per item, per frame, per request), the baseline also times that path on a large case, and the bar gets a cost check: a deterministic cost test, or a limit against that baseline. The plan template's "How it is checked" gains a "Cost" line.
+- `plan:round` step 3: the triage estimates the production lines each item adds (tests apart); when the drift so far plus the estimate passes the split trigger, step 2's drift gate is asked then, before executing. The round template's "Change" line carries the estimate.
+- Question format § After the answer: a decision that changes a rule the plan states elsewhere (boundary, invariants, behaviour table, intentional changes, bar) updates every place that repeats it in the same edit, since the answer already decided them. `plan:round` records gate answers in the plan by that rule.
+- A change the coordinator makes itself, in the S lane or on a direct request of a few lines, runs steps 6–8 like the full lane: step 7's fresh review comes before the push, and the push waits for it (principles, "A request to do part of it directly").
+
+### Pull requests
+
+- `pr:comments` step 3: a group that claims a bug, above all one a bot marks uncertain, is classified real only once reproduced through the production caller; otherwise it is "not verified", with the command that would decide it.
+- `pr:review` step 1 holds the command that reads each review thread's resolved state, path, line, first comment and its commit (`gh api graphql`, `reviewThreads`, with `<owner>`, `<repo>`, `<n>`). It was run once, read-only, on a real pull request: it answered in under a second with every field filled. `pr:learn` reuses it for its comments overview.
+- `pr:review`: on a PR reviewed before, the fresh agents also get the earlier analysis and the open threads; a reply in an existing thread stays with the user because it cannot wait in a pending review (posting it publishes it at once). `learning.md` mentions the reading's review comments overview after its three layers.
+
+### Improve
+
+- Note step 4 and Digest step 4: after appending an entry, re-read the log; if another entry has the same id (another session wrote at the same moment), the entry just written takes the next free number of that day, changing only its header, and a digest marks its signals with the final id.
+
+### Evals
+
+- New case `plan/decision-updates-plan` (the user answers a gate that turns "a release is final at any delay" into "within 24 hours"; the rule is repeated in the boundary, an invariant and the behaviour table): on 5.2.0 it fails 2 of 2 runs, recording the decision and leaving the three places unchanged (one run asked a second gate to rewrite them); after, it passes 1 of 1.
+- New case `improve/note-id-stays-unique`: its scaffold starts a short-lived process that plays another session, appending a note with the same id right after the skill writes its own. On 5.2.0 it fails (two `-02` entries); after, it passes (the skill's entry becomes `-03`, the other keeps its header).
+- New cases `plan/hot-path-cost-check`, `plan/triage-estimates-size` and `pr/uncertain-claim-reproduced` could not be made to fail on 5.2.0's text in a small fixture: there the model already timed the hot path and put a cost check in the bar (1 of 1 run that finished, the other timed out at 300 s, now 600 s), estimated Part B and asked the size gate before executing (at least 2 of 3 runs, across fixture tweaks; an LLM judge failed one of those correct reports, so the case is now graded by regex), and reproduced the bot's claim through the production caller (1 of 1). The misses they come from happened on large codebases. They stay as guards of the new rules, and pass after (1 run each).
+- No case for the coordinator's own change: executing a round needs commits, and evals have no working git; `plan/round-reviewed-by-fresh-agent`, which pins step 7 in the S lane, passes (1 run).
+- `small-task`, `false-premise`, `baseline-and-callers`, `skipped-item-caught`, `duplicates`, `broken-promise`, `later-round-confirms-fixes`, `note-logs-without-changing` and `digest-groups-signals` pass (1 run each; `small-task` failed its planning-state grader once and passed on a second run, a known flake). `run-carries-blocks` passed 1 of 2: the failed run stopped before writing round 2's triage, with no trace kept to say why. The suite has 39 cases.
+- Prose in `skills/`, `docs/` and `templates/`: 1,427 → 1,429 lines.
+
 ## [5.2.0] - 2026-10-23
 
 A note now records the kit version it was written with, and `/my:improve run` checks a note from an older version against what changed since, so it no longer "fixes" a rule a later release already fixed or rewrote. Minor: new behaviour, nothing you rely on changes incompatibly.
