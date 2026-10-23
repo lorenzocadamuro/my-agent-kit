@@ -8,6 +8,7 @@ Confirmed by the user on <date>. Correct it through `/my:improve` when it is wro
 - Worktree root: <path pattern; prefer the editor's own worktree folder, e.g. <repo>/.claude/worktrees/<short-name> | none: work on `main` (one task at a time)>
 - Session follows the worktree: <yes: move the session in with EnterWorktree | no: open the worktree in a new session>
 - Setup after creating a worktree: `<command>`
+- Test paths for the size budget (optional): <pathspecs, each single-quoted, passed as `drift.sh --tests`; default: test folders and test file names>
 - Branch naming: <rule, e.g. "Linear gitBranchName when a ticket exists">
 - PR title style: <rule>
 

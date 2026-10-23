@@ -71,6 +71,8 @@ HEAD c0ffee1 · upstream 7d1e2f0 · items: 1
 verify-round: OK
 $ scripts/drift.sh
 size: 2 files, +14 -0 (14 lines) since merge-base 9f8e7d6c5b4
+production: 1 files, +2 -0 (2 lines)
+tests: 1 files, +12 -0 (12 lines), outside the budget
 commits: 1 ahead, 0 behind origin/main
 merge preview: clean
 $ git diff a1b2c3d..HEAD

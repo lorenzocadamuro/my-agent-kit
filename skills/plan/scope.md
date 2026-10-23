@@ -26,8 +26,8 @@ Read the ticket, its links and related issues. Then classify:
 
 - **Type:** bug fix, feature, refactor, tool or infra.
 - **Size:**
-  - **S:** one area, about 200 changed lines or fewer, no data or flag changes.
-  - **L:** crosses services, adds flags, migrations or backfills, or is over about 1,500 lines.
+  - **S:** one area, about 200 changed production lines or fewer (tests apart, as in the size budget), no data or flag changes.
+  - **L:** crosses services, adds flags, migrations or backfills, or is over about 1,500 production lines.
   - **M:** everything in between.
 
 State the classification and its reason in one line; the user can override it in the first question batch.
@@ -63,7 +63,7 @@ Ask with the multiple-choice tool, following the question format, in batches of 
 | Size       | Topics                                                                                                                                             |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Every size | goal confirmation, boundary, bar for done (what is checked every round, what once at the end, and a condition that happens only after the merge, such as a deploy or a sync, proposed as a separate verification ticket) |
-| M and L    | invariants, existing versus new behaviour (only where research found a question), out of scope, intentional changes, size budget and split trigger |
+| M and L    | invariants, existing versus new behaviour (only where research found a question), out of scope, intentional changes, size budget in production lines (tests estimated apart) and split trigger |
 | L          | people and what they are building next, rollout (flags, deploy order, migrations, backfills), extra gates and stop conditions                      |
 
 About 4 questions for S, 8 for M, 12 for L. Never ask what research already answered. Ask now only what the plan and its first part need; a later part's choice becomes a gate or an open question of that part (question format: when to ask).

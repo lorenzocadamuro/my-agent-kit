@@ -56,7 +56,7 @@ Differences from today that this change means to make, for everyone or behind th
 
 ## Size budget [M+]
 
-Budget: ~<N> changed lines, <N> files. Split trigger: <condition>.
+Budget: ~<N> changed production lines, <N> files; tests ~<N> lines, reported apart. Split trigger: <condition, on production code>.
 
 ## People [M+]
 

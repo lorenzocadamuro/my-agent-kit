@@ -19,7 +19,7 @@ These principles serve [CONSTITUTION.md](../CONSTITUTION.md). Where they disagre
 - **The bar for done is set at the start.** It is the stop criterion for every review. A review stops when the bar is met, not when it runs out of things to say.
 - **Out of scope is a list.** A finding outside the plan is never fixed in it: it becomes a ticket, or, when the user accepts it as it is, the plan records why, with no ticket (the recommended option when it concerns only a non-production environment).
 - **Intentional changes are a list.** Every difference from today's behaviour that the change means to make is written down. An unlisted difference is either a bug or a missing entry.
-- **Size budget and split trigger.** Agree a rough size up front. Crossing it means stop and decide whether to split.
+- **Size budget and split trigger.** Agree a rough size up front, in production lines and files: tests are estimated and reported apart, and never trigger the split (a plan written before reads its numbers as production). Crossing it means stop and decide whether to split.
 
 ## Humans decide at gates, agents do the rest
 

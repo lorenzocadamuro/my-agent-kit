@@ -37,7 +37,7 @@ At the end of a round or a run, set `state`: `done` when the bar is met (the rea
 
 - A linked worktree on the change's branch, or what the profile names instead (principles: always in a worktree), with a clean tree.
 - Record HEAD, and whether it equals its upstream.
-- Run `${CLAUDE_PLUGIN_ROOT}/scripts/drift.sh --lines <budget> --files <budget>`, with the budgets taken from the plan.
+- Run `${CLAUDE_PLUGIN_ROOT}/scripts/drift.sh --lines <budget> --files <budget>`, with the budgets taken from the plan (production code: principles, size budget), and `--tests <pathspecs>` when the profile names test paths.
 - **If main moved and the preview shows conflicts,** ask whether to run `/my:pr:sync` first.
 - **If drift is over budget,** that is a gate: split, accept with a reason, or cut scope.
 
@@ -101,7 +101,7 @@ Six lines, labels as shown and sentences in the user's language, and a desktop n
 ```
 Round N: <k done / c checked / m stopped / s skipped>  ·  HEAD <sha> (pushed | not pushed: why)
 Review: <verdict against the bar>; block <b>, ticket <t>, note <n>
-Drift: <lines>/<budget> lines, <files>/<budget> files; main <ahead/behind>
+Drift: production <lines>/<budget> lines, <files>/<budget> files; tests <lines> lines apart; main <ahead/behind>
 Decisions taken alone: <each unflagged one (a flagged one is a gate), and each handed-over one as "decided alone (handed over: K<n>)"; or none>
 Lessons: <note ids from the digest | none | at the end of the run>
 Next: <Run plan | One round | Review comments | Merge main | a question | ready-for-review gate>
