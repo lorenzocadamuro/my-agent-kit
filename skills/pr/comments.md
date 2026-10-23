@@ -23,7 +23,7 @@ Pasted comments work too, when `gh` is unavailable.
 3. **Check each group against the code at HEAD:**
    - Is the issue still present? Has a later commit already fixed it? Compare the comment's commit with HEAD.
    - Read the code the comment points to, plus its callers and tests.
-   - Classify the group as **real**, **duplicate** (of which group), **not a bug** (with evidence), **already fixed** (with the commit), or **out of scope** (outside the PR's plan or diff).
+   - Classify the group as **real** (a claimed bug, above all one a bot marks uncertain, only once reproduced through the production caller: principles, verify), **not verified** (with the command that would decide it), **duplicate** (of which group), **not a bug** (with evidence), **already fixed** (with the commit), or **out of scope** (outside the PR's plan or diff).
    - A real group that the plan, the research or a round's review should have caught is a signal (principles: closing step). Read the plan (`.plans/plan.md`, or the one the user names) to judge it.
 4. **Weigh and act.** Weight each group by the lenses doc § Grading a finding. Pick a proportional action: fix, document, ticket, or reply only. A low-value style point on a local tool does not get an elaborate fix.
 5. **Draft the replies:** at most 3 sentences, factual, in English.

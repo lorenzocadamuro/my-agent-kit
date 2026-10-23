@@ -18,7 +18,7 @@ This mode explains; it does not judge. Write hypotheses as questions, never as f
    - `gh pr view <n> --json title,body,author,files,headRefOid,baseRefName,url,reviewRequests`;
    - `gh pr diff <n>`;
    - linked tickets;
-   - the existing reviews and their comments, with each thread's state, for the overview at the end, not to study them;
+   - the existing reviews and their comments, with each thread's state (the query in `review.md` step 1), for the overview at the end, not to study them;
    - the project profile, for the guides to load.
 
    When the profile names a repository tool that explains PRs, you may use its output as a source. Never use its publish options.

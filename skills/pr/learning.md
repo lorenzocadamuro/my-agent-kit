@@ -12,7 +12,7 @@ Use `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` to name reasoning moves and th
 - **Budget:** layer 0 is at most 150 words; the whole page is at most about 1,800 words.
   - Before opening the page, count the words with `wc -w`, and cut until it fits.
   - Never cut code anchors or weights.
-- **Three layers:**
+- **Three layers** (a reading then ends with the review comments overview: `learn.md` step 4):
   - **layer 0:** what the user needs now, in one minute;
   - **layer 1:** the ten-minute read;
   - **layer 2:** optional depth, inside `<details>`.
