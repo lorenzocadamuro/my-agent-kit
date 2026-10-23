@@ -49,7 +49,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
    Save it to `<data root>/reviews/<owner-name>-pr<n>-<date>.md` (or the file the user names), with the head commit in its header, present the file (principles: where files go), and ask whether the analysis holds. A correction continues the conversation, and is a signal (principles: closing step). The drafts wait for the user's agreement, in chat or already in the instructions ("write the drafts too"); without either, and with no way to ask, stop here.
 7. **The drafts, once the user agrees with the analysis:**
    - the questions to ask the author, only those worth asking, the most important first;
-   - an inline comment of at most 4 sentences per kept finding, phrased as a question when uncertain, with a concrete suggestion when there is one; for a point with an open thread, at most a reply in it with something new, which the user posts there (a reply cannot wait in a pending review: posting it publishes it at once);
+   - an inline comment of at most 4 sentences per kept finding, phrased as a question when uncertain, with a concrete suggestion when there is one; for a point with an open thread, at most a reply in it with something new, which the user posts there (the review payload of step 8 cannot carry a thread reply);
    - a review summary of at most 6 lines.
 
    Add them to the file and paste them in chat, in every mode (principles: present a file). In `local` mode they are for the user only, with no gate. Otherwise the gate: ask whether to create the pending review as drafted, switch the mode, or edit first.

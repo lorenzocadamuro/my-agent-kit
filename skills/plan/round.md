@@ -48,7 +48,7 @@ Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, whe
 - **Verify the claim against the code at HEAD,** and drop or rewrite what does not hold.
 - **List the callers covered, by path,** with the untruncated count, and for each field, state, key or rule the item adds or changes, its writers, readers (saved data included), transitions and opened routes (`plan:scope` step 3).
 - **Name the owning code point,** and a test that fails without the fix and drives the production caller. A check-only item names instead the commands it runs and the result that counts as passing.
-- **Estimate the production lines** each item adds (tests apart). When the drift so far plus the estimate passes the plan's split trigger, step 2's drift gate comes now, before executing.
+- **Estimate the production lines** each item adds (tests apart). When the drift so far plus the estimate passes the plan's split trigger, step 2's drift gate comes now, before executing, unless step 2 already asked it this round.
 - **Write the stop conditions.** They use the plan's "every round" checks; the "once, at the end" proof belongs to the ready-for-review gate. A check copied from the plan or the profile keeps its baseline (principles: measure the baseline).
 
 Items outside the plan's scope, and findings labelled "ticket", go to "Not this round", with ticket text and no fix. An item whose only fix crosses the boundary or a repository rule is a gate: ask before executing.

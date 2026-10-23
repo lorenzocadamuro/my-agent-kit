@@ -70,7 +70,7 @@ Follow [question-format.md](question-format.md) for when to ask, and for the sha
 ## The kit carries the plan it made
 
 - **An approved plan runs only through `/my:plan:run` or `/my:plan:round`.** Together with `/my:plan:scope`, which keeps it while planning, they keep the state file, and so the status line, true from the first step to the last.
-- **A request to do part of it directly** ("implement part B") becomes a round with that part as its source, even a fix of a few lines the coordinator makes itself: it gets the round's fresh review (`plan:round` step 7) before the push.
+- **A request to do part of it directly** ("implement part B") becomes a round with that part as its source; whoever makes the change, even a few lines, it gets the round's fresh review (`plan:round` step 7) before the push.
 - **Leave the kit for a change only when the user says so;** then delete its state file, and work as plain Claude Code.
 
 ## Always in a worktree

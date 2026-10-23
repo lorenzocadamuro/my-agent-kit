@@ -67,7 +67,7 @@ P
 cat > comments.md <<'P'
 Comments on PR acme/board#31 (unresolved):
 
-U002 (review-bot, app/geometry.py line 6, confidence: low): BUG? `union()` returns (inf, inf, -inf, -inf) for an empty list. When a family starts before any output exists, `ghost_box()` passes no boxes and the placeholder is drawn at infinity. Possible bug, please verify.
+B1 (review-bot, app/geometry.py line 6, confidence: low): BUG? `union()` returns (inf, inf, -inf, -inf) for an empty list. When a family starts before any output exists, `ghost_box()` passes no boxes and the placeholder is drawn at infinity. Possible bug, please verify.
 C1 (review-bot, app/ghost.py line 14): nit: `ghost_box` could take the output count instead of the whole family.
 P
 cat > plan.md <<'P'
