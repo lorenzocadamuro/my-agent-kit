@@ -25,6 +25,7 @@ How it is checked, and what it costs:
 
 - Every round: <the quick check that decides whether a round worked, e.g. targeted tests, a screening run> (~<time or cost>; fails on: <the likeliest wrong input it was seen failing on>)
 - Once, at the end: <the full proof that the change is done, e.g. the full suite, two independent A/B runs, a manual check> (~<time or cost>; fails on: <…>)
+- Cost, when the change adds work to a hot path: <a deterministic cost test, or a limit against the baseline timed on origin/main on a large case>
 - After the merge, only when a condition happens then (a deploy, a sync): <a separate verification ticket, its text: what to check, where and when>
 
 ## Gates [always]

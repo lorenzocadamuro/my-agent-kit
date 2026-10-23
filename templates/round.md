@@ -20,7 +20,7 @@ Bar: see plan § Bar for done. Act only on items below; anything else is reporte
 - Verified at: `<file>:<line>` (<sha>) — <what the code shows>
 - Callers covered (paths): <list>; for each field, state, key or rule added or changed: writers · readers (saved data too) · transitions · routes opened
 - Owning code point: <file · function>
-- Change: <what to do, or `none, check only`>
+- Change: <what to do, or `none, check only`> (~<n> production lines)
 - Test: <name and what it asserts>
 - Stop if: <condition>
 

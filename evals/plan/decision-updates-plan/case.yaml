@@ -1,0 +1,9 @@
+schema_version: "1"
+name: decision-updates-plan
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 40
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:plan:round --triage-only part B. Il worktree è ./wt (repository acme/placement, branch feature). In questo ambiente git e gh non sono eseguibili: gli output sono in ./git-out/git.txt, usali al posto dei comandi e degli script. Data root ./kit-data. La mia risposta a Q1, il gate di Part B: una release è finale solo entro 24 ore; dopo 24 ore il record può prendere di nuovo uno slot. Registrala nel piano e prepara il triage. Scrivi il report finale anche in ./report.md.

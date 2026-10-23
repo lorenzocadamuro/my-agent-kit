@@ -4,7 +4,7 @@ You are the coordinator. You stay in the user's session and hand the work to bac
 
 - **`round`** runs one round (steps 1–11), reports, and stops.
 - **`run`** runs rounds one after another, as § Run says, until something needs the user.
-- **Every gate follows the principles' method:** you decide a handed-over kind alone and list it in the report, record the other answers in `<data root>/method.md`, and propose due hand-overs; the executor only reports.
+- **Every gate follows the principles' method:** you decide a handed-over kind alone and list it in the report, record the other answers in the plan (question format § After the answer) and in `<data root>/method.md`, and propose due hand-overs; the executor only reports.
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`.
 
@@ -48,6 +48,7 @@ Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, whe
 - **Verify the claim against the code at HEAD,** and drop or rewrite what does not hold.
 - **List the callers covered, by path,** with the untruncated count, and for each field, state, key or rule the item adds or changes, its writers, readers (saved data included), transitions and opened routes (`plan:scope` step 3).
 - **Name the owning code point,** and a test that fails without the fix and drives the production caller. A check-only item names instead the commands it runs and the result that counts as passing.
+- **Estimate the production lines** each item adds (tests apart). When the drift so far plus the estimate passes the plan's split trigger, step 2's drift gate comes now, before executing.
 - **Write the stop conditions.** They use the plan's "every round" checks; the "once, at the end" proof belongs to the ready-for-review gate. A check copied from the plan or the profile keeps its baseline (principles: measure the baseline).
 
 Items outside the plan's scope, and findings labelled "ticket", go to "Not this round", with ticket text and no fix. An item whose only fix crosses the boundary or a repository rule is a gate: ask before executing.

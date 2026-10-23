@@ -30,6 +30,6 @@ A dismissed batch, an answer like "I don't understand", or a free answer that ho
 
 ## After the answer
 
-- **Record the decision** in the plan's Decisions table (date, kind, recommended and chosen option, one line of reasoning) and, in the modes the method names, update its kind (principles: the method).
+- **Record the decision** in the plan's Decisions table (date, kind, recommended and chosen option, one line of reasoning) and, in the modes the method names, update its kind (principles: the method). When it changes a rule the plan states elsewhere (boundary, invariants, behaviour table, intentional changes, bar), update every place that repeats it in the same edit: the answer already decided them.
 - **If the answer reframes the question, or makes a pending one stale,** restate the new understanding in one line, and drop or rewrite the stale question before asking it.
 - **A free answer, a dismissal, or a question asked twice is a signal** (principles: closing step). Record it, then carry on, unless it holds a question or a doubt (above).

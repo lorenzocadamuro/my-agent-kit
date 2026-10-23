@@ -52,7 +52,7 @@ For M and L, run up to three Explore agents in parallel. For S, do it yourself, 
   - CODEOWNERS entries for the paths;
   - branch rules (`gh api repos/<o>/<r>/rules/branches/main`), covering required reviews, code owners, checks and thread resolution.
 - **Rules to load:** the guides the profile maps to these paths.
-- **Baseline:** run the profile's check commands for these paths on `origin/main`, and note pass, fail or missing tool (principles: measure the baseline). For each check the bar will use, try it once on the change's likeliest wrong input (on a scratch copy), or read its code, and note whether it can fail (principles: a test or a check must be able to fail).
+- **Baseline:** run the profile's check commands for these paths on `origin/main`, and note pass, fail or missing tool (principles: measure the baseline). For each check the bar will use, try it once on the change's likeliest wrong input (on a scratch copy), or read its code, and note whether it can fail (principles: a test or a check must be able to fail). When the change adds work to a hot path (per operation, per item, per frame, per request), also time that path on a large case, and propose a cost check for the bar: a deterministic cost test, or a limit against that baseline.
 
 Keep research notes in the scratchpad. They feed the plan and, for M and L, the independent review.
 
