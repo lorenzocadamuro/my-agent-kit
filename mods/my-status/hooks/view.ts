@@ -96,7 +96,8 @@ export function totalTime(run: MyStatusRun): string | undefined {
 }
 
 function hint(part: MyStatusPart, index: number): Tile['hint'] {
-  const label = part.title.match(/^Part\s+[\w.]+/i)?.[0] ?? `Part ${index + 1}`
+  const head = part.title.split(':')[0]?.trim() ?? ''
+  const label = /^(\S+\s+)?[A-Za-z0-9]{1,3}$/.test(head) ? head : `Part ${index + 1}`
   if (partFraction(part) >= 1) return { full: `${label} · done` }
   const left = (part.left ?? []).filter(Boolean)
   if (left.length > 0) return { full: `${label} · left: ${left.join(', ')}`, short: `${label} · ${left.length} left` }
@@ -146,20 +147,18 @@ export function bandWidth(view: BandView): number {
 }
 
 /**
- * One card per tile with a hint, starting right after the tiles and covering the badges, reason and detail, so what
- * shows is the hint alone. The full hint, else the short one, only when it fits whole in the band; else no card.
+ * One card per tile with a hint, from right after the tiles to the band's end, so it covers every other element whole
+ * and leaves no piece of one showing. The full hint, else the short one, only when it fits whole; else no card.
  */
 export function hintCards(view: BandView, columns: number): HintCard[] {
   const n = view.tiles.length
   if (n === 0) return []
   const left = n * TILE_CELLS + (n - 1) + 1
-  const covered = [...view.badges.map(badge => width(badge.text) + 2), ...(view.reason ? [width(view.reason)] : []), ...(view.detail ? [width(view.detail)] : [])]
-  const cover = covered.reduce((a, b) => a + b, 0) + Math.max(0, covered.length - 1)
   return view.tiles.flatMap((tile, index) => {
     const text = [tile.hint?.full, tile.hint?.short].find(t => t !== undefined && left + width(t) + 2 <= columns)
     if (text === undefined) return []
-    const padded = ` ${text} `.padEnd(cover, ' ')
-    return [{ index, left, text: padded, tone: tile.tone }]
+    const shown = ` ${text} `
+    return [{ index, left, text: shown + ' '.repeat(columns - left - width(shown)), tone: tile.tone }]
   })
 }
 

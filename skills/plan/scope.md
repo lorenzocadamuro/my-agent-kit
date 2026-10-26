@@ -99,7 +99,7 @@ Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, siz
 Skip this step for `--dry-run`, and delete the planning state file: there is nothing to run. The worktree exists since step 2; only this is left:
 
 1. **Setup:** make sure the setup command started in step 2 finished, or run it now if step 2 did not start it.
-2. **State:** write the worktree branch's state file with `state: "ready"`, its `repo`, `branch` and `worktree`, the plan's title and path, and its parts, and delete this session's planning file if there is one. The bar then shows in any session working in the worktree.
+2. **State:** write the worktree branch's state file with `state: "ready"`, its `repo`, `branch` and `worktree`, the plan's title and path, and its parts, each with `left`, its unticked steps in two or three words each, and delete this session's planning file if there is one. The bar then shows in any session working in the worktree.
 3. **Ticket:** move it to the profile's start status (Linear `save_issue` with `state`), and say so in the summary. This is the only ticket change allowed without asking.
 4. **Report:**
    - the worktree path and branch, and, when this session did not move there, that the run starts in a new session opened in the worktree;

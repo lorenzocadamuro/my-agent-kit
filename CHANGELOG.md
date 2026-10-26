@@ -10,12 +10,12 @@ The status band says what a part still needs: with the pointer on a part's tile,
 
 ### Status band
 
-- `my-status` 0.3.0: each tile of a plan part carries a hint, revealed while the pointer is on it (a hover group: no hook runs). The hint is drawn over the line, right after the tiles, covering the badges and the detail: `Part D · left: Report, Draft PR`, `Part B · done`, or `Part D · 1 of 2 done` for a state file without the new field. It is shown only whole: when the full hint does not fit, `Part D · 2 left`; when that does not fit either, no hint. It names the part (`Part D`), never its title. A card above the line is not possible: the band clips what it draws to its own row.
+- `my-status` 0.3.0: each tile of a plan part carries a hint, revealed while the pointer is on it (a hover group: no hook runs). The hint is drawn over the line, from right after the tiles to its end, covering every other element whole while the pointer stays (no piece of a button or text shows): `Part D · left: Report, Draft PR`, `Part B · done`, or `Part D · 1 of 2 done` for a state file without the new field. It is shown only whole: when the full hint does not fit, `Part D · 2 left`; when that does not fit either, no hint. It names the part by what comes before its title's colon when that is a word and a letter or number (`Part D`, `Parte A`), else by its number, never by its title. A card above the line is not possible: the band clips what it draws to its own row.
 - The test harness cannot move a pointer, so the hover itself is checked by hand in the app; the tests pin the hints' text, position and fit, and that each card is drawn hidden.
 
 ### Plans
 
-- State file: `parts[].left` lists the part's unticked steps, two or three words each, empty when it is done (`docs/local-data.md`). `plan:scope` writes it with the parts; `plan:round` step 6 updates each ticked part's `status`, `done` and `left`.
+- State file: `parts[].left` lists the part's unticked steps, two or three words each, empty when it is done (`docs/local-data.md`). `plan:scope` writes it with the parts (step 8); `plan:round` step 6 updates each ticked part's `status`, `done` and `left`, and does the same when the plan's steps change. No eval covers `plan:scope` writing it: the case covers the round.
 
 ### Evals
 

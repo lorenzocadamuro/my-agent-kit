@@ -212,20 +212,27 @@ test('the pointer on a tile shows the part and what it still needs, never the pa
   expect(cards.every(card => card.left === 3 * 3 + 2 + 1)).toBe(true)
 })
 
-test('a hint covers the badges and detail, fits the band whole, or falls back to its count', async () => {
+test('a hint covers the rest of the band whole, fits it, or falls back to its count', async () => {
   const long: MyStatusRun = { ...HALF_DONE, parts: [{ title: 'Part A', status: 'running', done: 0, total: 3, left: ['Checkout test', 'Discount docs', 'Webhook retries'] }] }
-  for (const columns of [120, 60, 40, 30]) {
-    const view = bandView(snap(long), columns)
-    if (!view) continue
-    for (const card of hintCards(view, columns)) {
-      expect(card.left + [...card.text].length).toBeLessThanOrEqual(columns)
-      expect(card.text.trim()).toMatch(/^Part A · (left: Checkout test, Discount docs, Webhook retries|3 left)$/)
-      const under = bandWidth({ ...view, actions: [], time: undefined }) - card.left
-      expect([...card.text].length).toBeGreaterThanOrEqual(under)
+  const short: MyStatusRun = { ...RUNNING, parts: [{ title: 'Part A', status: 'done', done: 3, total: 3 }, { title: 'Part B', status: 'running', done: 1, total: 6 }] }
+  for (const run of [long, short]) {
+    for (const columns of [120, 90, 60, 40, 30]) {
+      const view = bandView(snap(run), columns)
+      if (!view) continue
+      for (const card of hintCards(view, columns)) {
+        expect(card.left + [...card.text].length).toBe(columns)
+        expect(card.text.trim()).toMatch(/^Part [AB] · (left: Checkout test, Discount docs, Webhook retries|3 left|done|1 of 6 done)$/)
+      }
     }
   }
   const narrow = bandView(snap(long), 40)
   expect(narrow && hintCards(narrow, 40).map(card => card.text.trim())).toEqual(['Part A · 3 left'])
+})
+
+test('a part is named by the word and letter before its colon, else by its number', async () => {
+  const run: MyStatusRun = { ...READY, parts: [{ title: 'Parte A: arrotondamento', status: 'todo', done: 0, total: 1 }, { title: 'Rounding totals in checkout', status: 'todo', done: 0, total: 1 }] }
+  const view = bandView(snap(run), 120)
+  expect(view && hintCards(view, 120).map(card => card.text.trim())).toEqual(['Parte A · 0 of 1 done', 'Part 2 · 0 of 1 done'])
 })
 
 test('planning steps and a band without tiles carry no hint', async () => {
