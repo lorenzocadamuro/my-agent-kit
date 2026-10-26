@@ -39,7 +39,8 @@ State the classification and its reason in one line; the user can override it in
    - If the branch already exists locally or remotely, stop and offer `--adopt`; set the planning state file to `needs_you` with that reason.
    - With `--adopt`, reuse the existing worktree, or add one for the existing branch.
 3. **Move the session:** when the profile says the session follows the worktree, switch this session into it with the EnterWorktree tool (`path` set to the worktree; it accepts worktrees under the repository's `.claude/worktrees/`), then check that the session's folder is the worktree (`git rev-parse --show-toplevel`); if it is not, say so in chat and offer to open the worktree in a new session. From then on keep the worktree branch's state file, and delete this session's. Otherwise keep the session file, and plan from the worktree's files.
-4. **Ticket** (also when the profile works without a worktree, never with `--dry-run`): the work has started: move it to the profile's start status (Linear `save_issue` with `state`), and say so. This is the only ticket change allowed without asking.
+
+**Then the ticket,** when there is one, also without a worktree and never with `--dry-run`: the work has started, so move it to the profile's start status (Linear `save_issue` with `state`), unless it is already there or further on, and say so. Keep its previous status in the state file (`ticketFrom`). This is the only ticket change allowed without asking.
 
 ### 3. Research before asking
 
@@ -93,7 +94,7 @@ It also names any question the user should have been asked. Fix what it finds. A
 
 ### 7. Gate: plan approval
 
-Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel, and propose here each kind due for hand-over (principles: the method). On cancel, delete the planning state file, and offer to remove the worktree and its branch when they hold no commit (leaving it first with ExitWorktree if the session moved there), and to move the ticket back to its previous status. The approval is never assumed: without the question tool, stop here and set the planning state file to `needs_you` with reason "Plan approval"; a `--dry-run` skips this stop and goes on to step 8, which it skips.
+Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, size and budget, key decisions, open questions. Ask: approve / change something / cancel, and propose here each kind due for hand-over (principles: the method). On cancel, delete the planning state file, and offer to remove the worktree and its branch when they hold no commit (leaving it first with ExitWorktree if the session moved there), and to move the ticket back to `ticketFrom`. The approval is never assumed: without the question tool, stop here and set the planning state file to `needs_you` with reason "Plan approval"; a `--dry-run` skips this stop and goes on to step 8, which it skips.
 
 ### 8. Finish the workspace
 

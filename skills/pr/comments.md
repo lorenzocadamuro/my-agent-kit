@@ -27,8 +27,8 @@ Pasted comments work too, when `gh` is unavailable.
    - A real group that the plan, the research or a round's review should have caught is a signal (principles: closing step). Read the plan (`.plans/plan.md`, or the one the user names) to judge it.
 4. **Weigh and act.** Weight each group by the lenses doc § Grading a finding. Pick a proportional action: fix, document, ticket, or reply only. A low-value style point on a local tool does not get an elaborate fix.
 5. **Draft the replies,** in English.
-   - **A person's review** (a colleague, not a bot): one reply for the whole review, as a PR comment that names the points it answers, never one per point. For each point, where the behaviour comes from and what the alternative would cost, so they can judge; no stance or verdict ("I'd keep this as is", "on purpose", "deliberate"); end open to their view. As long as the points need.
-   - **A bot, or a fix:** at most 3 sentences, factual.
+   - **A person's review** (a colleague, not a bot): one reply for the whole review, as a PR comment that names the points it answers, never one per point; a point already fixed takes its "Addressed in `<sha>`" line inside it. For each other point, where the behaviour comes from and what the alternative would cost, so they can judge; no stance or verdict ("I'd keep this as is", "on purpose", "deliberate"); end open to their view. As long as the points need.
+   - **A bot:** at most 3 sentences, factual.
      - Fixed: "Addressed in `<sha>`: <how>."
      - Not a bug: the evidence, with `file:line`.
      - Ticket: "Out of scope for this PR; tracked in <ticket>."
@@ -36,7 +36,7 @@ Pasted comments work too, when `gh` is unavailable.
    - **Chat:** a table with one row per group: comment(s), plain explanation (2 lines), class, weight, action.
    - **File:** `<worktree>/.plans/comments-<date>.md` (or the scratchpad), holding the table, the evidence and the reply drafts. Items marked "fix" are written as `### <k>. <claim>` entries, so `/my:plan:round` and `/my:plan:run` can take the file as their input.
    - **State file:** update it.
-7. **Gate.** Paste the reply drafts in chat, and ask which to post (all, a selection, or none) and whether to resolve the answered threads. Post with `gh api repos/<o>/<r>/pulls/<n>/comments -X POST -f body=… -F in_reply_to=<id>` (a person's review: `gh api repos/<o>/<r>/issues/<n>/comments -X POST -f body=…`), and resolve with the GraphQL `resolveReviewThread` mutation, only for what the user approved. Never resolve a thread whose fix is not yet pushed.
+7. **Gate.** Paste the reply drafts in chat, and ask which to post (all, a selection, or none) and whether to resolve the answered threads, never those of a person's review answered with an explanation: they resolve them. Post with `gh api repos/<o>/<r>/pulls/<n>/comments -X POST -f body=… -F in_reply_to=<id>` (a person's review: `gh api repos/<o>/<r>/issues/<n>/comments -X POST -f body=…`), and resolve with the GraphQL `resolveReviewThread` mutation, only for what the user approved. Never resolve a thread whose fix is not yet pushed.
 8. **Suggest the next step:**
    - `/my:plan:run <comments file>` when fixes are pending;
    - the repository's own comment resolver, when the project profile names one, as an alternative.

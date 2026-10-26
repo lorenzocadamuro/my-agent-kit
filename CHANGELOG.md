@@ -10,21 +10,24 @@ No more spend caps; replies to a colleague's review explain instead of taking a 
 
 ### Improve and evals
 
-- No spend cap: the eval commands lose `--max-cost-usd` (`evals/README.md`, README), and `improve run` step 5.3 says "Report the spend; there is no spend cap". The caps a coordinator wrote in its agents' briefs ("Spend cap about $N") came from no rule and from no measure; one was crossed by 26% ($18.93 against ~$15). Each release keeps reporting what it spent. Measured: a case run costs $0.33 at the median (132 runs), $1.67 at most.
+- No spend cap: the eval commands lose `--max-cost-usd` (`evals/README.md`, README), and `improve run` step 5.3 says "Report the spend; there is no spend cap". The caps a coordinator wrote in its agents' briefs ("Spend cap about $N") came from no rule and from no measure; one was crossed by 26% ($18.93 against ~$15). Each release keeps reporting what it spent. Measured from the saved eval results (`evals/results/`, 132 case runs, 2026-10-14 to 19): a case run costs $0.33 at the median, $1.67 at most.
 
 ### Pull requests
 
-- `pr:comments` step 5: a colleague's review gets one reply for the whole review, posted as a PR comment, that explains for each point where the behaviour comes from and what the alternative would cost, with no stance or verdict, ending open to their view. Bots and fixes keep the short, factual replies.
+- `pr:comments` step 5: a colleague's review gets one reply for the whole review, posted as a PR comment, that explains for each point where the behaviour comes from and what the alternative would cost, with no stance or verdict, ending open to their view; a point already fixed takes its "Addressed in" line inside it. Bots keep the short, factual replies. Step 7 never resolves the threads of a colleague's review answered with an explanation: the reviewer does.
 
 ### Plans
 
 - `plan:round` § The state file: a gate's answer is a write: the state leaves `needs_you` before acting on the answer. Step 10.3: after the last answer of the ready-for-review gate, the state is `done`.
-- `plan:scope` step 2: the ticket moves to the start status when the worktree is opened (also without a worktree, never with `--dry-run`), no longer at step 8 after approval, which an approval like "start now" could skip. After EnterWorktree, the session checks its folder is the worktree, and says so when it is not. On cancel, step 7 offers to move the ticket back.
+- `plan:scope` step 2: the ticket moves to the start status right after the worktree is opened (also without a worktree, never with `--dry-run`, never backwards), no longer at step 8 after approval, which an approval like "start now" could skip. Its previous status is kept in the state file (`ticketFrom`, `docs/local-data.md`), and on cancel step 7 offers to move it back. After EnterWorktree, the session checks its folder is the worktree, and says so when it is not.
 
 ### Evals
 
 - New case `pr/human-review-explained` (a colleague asks for two changes the plan explains): on 5.4.0 it fails (two replies, "This is deliberate", "Kept at 3 on purpose"); after a first wording (a sub-bullet under the 3-sentence rule) it still failed the same way; after the rule was split by who wrote the review, it passes.
-- No case for the state after a gate answer or for the ticket and session in `plan:scope`: both need a real gate answered mid-run, a tracker or the worktree tool, which an eval cannot give.
+- New case `plan/gate-answer-moves-state` (the ready-for-review gate answered in the prompt, the state file still `needs_you`): it passes on 5.4.0 too (1 run), so the miss came from a long session, not from a short one; it stays as a guard, and passes after (1 run).
+- No case for the ticket and session in `plan:scope`: they need a tracker and the worktree tool, which an eval cannot give.
+- `uncertain-claim-reproduced`, `duplicates`, `false-premise`, `skipped-item-caught` and `state-says-what-is-left` pass (1 run each); `human-review-explained` passes 3 of 3 after the rule was split.
+- `small-task`: its `planning-state` grader failed 3 of 5 runs on a first wording of `plan:scope` step 2, where the ticket paragraph ran on from item 3 of the list (no blank line), against 4 of 4 on 5.4.0's text; with the paragraph apart it passed 3 of 3 (one of those runs failed the plan judge 1 vote to 2, on the plan's content, which the change does not touch). The suite has 42 cases. Eval spend for this release: $12.57, no cap.
 
 ## [5.4.0] - 2026-10-26
 
