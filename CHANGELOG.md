@@ -4,6 +4,28 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [5.5.0] - 2026-10-26
+
+No more spend caps; replies to a colleague's review explain instead of taking a stance; the bar leaves a gate as soon as you answer; a plan's ticket starts when its worktree does, and the session checks it is really in the worktree. Minor: new behaviour, nothing you rely on changes incompatibly.
+
+### Improve and evals
+
+- No spend cap: the eval commands lose `--max-cost-usd` (`evals/README.md`, README), and `improve run` step 5.3 says "Report the spend; there is no spend cap". The caps a coordinator wrote in its agents' briefs ("Spend cap about $N") came from no rule and from no measure; one was crossed by 26% ($18.93 against ~$15). Each release keeps reporting what it spent. Measured: a case run costs $0.33 at the median (132 runs), $1.67 at most.
+
+### Pull requests
+
+- `pr:comments` step 5: a colleague's review gets one reply for the whole review, posted as a PR comment, that explains for each point where the behaviour comes from and what the alternative would cost, with no stance or verdict, ending open to their view. Bots and fixes keep the short, factual replies.
+
+### Plans
+
+- `plan:round` § The state file: a gate's answer is a write: the state leaves `needs_you` before acting on the answer. Step 10.3: after the last answer of the ready-for-review gate, the state is `done`.
+- `plan:scope` step 2: the ticket moves to the start status when the worktree is opened (also without a worktree, never with `--dry-run`), no longer at step 8 after approval, which an approval like "start now" could skip. After EnterWorktree, the session checks its folder is the worktree, and says so when it is not. On cancel, step 7 offers to move the ticket back.
+
+### Evals
+
+- New case `pr/human-review-explained` (a colleague asks for two changes the plan explains): on 5.4.0 it fails (two replies, "This is deliberate", "Kept at 3 on purpose"); after a first wording (a sub-bullet under the 3-sentence rule) it still failed the same way; after the rule was split by who wrote the review, it passes.
+- No case for the state after a gate answer or for the ticket and session in `plan:scope`: both need a real gate answered mid-run, a tracker or the worktree tool, which an eval cannot give.
+
 ## [5.4.0] - 2026-10-26
 
 The status band says what a part still needs: with the pointer on a part's tile, the line shows that part and its remaining steps. Minor: new behaviour, nothing you rely on changes incompatibly.

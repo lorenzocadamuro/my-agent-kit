@@ -27,10 +27,10 @@ execution:
 
 ## Running
 
-Always local-only, one run per case (2–3 for a noisy grader: principles § Verify, don't assume, "Stop and report"), with a cost cap. `--ablation none` skips the no-plugin baseline, which doubles the cost and rarely helps here.
+Always local-only, one run per case (2–3 for a noisy grader: principles § Verify, don't assume, "Stop and report"), with no spend cap: each release reports what it spent. `--ablation none` skips the no-plugin baseline, which doubles the cost and rarely helps here.
 
 ```bash
-claude plugin eval <kit> --no-publish --runs 1 --max-cost-usd 5 --trust-plugin \
+claude plugin eval <kit> --no-publish --runs 1 --trust-plugin \
   --ablation none --allow-tools Bash Write Edit --scaffold [--case '<glob>']
 ```
 

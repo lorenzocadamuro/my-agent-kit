@@ -110,7 +110,7 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
       - `"<kit worktree>/scripts/check.sh"`;
       - the touched skills' evals, with the command in `evals/README.md`.
 
-      Report the spend.
+      Report the spend; there is no spend cap.
 
 6. **Record:**
    - **README:** update the skills table and any text the change makes untrue.

@@ -20,7 +20,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 
 ## The state file
 
-Write the state file (name and shape in `${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) at the start of each round, at each step below, at each gate and its answer, and at the end. Rewrite it whole, keeping every field you do not change, through a temp file and a rename, so a reader never sees half a file. It feeds the optional status mod, and a resuming run reads it. A `reason` is two or three words (`Tests failing`).
+Write the state file (name and shape in `${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) at the start of each round, at each step below, at each gate and its answer, and at the end. Rewrite it whole, keeping every field you do not change, through a temp file and a rename, so a reader never sees half a file. It feeds the optional status mod, and a resuming run reads it. A gate's answer is a write too: the state leaves `needs_you` before you act on the answer. A `reason` is two or three words (`Tests failing`).
 
 At the end of a round or a run, set `state`: `done` when the bar is met (the ready-for-review gate); `needs_you` with a `reason` when a gate or a question waits for the user; `stopped` with a `reason` when verification failed or the run hit its cap; otherwise `ready`, waiting for the next round.
 
@@ -114,7 +114,7 @@ When the review says the bar is met and no block finding remains:
 
 1. Run the plan's "once, at the end" checks. If one fails, the bar is not met: its failures become the next round's items, and the state stays `ready` (or `needs_you` when the fix is a decision). Then run `/my:pr:review` on the PR in `local` mode and the deep review, if this round did not already.
 2. Write a one-page retrospective to `<data root>/retros/<repo>-<branch>.md`: rounds, rework and its causes, decision reversals, drift, and what the reviewers asked.
-3. Ask the user, one question each: mark the PR ready, update the description (the new text pasted in chat), notify the reviewers (all of these are publishing).
+3. Ask the user, one question each: mark the PR ready, update the description (the new text pasted in chat), notify the reviewers (all of these are publishing). After the last answer, the state is `done`.
 
 ### 11. Closing step
 
