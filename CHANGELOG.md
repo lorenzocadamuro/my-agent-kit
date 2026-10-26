@@ -19,7 +19,8 @@ The status band says what a part still needs: with the pointer on a part's tile,
 
 ### Evals
 
-- New case `plan/state-says-what-is-left` (a verified round finished Part A and one of Part B's three steps): on 5.3.0 it fails 2 of 2 runs (the state file's parts carry counts only; the first run was judged by an earlier wording of the grader), after it passes (1 run). The suite has 40 cases.
+- New case `plan/state-says-what-is-left` (a verified round finished Part A and one of Part B's three steps): on 5.3.0 it fails 2 of 2 runs (the state file's parts carry counts only; the first run was judged by an earlier wording of the grader), after it passes (2 runs, before and after the review fixes). The suite has 40 cases.
+- `skipped-item-caught`, `round-reviewed-by-fresh-agent`, `run-carries-blocks` and `small-task` pass (1 run each). Eval spend for this release: $4.94.
 
 ## [5.3.0] - 2026-10-23
 
