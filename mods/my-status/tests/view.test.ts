@@ -1,7 +1,8 @@
 import { expect, test } from 'claude-code/testing'
 
-import { bandView, bandWidth, planPercent, statusLine, timeLeft } from '../hooks/view'
+import { bandView, bandWidth, hintCards, planPercent, statusLine, timeLeft } from '../hooks/view'
 import type { BandView } from '../hooks/view'
+import type { MyStatusRun } from '../types'
 import { ACTIVITY, AFTER_ROUND, DONE, FIRST_ROUND, GATE, LONG_REASON, NAMED, NEEDS_YOU, OLD_NEEDS_YOU, PLANNING, READY, RUNNING, STOPPED, WITH_PR, WORK_TEXTS, snap } from './fixtures'
 
 test('the plan percentage gives each part an equal share', async () => {
@@ -193,4 +194,41 @@ test('unknown comments or conflicts show no badge and no action', async () => {
 test('buttons carry names, and commands only behind them', async () => {
   const labels = bandView(snap(READY), 120)?.actions.map(a => a.label).join(' ') ?? ''
   expect(labels.includes('/my:')).toBe(false)
+})
+
+const HALF_DONE: MyStatusRun = {
+  ...READY,
+  parts: [
+    { title: 'Part B: stable runs', status: 'done', done: 3, total: 3, left: [] },
+    { title: 'Part C: reuse', status: 'running', done: 1, total: 2, left: ['Final report'] },
+    { title: 'Part D', status: 'todo', done: 0, total: 2 },
+  ],
+}
+
+test('the pointer on a tile shows the part and what it still needs, never the part title', async () => {
+  const view = bandView(snap(HALF_DONE), 120)
+  const cards = view ? hintCards(view, 120) : []
+  expect(cards.map(card => card.text.trim())).toEqual(['Part B · done', 'Part C · left: Final report', 'Part D · 0 of 2 done'])
+  expect(cards.every(card => card.left === 3 * 3 + 2 + 1)).toBe(true)
+})
+
+test('a hint covers the badges and detail, fits the band whole, or falls back to its count', async () => {
+  const long: MyStatusRun = { ...HALF_DONE, parts: [{ title: 'Part A', status: 'running', done: 0, total: 3, left: ['Checkout test', 'Discount docs', 'Webhook retries'] }] }
+  for (const columns of [120, 60, 40, 30]) {
+    const view = bandView(snap(long), columns)
+    if (!view) continue
+    for (const card of hintCards(view, columns)) {
+      expect(card.left + [...card.text].length).toBeLessThanOrEqual(columns)
+      expect(card.text.trim()).toMatch(/^Part A · (left: Checkout test, Discount docs, Webhook retries|3 left)$/)
+      const under = bandWidth({ ...view, actions: [], time: undefined }) - card.left
+      expect([...card.text].length).toBeGreaterThanOrEqual(under)
+    }
+  }
+  const narrow = bandView(snap(long), 40)
+  expect(narrow && hintCards(narrow, 40).map(card => card.text.trim())).toEqual(['Part A · 3 left'])
+})
+
+test('planning steps and a band without tiles carry no hint', async () => {
+  const planning = bandView(snap(PLANNING), 120)
+  expect(planning && hintCards(planning, 120)).toEqual([])
 })

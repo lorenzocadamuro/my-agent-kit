@@ -4,6 +4,23 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [5.4.0] - 2026-10-26
+
+The status band says what a part still needs: with the pointer on a part's tile, the line shows that part and its remaining steps. Minor: new behaviour, nothing you rely on changes incompatibly.
+
+### Status band
+
+- `my-status` 0.3.0: each tile of a plan part carries a hint, revealed while the pointer is on it (a hover group: no hook runs). The hint is drawn over the line, right after the tiles, covering the badges and the detail: `Part D · left: Report, Draft PR`, `Part B · done`, or `Part D · 1 of 2 done` for a state file without the new field. It is shown only whole: when the full hint does not fit, `Part D · 2 left`; when that does not fit either, no hint. It names the part (`Part D`), never its title. A card above the line is not possible: the band clips what it draws to its own row.
+- The test harness cannot move a pointer, so the hover itself is checked by hand in the app; the tests pin the hints' text, position and fit, and that each card is drawn hidden.
+
+### Plans
+
+- State file: `parts[].left` lists the part's unticked steps, two or three words each, empty when it is done (`docs/local-data.md`). `plan:scope` writes it with the parts; `plan:round` step 6 updates each ticked part's `status`, `done` and `left`.
+
+### Evals
+
+- New case `plan/state-says-what-is-left` (a verified round finished Part A and one of Part B's three steps): on 5.3.0 it fails 2 of 2 runs (the state file's parts carry counts only; the first run was judged by an earlier wording of the grader), after it passes (1 run). The suite has 40 cases.
+
 ## [5.3.0] - 2026-10-23
 
 Plans look ahead (a cost check for hot paths, the round's size estimated before it runs, a decision applied everywhere the plan repeats it), comment triage and reviews rely only on what was tried, every change gets a fresh review, and a note checks its id against the log after writing it. Minor: new behaviour, nothing you rely on changes incompatibly.

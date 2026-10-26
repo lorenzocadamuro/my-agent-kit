@@ -4,7 +4,11 @@ export type Tone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger'
 
 export type Badge = { key: string; text: string; tone: Tone }
 
-export type Tile = { fill: number; tone: Tone }
+/** `hint` is what the pointer on the tile shows: the part and what it still needs. */
+export type Tile = { fill: number; tone: Tone; hint?: { full: string; short?: string } }
+
+/** A hint drawn over the band at `left`, revealed while the pointer is on tile `index`. */
+export type HintCard = { index: number; left: number; text: string; tone: Tone }
 
 export type Action = { key: string; label: string; command?: string; opensPlan?: true }
 
@@ -91,12 +95,21 @@ export function totalTime(run: MyStatusRun): string | undefined {
   return minutes(all.reduce((a, b) => a + b, 0))
 }
 
+function hint(part: MyStatusPart, index: number): Tile['hint'] {
+  const label = part.title.match(/^Part\s+[\w.]+/i)?.[0] ?? `Part ${index + 1}`
+  if (partFraction(part) >= 1) return { full: `${label} · done` }
+  const left = (part.left ?? []).filter(Boolean)
+  if (left.length > 0) return { full: `${label} · left: ${left.join(', ')}`, short: `${label} · ${left.length} left` }
+  return { full: `${label} · ${part.done} of ${part.total} done` }
+}
+
 function tiles(run: MyStatusRun, currentTone: Tone): Tile[] {
-  return (run.parts ?? []).map(part => {
+  return (run.parts ?? []).map((part, index) => {
     const fill = partFraction(part)
-    if (fill >= 1) return { fill: 1, tone: 'success' as Tone }
-    if (part.status === 'running' || fill > 0) return { fill: Math.max(fill, 0.1), tone: currentTone }
-    return { fill: 0, tone: 'neutral' as Tone }
+    const tile = (t: Tile): Tile => ({ ...t, hint: hint(part, index) })
+    if (fill >= 1) return tile({ fill: 1, tone: 'success' })
+    if (part.status === 'running' || fill > 0) return tile({ fill: Math.max(fill, 0.1), tone: currentTone })
+    return tile({ fill: 0, tone: 'neutral' })
   })
 }
 
@@ -130,6 +143,24 @@ export function bandWidth(view: BandView): number {
     ...view.actions.map(action => width(action.label) + 4),
   ]
   return widths.reduce((a, b) => a + b, 0) + widths.length - 1
+}
+
+/**
+ * One card per tile with a hint, starting right after the tiles and covering the badges, reason and detail, so what
+ * shows is the hint alone. The full hint, else the short one, only when it fits whole in the band; else no card.
+ */
+export function hintCards(view: BandView, columns: number): HintCard[] {
+  const n = view.tiles.length
+  if (n === 0) return []
+  const left = n * TILE_CELLS + (n - 1) + 1
+  const covered = [...view.badges.map(badge => width(badge.text) + 2), ...(view.reason ? [width(view.reason)] : []), ...(view.detail ? [width(view.detail)] : [])]
+  const cover = covered.reduce((a, b) => a + b, 0) + Math.max(0, covered.length - 1)
+  return view.tiles.flatMap((tile, index) => {
+    const text = [tile.hint?.full, tile.hint?.short].find(t => t !== undefined && left + width(t) + 2 <= columns)
+    if (text === undefined) return []
+    const padded = ` ${text} `.padEnd(cover, ' ')
+    return [{ index, left, text: padded, tone: tile.tone }]
+  })
 }
 
 /**

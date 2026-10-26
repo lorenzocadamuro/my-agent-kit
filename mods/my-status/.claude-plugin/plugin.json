@@ -1,6 +1,6 @@
 {
   "name": "my-status",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "A single line above the prompt for the my kit: where a plan stands, how far a run is, what needs you, and the next action.",
   "types": "./types/index.d.ts",
   "author": {

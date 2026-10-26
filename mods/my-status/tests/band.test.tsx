@@ -379,3 +379,17 @@ test('a leftover session planning file older than the folder\'s running file doe
   await refresh($)
   expect((await shown($)).detail).toBe('Waiting for approval')
 })
+
+test('each tile has its hint drawn hidden over the band, after the tiles (the harness does not expose hover)', async ($, on) => {
+  const run: MyStatusRun = { ...READY, parts: [{ title: 'Part A', status: 'done', done: 3, total: 3 }, { title: 'Part B', status: 'running', done: 1, total: 2, left: ['Final report'] }] }
+  world(on, { run })
+  await refresh($)
+  for (const surface of SURFACES) {
+    const ui = await $.ui.mount({ plugin: 'my-status', surface, ...band(120) })
+    const card = await ui.find({ key: 'hint-1' })
+    expect(await ui.find({ key: 'tile-1' })).toBeDefined()
+    expect(card?.props).toMatchObject({ position: 'absolute', top: 0, left: 8, display: 'none' })
+    expect(card?.text.trim()).toBe('Part B · left: Final report')
+    await ui.unmount()
+  }
+})

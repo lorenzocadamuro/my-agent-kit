@@ -2,7 +2,7 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
 import type { MyStatusActivity, MyStatusProgress, MyStatusRun, MyStatusSnapshot } from '../types'
-import { bandView, statusLine, TILE_CELLS } from './view'
+import { bandView, hintCards, statusLine, TILE_CELLS } from './view'
 import type { Badge, Tile, Tone } from './view'
 
 const PLUGIN = 'my-status'
@@ -235,6 +235,8 @@ export const register: Register = on => {
     const snap = await read($, snapAtom)
     const view = bandView(snap, e.props.bodyColumns)
     if (!view) return next(e)
+    const cards = hintCards(view, e.props.bodyColumns)
+    const scope = (index: number) => `my-status-part-${index}`
     const { Box, Button, Text } = $.ui.resolve(e)
 
     const badge = (b: Badge) => (
@@ -245,7 +247,7 @@ export const register: Register = on => {
     const tile = (t: Tile, i: number) => {
       const filled = t.fill <= 0 ? 0 : Math.max(1, Math.round(t.fill * TILE_CELLS))
       return (
-        <Box key={`tile-${i}`} flexShrink={0}>
+        <Box key={`tile-${i}`} flexShrink={0} hover={cards.some(card => card.index === i) ? { scope: scope(i) } : undefined}>
           <Text color={COLOR[t.tone]}>{'█'.repeat(filled)}</Text>
           <Text color="gray">{'░'.repeat(TILE_CELLS - filled)}</Text>
         </Box>
@@ -273,6 +275,11 @@ export const register: Register = on => {
               if (action.command) await $.prompt.fill({ text: action.command })
             }}
           />
+        </Box>
+      )),
+      ...cards.map(card => (
+        <Box key={`hint-${card.index}`} position="absolute" top={0} left={card.left} display="none" hover={{ scope: scope(card.index), display: 'flex' }}>
+          <Text color="black" backgroundColor={COLOR[card.tone]}>{card.text}</Text>
         </Box>
       )),
     ]

@@ -3,6 +3,8 @@ export type MyStatusPart = {
   status: 'todo' | 'running' | 'done'
   done: number
   total: number
+  /** The part's steps not done yet, two or three words each. */
+  left?: string[]
 }
 
 export type MyStatusRound = {
