@@ -1,0 +1,9 @@
+schema_version: "1"
+name: ticket-not-law
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 40
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:plan:scope --dry-run Il ticket è in ./ticket.md, le PR aperte che toccano gli stessi file sono in ./open-prs.json. Data root ./kit-data, salva il piano in ./plan.md. Non posso rispondere alle domande ora: scrivi in ./questions.md le domande che mi faresti, ciascuna con le opzioni e la raccomandazione, poi continua con le raccomandate. Non c'è un repository git né GitHub: pianifica dai file presenti.

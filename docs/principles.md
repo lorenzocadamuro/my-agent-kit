@@ -77,6 +77,7 @@ Follow [question-format.md](question-format.md) for when to ask, and for the sha
 
 - **Work happens in the worktree of the change, never in the main checkout,** planning included, unless the project profile says how the user works there instead (for example "work on `main`, no worktree" in a single-thread repository). Every skill checks the worktree (or what the profile names), branch, HEAD and clean tree at start, and stops if they are wrong.
 - **New branches start from `origin/main`,** never from whatever branch happens to be checked out.
+- **Entering a worktree.** After `git worktree add`, copy the git-ignored files the repository's `.worktreeinclude` lists (plain git does not; Claude Code and Codex do), except those the profile names as assembled per checkout. Move the session with the EnterWorktree tool (`path`), never with `cd`, and in the desktop app also with its change-directory tool: EnterWorktree moves the agent and the new Terminal tabs, not the app's record of the session, which the Changes and Terminal panes follow, and the app applies its move when the turn ends. The move holds once the app's own record (`get_session` with `self`) names the worktree: git, or the working directory the agent sees, follow a `cd` and prove nothing. Then, when no Terminal tab is in the worktree, open one there. A move that cannot be made is said plainly, with the offer of a new session opened in the worktree.
 - **One writer per worktree at a time.**
 
 ## Where files go
