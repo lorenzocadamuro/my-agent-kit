@@ -16,4 +16,4 @@ Used by `/my:plan:scope` when `<data root>/projects/<owner>-<repo>.md` does not 
 - **Prefer commands the repository already documents** over ones you assemble yourself.
 - **Mark every guess** with "(unconfirmed)". The user confirms or corrects these.
 - **Keep it short:** one line per command or rule, and links instead of copies.
-- **Ask the user only** what the sources cannot answer: how they work in this repository (parallel tasks in worktrees, or one at a time on `main`), how their local stack runs (variant, and the commands to move it to a worktree and back), the ticket tracker and its start status, and which slow suites to avoid locally.
+- **Ask the user only** what the sources cannot answer: how they work in this repository (parallel tasks in worktrees, or one at a time on `main`, and which files `.worktreeinclude` lists that are assembled per checkout rather than copied), how their local stack runs (variant, and the commands to move it to a worktree and back), the ticket tracker and its start status, and which slow suites to avoid locally.

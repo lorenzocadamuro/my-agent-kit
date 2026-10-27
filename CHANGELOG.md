@@ -11,7 +11,8 @@ A worktree the app really shows, with the repository's include files; plans that
 ### Worktrees
 
 - Principles § Always in a worktree, "Entering a worktree": after `git worktree add`, copy the git-ignored files `.worktreeinclude` lists (plain git does not), except those the profile names as assembled per checkout; move the session with EnterWorktree, never `cd`, and in the desktop app also with its change-directory tool; the move holds only once the app's record of the session (`get_session` with `self`) names the worktree; then open a Terminal tab there when none is. Tried live: EnterWorktree moved the agent and new Terminal tabs but not the app's record (still the main checkout after the turn ended); the change-directory tool moved it. The 5.5.0 check (`git rev-parse` in the shell) passed after a `cd` while the app stayed on the main checkout.
-- `plan:scope` step 2 and `improve run` steps 5 and 7 follow it; the project profile template gains "Files assembled per checkout".
+- The app moves the session when the turn ends, so the check on its record comes at the start of the next turn; without the app's tools (a terminal session), EnterWorktree and its result are the move and the proof.
+- `plan:scope` step 2 follows it. `improve run` keeps using its kit worktree by absolute path and does not move the session: it may run from another project's session. The project profile template gains "Files assembled per checkout", and the profile setup asks for them.
 
 ### Plans
 
@@ -19,14 +20,14 @@ A worktree the app really shows, with the repository's include files; plans that
 - `plan:scope` step 3, Overlap: each overlapping PR with how live it is (age, last activity, draft or review state, conflicts); building on it is a question for the user with that evidence, even when the ticket asks for it.
 - Question format: a recommendation rests on the kit's own reasoning, a ticket or spec being one input, never the reason by itself; a question on a point the ticket states quotes its words and says which option departs from it.
 - `plan:scope` step 4: when research found risks behind a product choice, the design options that remove them are asked before or beside that choice.
-- `plan:scope` step 7: the approval summary lists the actions the plan will need your yes for (commits, pushes, publishing, moving the local stack), each with what happens without it.
+- `plan:scope` step 7: the approval summary lists the actions the plan will need your yes for (anything published; commits, pushes or moving the local stack when the profile gates them), each with what happens without it.
 
 ### Evals
 
-- New case `plan/gated-actions-listed` (the bar needs an A/B that only measures commits; the profile gates commits): on 5.5.0 the approval summary names the commits as a gate but never what happens without them (3 of 3 runs); after, it says the work stops before the A/B without that yes, or asks to authorise it with the plan (2 of 2). Its LLM judge failed both versions alike, so the case is graded by regex, checked on the five saved summaries without new runs.
+- New case `plan/gated-actions-listed` (the bar needs an A/B that only measures commits; the profile gates commits): on 5.5.0 the approval summary names the commits as a gate but never what happens without them (3 of 3 runs); after, it says the work stops before the A/B without that yes, or asks to authorise it with the plan (4 of 5 runs; the fifth was judged by a narrower first regex and its output not kept). Its LLM judge failed both versions alike, so the case is graded by regex, checked on every saved summary.
 - New cases `plan/option-cost-priced`, `plan/ticket-not-law` and `plan/design-options-offered` could not be made to fail on 5.5.0's text in a small fixture: the model already priced each option's per-frame work and remounts, checked the overlapping PR's age, draft and conflicts, and offered a separate view for the risky filter. Its first ticket quote was translated, its second verbatim. The misses came from long sessions on a large codebase. LLM judges on these long files failed correct outputs, so the cases are graded by regex where they can be; they stay as guards and pass after (1 run each).
 - No case for entering a worktree: evals have neither the app nor git; the rule rests on the live trial above.
-- `small-task`, `false-premise`, `baseline-and-callers`, `hot-path-cost-check` and `free-answer-gets-an-answer` pass (1 run each). The suite has 46 cases. Eval spend for this release: $13.31, no cap.
+- `false-premise`, `baseline-and-callers`, `hot-path-cost-check` and `free-answer-gets-an-answer` pass (1 run each); `small-task` passes 2 of 3 (one run failed its planning-state grader, the flake 5.3.0 and 5.5.0 recorded). The suite has 46 cases. Eval spend for this release: $16.04, no cap.
 
 ## [5.5.0] - 2026-10-26
 
