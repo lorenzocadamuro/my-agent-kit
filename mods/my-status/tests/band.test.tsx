@@ -3,9 +3,30 @@ import { expect, test } from 'claude-code/testing'
 import type { Engine } from 'claude-code/testing'
 
 import type { MyStatusActivity, MyStatusProgress, MyStatusRun } from '../types'
-import { LONG_REASON, NAMED, NEEDS_YOU, OLD_NEEDS_YOU, PLANNING, READY, RUNNING, WITH_PR } from './fixtures'
+import {
+  LONG_TITLE,
+  NAMED,
+  NEEDS_YOU,
+  OLD_NEEDS_YOU,
+  PLAN_FILE,
+  PLANNING,
+  READY,
+  RUNNING,
+  V2_DONE,
+  V2_NEEDS_YOU,
+  V2_PLANNING,
+  V2_READY,
+  V2_RUNNING,
+  V2_RUNNING_SIX,
+  V2_STOPPED,
+  WITH_PR,
+} from './fixtures'
+
+// The band above the prompt, from state files read through the mod's own lookup, on the terminal and the desktop: the
+// pictures it draws (desktop only, by the key of the Box around each), its Buttons by key, and what it says in words.
 
 const SURFACES = ['terminal', 'desktop'] as const
+type Surface = (typeof SURFACES)[number]
 const STATE_FILE = '/home/u/.my-agent-kit/state/acme-shop-feature.json'
 const ME = 'me'
 
@@ -27,6 +48,12 @@ type World = {
   sessionId?: string | null
   /** Other files in the state folder, by name. */
   files?: Record<string, object>
+  /** Whether the plan file exists. */
+  planExists?: boolean
+  /** The plan file's text. */
+  planText?: string
+  /** The panes opened, by id. */
+  opened?: string[]
 }
 
 function rows(cmd: string, list: Row[]): string {
@@ -35,10 +62,13 @@ function rows(cmd: string, list: Row[]): string {
   return list.map(row => JSON.stringify(row)).join('\n')
 }
 
-function band(bodyColumns: number) {
+function band(surface: Surface, maxRows = 400, bodyColumns = 110) {
   return {
+    plugin: 'my-status',
+    surface,
     component: 'AbovePrompt' as const,
-    props: { hasSurvey: false, isWorking: false, maxRows: 2, bodyColumns, scroll: { offset: 0, bodyRows: 2 }, view: {} },
+    requestId: 'band',
+    props: { hasSurvey: false, isWorking: false, maxRows, bodyColumns, scroll: { offset: 0, bodyRows: maxRows - 1 }, view: {} },
   }
 }
 
@@ -48,7 +78,10 @@ function world(on: On, w: World, ran: string[] = []): void {
   on('session.id', () => (w.sessionId === null ? { deny: 'no session id' } : { value: w.sessionId ?? 'chat-a' }))
   on('clock.now', () => ({ value: Date.parse(w.now ?? '2026-01-10T09:25:00Z') }))
   on('ui.status', () => ({ value: undefined }))
-  on('ui.open', () => ({ value: { isPlaced: true as const } }))
+  on('ui.open', ($, e) => {
+    w.opened?.push(e.id)
+    return { value: { isPlaced: true as const } }
+  })
   on('process.run', ($, e) => {
     const cmd = e.argv.join(' ')
     ran.push(cmd)
@@ -77,8 +110,10 @@ function world(on: On, w: World, ran: string[] = []): void {
     const extra = w.files?.[e.path.replace('/home/u/.my-agent-kit/state/', '')]
     if (extra) return { value: JSON.stringify(extra) }
     if (e.path.endsWith('/suite-log.md') && w.log) return { value: w.log }
+    if (e.path === PLAN_FILE && w.planText) return { value: w.planText }
     return { deny: `no file ${e.path}` }
   })
+  on('fs.exists', ($, e) => ({ value: e.path === PLAN_FILE && w.planExists === true }))
   on('fs.list', () => ({
     value: [...(w.otherName ? [w.otherName] : w.run ? ['acme-shop-feature.json'] : []), ...Object.keys(w.files ?? {})].map(name => ({ name, kind: 'file' as const, size: 1, mtimeMs: 0, isLink: false })),
   }))
@@ -88,6 +123,7 @@ function world(on: On, w: World, ran: string[] = []): void {
   })
   on('command.register', ($, e) => ({ value: { command: e.name } }))
   on('clock.every', () => ({ value: undefined }))
+  on('clock.after', () => ({ value: undefined }))
   on('session.start', ($, e) => ({ cwd: e.cwd }))
 }
 
@@ -100,20 +136,52 @@ async function refresh($: Engine): Promise<void> {
   await poll($)
 }
 
-async function shown($: Engine, columns = 120): Promise<{ state?: string; comments?: string; conflicts?: string; title?: string; reason?: string; detail?: string; time?: string; percent?: string; open: boolean; band: boolean }> {
-  const ui = await $.ui.mount({ plugin: 'my-status', surface: 'terminal', ...band(columns) })
-  const text = async (key: string) => (await ui.find({ key }))?.text
+type El = { type: string; props?: Record<string, unknown>; hover?: Record<string, unknown>; children?: unknown[] }
+const isEl = (x: unknown): x is El => typeof x === 'object' && x !== null && 'type' in x
+const kids = (el: El) => (el.children ?? []).filter(isEl)
+const all = (el: El): El[] => [el, ...kids(el).flatMap(all)]
+type Drawing = { drawn: () => Promise<unknown> }
+
+// the desktop's band pictures, by the key of the Box around each (an Svg keeps no key), with their heights
+const PIC_KEYS = ['header', 'track', 'steps', 'agents-head', 'agents']
+async function pictures(ui: Drawing) {
+  const tree = (await ui.drawn()) as El
+  return Object.fromEntries(
+    kids(tree)
+      .filter(b => PIC_KEYS.includes(String(b.props?.key)))
+      .map(b => [String(b.props?.key), Number(kids(b).find(k => k.type === 'Svg')?.props?.height)]),
+  ) as Record<string, number>
+}
+// what the drawing says in words: the Texts', the Buttons' labels and the pictures' (an Svg's alt)
+async function words(ui: Drawing) {
+  return all((await ui.drawn()) as El)
+    .flatMap(el =>
+      el.type === 'Svg' ? [String(el.props?.alt ?? '')] : el.type === 'Text' ? (el.children ?? []).filter(c => typeof c === 'string') : el.type === 'Button' ? [String(el.props?.label ?? '')] : [],
+    )
+    .join(' | ')
+}
+// everything drawn as text, the pictures' markup included
+async function everything(ui: Drawing) {
+  return `${await words(ui)} | ${all((await ui.drawn()) as El)
+    .filter(el => el.type === 'Svg')
+    .map(el => String(el.props?.source ?? ''))
+    .join(' | ')}`
+}
+// a picture's markup, by the key of the Box around it
+async function source(ui: Drawing, key: string) {
+  const box = kids((await ui.drawn()) as El).find(b => b.props?.key === key)
+  return String(box && kids(box).find(k => k.type === 'Svg')?.props?.source)
+}
+const labelRow = (svg: string) => svg.match(/<g class="labels">.*?<\/g>/)?.[0] ?? ''
+
+type Seen = { band: boolean; words: string; buttons: (string | undefined)[] }
+/** The band as each surface draws it. */
+async function seen($: Engine, surface: Surface = 'terminal', maxRows = 400, bodyColumns = 110): Promise<Seen> {
+  const ui = await $.ui.mount(band(surface, maxRows, bodyColumns))
   const view = {
-    state: await text('state'),
-    comments: await text('comments'),
-    conflicts: await text('conflicts'),
-    title: await text('title'),
-    reason: await text('reason'),
-    detail: await text('detail'),
-    time: await text('time'),
-    percent: await text('percent'),
-    open: (await ui.find({ key: 'open' })) !== undefined,
     band: (await ui.find({ key: 'band' })) !== undefined,
+    words: await words(ui),
+    buttons: (await ui.findAll({ type: 'Button' })).map(b => b.key),
   }
   await ui.unmount()
   return view
@@ -123,48 +191,316 @@ const SINCE = '2026-01-10T09:00:00Z'
 const OTHER: Row = { login: 'bob', at: '2026-01-10T10:00:00Z' }
 const OWN: Row = { login: ME, at: '2026-01-10T10:05:00Z' }
 
-test('a running plan shows its percentage on every surface', async ($, on) => {
-  world(on, { run: { ...RUNNING, plan: { title: 'Learn from use', path: '' } } })
+// ---------- the prototype's states, from real state files ----------
+
+type Case = { name: string; w: World; svgs: string[]; buttons: string[]; text?: RegExp }
+const CASES: Case[] = [
+  { name: 'planning, no plan file yet', w: { run: V2_PLANNING }, svgs: ['header', 'track'], buttons: [], text: /Planning: Interview, step 2 of 5; 4m elapsed/ },
+  { name: 'planning, plan file written', w: { run: { ...V2_PLANNING, step: 'write' }, planExists: true }, svgs: ['header', 'track'], buttons: ['open-plan'], text: /Planning: Write, step 3 of 5/ },
+  {
+    name: 'ready with new comments',
+    w: { run: { ...V2_READY, pr: 456, commentsReadUntil: SINCE }, comments: [OTHER, OTHER, { ...OTHER, at: '2026-01-10T11:00:00Z' }] },
+    svgs: ['header', 'track'],
+    buttons: ['toggle', 'comments', 'one-round', 'run-plan', 'open-plan'],
+    text: /Ready: Round 3 done, next: Part C, Dark mode; 42% 8 of 19 steps, .*left \(estimate\), 1h 12m elapsed.*Review comments \(3\)/,
+  },
+  { name: 'running', w: { run: V2_RUNNING }, svgs: ['header', 'track'], buttons: ['toggle', 'open-plan'], text: /Running: Part D, Remove form, step 2 of 3; 82% 9 of 11 steps, \d+–\d+ min left \(estimate\), 1h 12m elapsed/ },
+  {
+    name: 'running six with conflicts',
+    w: { run: { ...V2_RUNNING_SIX, pr: 456 }, conflicts: 'shop/pricing.py' },
+    svgs: ['header', 'track'],
+    buttons: ['toggle', 'merge-main', 'open-plan'],
+    text: /Part C, Loading skeletons, step 5 of 6; .*estimating… time left.*Conflicts with main/,
+  },
+  { name: 'needs you', w: { run: V2_NEEDS_YOU }, svgs: ['header', 'track'], buttons: ['toggle', 'open-plan'], text: /Needs you: PR description, Part D, step 3 of 3.*Answer in the chat below/ },
+  { name: 'stopped', w: { run: V2_STOPPED }, svgs: ['header', 'track'], buttons: ['toggle', 'one-round', 'open-plan'], text: /Stopped: Tests failing, Part D, step 2 of 3; .*on hold time left/ },
+  { name: 'done', w: { run: V2_DONE }, svgs: ['header', 'track'], buttons: ['toggle', 'open-plan'], text: /Done: Bar met, all steps verified; 100% 11 of 11 steps, 1h 31m total time/ },
+]
+
+for (const c of CASES) {
+  test(`${c.name}: the band draws its pictures, buttons and words on both surfaces`, async ($, on) => {
+    world(on, c.w)
+    await refresh($)
+    for (const surface of SURFACES) {
+      const ui = await $.ui.mount(band(surface))
+      const svgs = surface === 'desktop' ? Object.keys(await pictures(ui)) : (await ui.findAll({ type: 'Svg' })).map(x => String(x.key))
+      expect(svgs).toEqual(surface === 'desktop' ? c.svgs : [])
+      expect((await ui.findAll({ type: 'Button' })).map(x => x.key)).toEqual(c.buttons)
+      if (c.text && surface === 'desktop') expect(await words(ui)).toMatch(c.text)
+      await ui.unmount()
+    }
+  })
+}
+
+test('the terminal says the same in characters: the state, line 2, the figures and the part labels', async ($, on) => {
+  world(on, { run: V2_RUNNING })
+  await refresh($)
+  const view = await seen($, 'terminal')
+  expect(view.words).toMatch(/● Running/)
+  expect(view.words).toMatch(/82% 9 of 11 steps {2}· {2}\d+–\d+ min left \(estimate\) {2}· {2}1h 12m elapsed/)
+  expect(view.words).toMatch(/Part D.* {2}· {2}Remove form {2}· {2}step 2 of 3/)
+  expect(view.words).toMatch(/A Cart totals.*D Old form/)
+})
+
+test('the capsule strip opens the steps under it and closes them', async ($, on) => {
+  world(on, { run: V2_RUNNING })
   await refresh($)
   for (const surface of SURFACES) {
-    const ui = await $.ui.mount({ plugin: 'my-status', surface, ...band(120) })
-    expect((await ui.find({ key: 'percent' }))?.text).toMatch(/50%/)
-    expect(await ui.find({ key: 'open' })).toBeDefined()
+    const ui = await $.ui.mount(band(surface))
+    if (surface === 'desktop') expect(Object.keys(await pictures(ui))).toEqual(['header', 'track'])
+    await ui.press({ key: 'toggle' })
+    if (surface === 'desktop') expect(Object.keys(await pictures(ui))).toEqual(['header', 'track', 'steps'])
+    else expect(await ui.find({ type: 'Box', key: 'steps-0' })).toBeDefined()
+    await ui.press({ key: 'toggle' })
+    if (surface === 'desktop') expect(Object.keys(await pictures(ui))).toEqual(['header', 'track'])
+    else expect(await ui.find({ type: 'Box', key: 'steps-0' })).toBeUndefined()
     await ui.unmount()
   }
 })
 
-test('a state file written under an older name is found by its worktree', async ($, on) => {
-  world(on, { run: { ...RUNNING, worktree: '/work', plan: { title: 'Learn from use', path: '' } }, otherName: 'local-shop-feature.json' })
+test('expanded, nothing lies over anything but its own lit picture and blank Button, and the controls come in band order', async ($, on) => {
+  world(on, { run: { ...V2_RUNNING_SIX, pr: 456 }, conflicts: 'shop/pricing.py' })
   await refresh($)
-  const ui = await $.ui.mount({ plugin: 'my-status', surface: 'terminal', ...band(120) })
-  expect((await ui.find({ key: 'percent' }))?.text).toMatch(/50%/)
+  const ui = await $.ui.mount(band('desktop'))
+  await ui.press({ key: 'toggle' })
+  const tree = (await ui.drawn()) as El
+  // the band is a column of keyed pieces, the action row last
+  expect(kids(tree).map(k => k.props?.key)).toEqual(['header', 'track', 'steps', 'actions'])
+  const placed: string[] = []
+  const lit: string[] = []
+  const walk = (el: El, parent: El | null) => {
+    if (el.props?.position === 'absolute') {
+      // over a picture, and only over its own: the Box it sits in starts with that picture
+      expect(parent && kids(parent)[0]?.type).toBe('Svg')
+      const [only, ...rest] = kids(el)
+      expect(rest).toHaveLength(0)
+      if (only?.type === 'Button') {
+        // the press: a plain Button, blank, its own hover plate cleared
+        expect(only.props?.plain).toBe(true)
+        expect(String(only.props?.label).trim()).toBe('')
+        expect(only.hover?.backgroundColor).toBe('#0000')
+        placed.push(String(only.props?.key))
+      } else {
+        // what lights up: hidden until the keyed Box around it is hovered, one picture
+        expect(only?.props?.display).toBe('none')
+        expect(only?.hover?.display).toBe('flex')
+        expect(kids(only!).map(k => k.type)).toEqual(['Svg'])
+        lit.push(String(parent?.props?.key))
+      }
+      return
+    }
+    // every Button on the desktop is a blank one over its picture
+    expect(el.type).not.toBe('Button')
+    for (const k of kids(el)) walk(k, el)
+  }
+  walk(tree, null)
+  expect(placed).toEqual(['toggle', 'merge-main', 'open-plan'])
+  expect(lit).toEqual(['track', 'pill-merge-main', 'pill-open-plan'])
+  expect((await ui.findAll({ type: 'Button' })).map(b => b.key)).toEqual(['toggle', 'merge-main', 'open-plan'])
   await ui.unmount()
+})
+
+test('opening the steps keeps the label row, grows the capsules, and lists every step of a done part', async ($, on) => {
+  world(on, { run: V2_RUNNING_SIX })
+  await refresh($)
+  const ui = await $.ui.mount(band('desktop'))
+  const closed = await source(ui, 'track')
+  await ui.press({ key: 'toggle' })
+  const open = await source(ui, 'track')
+  // the same label row, letter and short title, in the same place; the track as tall in both states
+  expect(labelRow(closed)).toContain('Query layer')
+  expect(labelRow(open)).toBe(labelRow(closed))
+  expect((await pictures(ui)).track).toBe(48)
+  // closed: thin capsules with no numbers; open: 16 px capsules with them
+  expect(closed).toContain('height="8"')
+  expect(closed).not.toMatch(/class="f-num(Empty)?"/)
+  expect(open).toContain('height="16"')
+  expect(open).toMatch(/class="f-num"/)
+  // parts A and B are done: every step listed, at L0 and at L2 alike, never a summary
+  const done = ['Add toggle', 'Persist choice', 'Filter param', 'Index', 'Backfill', 'Wire query']
+  for (const label of done) expect(await source(ui, 'steps')).toContain(label)
+  await ui.unmount()
+  // 6 rows of 24 px leave no room for the open columns: L2, the parts not started as one "to do" chip each
+  const tight = await $.ui.mount(band('desktop', 6))
+  const steps = await source(tight, 'steps')
+  for (const label of done) expect(steps).toContain(label)
+  expect(steps).not.toContain('done</text>')
+  expect(steps).toContain('to do')
+  await tight.unmount()
+})
+
+test('the pulse is in Running alone, on the state dot and the step under way, with a still copy', async ($, on) => {
+  const w: World = { now: '2026-01-10T09:25:01.300Z' }
+  world(on, w)
+  for (const run of [V2_RUNNING, V2_PLANNING, V2_READY, V2_NEEDS_YOU, V2_STOPPED, V2_DONE]) {
+    w.run = run
+    await refresh($)
+    const ui = await $.ui.mount(band('desktop'))
+    for (const key of ['header', 'track']) {
+      const svg = await source(ui, key)
+      const pulses = (svg.match(/<animate attributeName="opacity"/g) ?? []).length
+      expect(pulses).toBe(run.state === 'running' ? 1 : 0)
+      if (pulses > 0) {
+        // each moving copy has a still twin, shown only under reduced motion; the cycle starts where the clock has it
+        expect((svg.match(/<g class="sv">/g) ?? []).length).toBe(pulses)
+        expect(svg).toContain('@media (prefers-reduced-motion: reduce){.mv{display:none}.sv{display:inline}}')
+        expect(svg).toContain('begin="-1.300s"')
+      }
+    }
+    await ui.unmount()
+  }
+})
+
+test('Open plan opens the plan pane with the plan file', async ($, on) => {
+  const opened: string[] = []
+  world(on, { run: V2_RUNNING, planText: '# The plan', opened })
+  await refresh($)
+  opened.length = 0
+  for (const surface of SURFACES) {
+    const ui = await $.ui.mount(band(surface))
+    await ui.press({ key: 'open-plan' })
+    await ui.unmount()
+  }
+  expect(opened).toEqual(['my-status-plan', 'my-status-plan'])
+  const scroll = { offset: 0, bodyRows: 20 }
+  const pane = await $.ui.mount({ plugin: 'my-status', surface: 'desktop', component: 'Pane', requestId: 'my-status-plan', props: { title: 'Plan', isFocused: false, bodyColumns: 80, placement: 'dock', scroll, view: {} } })
+  expect((await pane.find({ key: 'plan-text' }))?.text).toBe('# The plan')
+  await pane.unmount()
+})
+
+// ---------- what the band never shows, the 5.6.0 file, the order of states ----------
+
+const WORK_TEXTS = ['Learn from use', 'Webhook retries', 'PR 9', 'Charge retries', 'Discounts on carts', 'Make checkout', 'cart totals add up']
+
+test('no work name, plan title or PR title anywhere in the band: named plans, an activity, a plan without parts', async ($, on) => {
+  const w: World = {}
+  world(on, w)
+  const noParts: MyStatusRun = {
+    ...V2_RUNNING,
+    name: 'Webhook retries',
+    parts: [{ title: 'Learn from use', short: 'Learn from use', status: 'running', done: 1, total: 2, steps: [{ label: 'Totals', status: 'done' }, { label: 'Rounding', status: 'running' }] }],
+  }
+  const worlds: World[] = [
+    { run: { ...V2_RUNNING, name: 'Webhook retries' } },
+    { run: { ...V2_NEEDS_YOU, plan: { title: LONG_TITLE, path: PLAN_FILE } } },
+    { run: noParts },
+    { run: OLD_NEEDS_YOU },
+    { activity: { mode: 'pr:review', name: 'PR 9 Charge retries', state: 'running', updatedAt: '2026-01-10T09:20:00Z' } },
+    { run: { ...PLANNING, plan: { title: 'Discounts on carts', path: PLAN_FILE } }, planExists: true },
+  ]
+  for (const next of worlds) {
+    Object.assign(w, { run: undefined, activity: undefined, planExists: undefined }, next)
+    await refresh($)
+    for (const surface of SURFACES) {
+      for (const open of [false, true]) {
+        const ui = await $.ui.mount(band(surface))
+        if (open && (await ui.find({ key: 'toggle' }))) await ui.press({ key: 'toggle' })
+        const shown = await everything(ui)
+        expect(shown.length > 10).toBe(true)
+        for (const work of WORK_TEXTS) expect(shown.includes(work), `${work} on ${surface}`).toBe(false)
+        await ui.unmount()
+      }
+    }
+  }
+})
+
+const OLD_PARTS: MyStatusRun['parts'] = [
+  { title: 'Part A: the cart totals add up across currencies', status: 'done', done: 3, total: 3 },
+  { title: 'Part B: checkout retries', status: 'running', done: 1, total: 3, left: ['Retry timer', 'Final report'] },
+  { title: 'Part C', status: 'todo', done: 0, total: 2 },
+]
+
+test('a state file written by kit 5.6.0 draws: numbered segments, labels from left, short titles from the heading, time estimating', async ($, on) => {
+  world(on, { run: { ...READY, state: 'running', round: 1, parts: OLD_PARTS, rounds: [{ n: 1, startedAt: '2026-01-10T09:00:00Z' }] } })
+  await refresh($)
+  for (const surface of SURFACES) {
+    const ui = await $.ui.mount(band(surface))
+    // the steps open once, for both surfaces: the choice is the session's
+    if (surface === 'terminal') await ui.press({ key: 'toggle' })
+    const shown = await everything(ui)
+    expect(shown).toMatch(/Running/)
+    expect(shown).toMatch(/50% 4 of 8 steps/)
+    expect(shown).toMatch(/estimating…/)
+    expect(shown).toMatch(/25m elapsed/)
+    expect(shown).toContain('Retry timer')
+    expect(shown).toContain('Final report')
+    // the heading's text after "Part X:" ("Part C" has none)
+    if (surface === 'desktop') expect(labelRow(await source(ui, 'track'))).toContain('checkout retries')
+    else expect(shown).toMatch(/B checkout retries/)
+    await ui.unmount()
+  }
+  // a heading too long for its column leaves the letter alone, on the terminal too
+  expect((await seen($, 'terminal')).words).not.toMatch(/cart totals add up/)
+  const narrow = await $.ui.mount(band('desktop', 400, 40))
+  expect(labelRow(await source(narrow, 'track'))).not.toContain('cart totals add up')
+  await narrow.unmount()
+})
+
+test('one state leads, in today\'s order; comments and conflicts are signals beside it', async ($, on) => {
+  const w: World = {}
+  world(on, w)
+  const running: MyStatusActivity = { mode: 'pr:review', state: 'running', updatedAt: '2026-01-10T09:20:00Z' }
+  const waiting: MyStatusActivity = { ...running, state: 'needs_you' }
+  const cases: [World, RegExp, string[]][] = [
+    [{ run: V2_RUNNING, activity: waiting }, /^Running: Part D/, ['toggle', 'open-plan']],
+    [{ run: V2_STOPPED, activity: running }, /^Running: pr:review/, []],
+    [{ run: { ...V2_READY, pr: 451, commentsReadUntil: SINCE }, activity: running, comments: [OTHER] }, /^Running: pr:review/, []],
+    [{ run: { ...V2_STOPPED, pr: 452, commentsReadUntil: SINCE }, comments: [OTHER] }, /^Stopped: Tests failing/, ['toggle', 'comments', 'one-round', 'open-plan']],
+    [{ run: { ...V2_DONE, pr: 453 }, conflicts: 'shop/pricing.py' }, /^Done: Bar met/, ['toggle', 'merge-main', 'open-plan']],
+    [{ activity: { ...running, state: 'done' } }, /^$/, []],
+  ]
+  for (const [next, head, buttons] of cases) {
+    Object.assign(w, { run: undefined, activity: undefined, comments: undefined, conflicts: undefined }, next)
+    await refresh($)
+    const view = await seen($, 'desktop')
+    expect(view.words).toMatch(head)
+    expect(view.buttons).toEqual(buttons)
+  }
+})
+
+test('elapsed counts from startedAt, else the first round\'s start, at the clock of the draw; Done\'s total time stays', async ($, on) => {
+  const w: World = { run: V2_RUNNING }
+  world(on, w)
+  await refresh($)
+  expect((await seen($, 'desktop')).words).toMatch(/1h 12m elapsed/)
+  w.now = '2026-01-10T09:40:00Z'
+  expect((await seen($, 'desktop')).words).toMatch(/1h 27m elapsed/)
+  w.now = undefined
+  w.run = { ...V2_RUNNING, startedAt: undefined }
+  await refresh($)
+  expect((await seen($, 'desktop')).words).toMatch(/1h 05m elapsed/)
+  w.run = V2_DONE
+  await refresh($)
+  expect((await seen($, 'desktop')).words).toMatch(/1h 31m total time/)
+  w.now = '2026-01-10T11:00:00Z'
+  expect((await seen($, 'desktop')).words).toMatch(/1h 31m total time/)
+})
+
+test('a needs-you header with no step under way shows the next step', async ($, on) => {
+  const parts = V2_READY.parts
+  world(on, { run: { ...V2_READY, state: 'needs_you', reason: 'Plan approval', parts } })
+  await refresh($)
+  expect((await seen($, 'desktop')).words).toMatch(/Needs you: Plan approval, next: Part C, Dark mode;/)
+})
+
+// ---------- today's lookup, network and buttons, against the new band ----------
+
+test('a state file written under an older name is found by its worktree', async ($, on) => {
+  world(on, { run: { ...V2_RUNNING, worktree: '/work' }, otherName: 'local-shop-feature.json' })
+  await refresh($)
+  expect((await seen($, 'desktop')).words).toMatch(/Running: .*82% 9 of 11 steps/)
 })
 
 test('a gate shows Needs you and its reason', async ($, on) => {
   world(on, { run: { ...NEEDS_YOU, plan: { title: 'Learn from use', path: '' } } })
   await refresh($)
-  const ui = await $.ui.mount({ plugin: 'my-status', surface: 'terminal', ...band(120) })
-  expect((await ui.find({ key: 'state' }))?.text).toMatch(/Needs you/)
-  expect((await ui.find({ key: 'reason' }))?.text).toMatch(/item 4/)
-  expect(await ui.find({ key: 'title' })).toBe(undefined)
-  await ui.unmount()
-})
-
-test('new PR comments show before the plan steps, with Review comments', async ($, on) => {
-  world(on, { run: { ...WITH_PR, commentsReadUntil: SINCE }, comments: [OTHER, { ...OTHER, at: '2026-01-10T11:00:00Z' }], now: '2026-01-11T09:00:00Z' })
-  await refresh($)
-  const ui = await $.ui.mount({ plugin: 'my-status', surface: 'terminal', ...band(120) })
-  expect((await ui.find({ key: 'comments' }))?.text).toMatch(/new comment/)
-  expect(await ui.find({ key: 'comments' })).toBeDefined()
-  await ui.unmount()
+  for (const surface of SURFACES) expect((await seen($, surface)).words).toMatch(/Needs you.*Verification failed: item 4 has no commit/)
 })
 
 test('Run plan fills the prompt with the command and submits nothing', async ($, on) => {
   const filled: string[] = []
   const submitted: string[] = []
-  world(on, { run: READY })
+  world(on, { run: V2_READY })
   on('prompt.fill', ($, e) => {
     filled.push(e.text)
     return { isFilled: true }
@@ -174,60 +510,31 @@ test('Run plan fills the prompt with the command and submits nothing', async ($,
     return next(e)
   })
   await refresh($)
-  const ui = await $.ui.mount({ plugin: 'my-status', surface: 'terminal', ...band(120) })
-  await ui.press({ key: 'run' })
-  expect(filled).toEqual(['/my:plan:run'])
+  for (const surface of SURFACES) {
+    const ui = await $.ui.mount(band(surface))
+    await ui.press({ key: 'run-plan' })
+    await ui.unmount()
+  }
+  expect(filled).toEqual(['/my:plan:run', '/my:plan:run'])
   expect(submitted).toEqual([])
-  await ui.unmount()
 })
 
 test('with no state file the band stays empty', async ($, on) => {
   world(on, {})
   await refresh($)
-  const ui = await $.ui.mount({ plugin: 'my-status', surface: 'terminal', ...band(120) })
-  expect(await ui.find({ key: 'band' })).toBe(undefined)
-  await ui.unmount()
-})
-
-test('a narrow band keeps the state and its only button, shows no title, and drops whole elements', async ($, on) => {
-  world(on, { run: NAMED })
-  await refresh($)
-  const view = await shown($, 60)
-  expect(view.state).toMatch(/Running/)
-  expect(view.percent).toMatch(/50%/)
-  expect(view.open).toBe(true)
-  expect(view.title).toBe(undefined)
-  expect(view.detail).toBe(undefined)
-  expect(view.time).toMatch(/^~\d+–\d+ min$/)
-})
-
-test('a 3.2.x state file with a long reason shows it whole when it fits, else drops it, and keeps its button', async ($, on) => {
-  world(on, { run: OLD_NEEDS_YOU })
-  await refresh($)
-  for (const surface of SURFACES) {
-    for (const [columns, reason] of [[120, LONG_REASON], [80, undefined]] as const) {
-      const ui = await $.ui.mount({ plugin: 'my-status', surface, ...band(columns) })
-      expect((await ui.find({ key: 'state' }))?.text).toMatch(/Needs you/)
-      expect(await ui.find({ key: 'title' })).toBe(undefined)
-      expect((await ui.find({ key: 'reason' }))?.text).toBe(reason)
-      expect(await ui.find({ key: 'open' })).toBeDefined()
-      await ui.unmount()
-    }
-  }
+  for (const surface of SURFACES) expect((await seen($, surface)).band).toBe(false)
 })
 
 test('a running state untouched for 7 hours draws no band', async ($, on) => {
   world(on, { run: NAMED, now: '2026-01-10T16:30:00Z' })
   await refresh($)
-  expect((await shown($)).band).toBe(false)
+  expect((await seen($)).band).toBe(false)
 })
 
-test('the executor progress sidecar moves the percent during the round', async ($, on) => {
-  world(on, { run: NAMED, progress: { round: 3, items: { done: 6, total: 6 }, updatedAt: '2026-01-10T09:24:00Z' } })
+test('a fresh progress sidecar keeps a running state untouched for 7 hours', async ($, on) => {
+  world(on, { run: NAMED, now: '2026-01-10T16:30:00Z', progress: { round: 3, items: { done: 4, total: 6 }, updatedAt: '2026-01-10T15:00:00Z' } })
   await refresh($)
-  const ui = await $.ui.mount({ plugin: 'my-status', surface: 'terminal', ...band(120) })
-  expect((await ui.find({ key: 'percent' }))?.text).toMatch(/67%/)
-  await ui.unmount()
+  expect((await seen($, 'desktop')).words).toMatch(/^Running/)
 })
 
 test('pr and improve activity shows Running or Needs you with its mode, not its name; a done one draws nothing', async ($, on) => {
@@ -236,23 +543,35 @@ test('pr and improve activity shows Running or Needs you with its mode, not its 
   for (const [state, label] of [['running', 'Running'], ['needs_you', 'Needs you'], ['done', undefined]] as const) {
     w.activity = { mode: 'pr:review', name: 'PR 9 Charge retries', state, updatedAt: '2026-01-10T09:20:00Z' }
     await refresh($)
-    const view = await shown($)
-    expect(view.state).toBe(label === undefined ? undefined : ` ${label} `)
-    expect(view.title).toBe(undefined)
-    expect(view.detail).toBe(label === undefined ? undefined : 'pr:review')
+    for (const surface of SURFACES) {
+      const view = await seen($, surface)
+      expect(view.band).toBe(label !== undefined)
+      if (label) expect(view.words).toMatch(new RegExp(`${label}.*pr:review`))
+      expect(view.words.includes('Charge retries')).toBe(false)
+    }
   }
+})
+
+test('an activity\'s elapsed time counts from when the mod first saw it', async ($, on) => {
+  const w: World = { activity: { mode: 'improve:run', state: 'running', updatedAt: '2026-01-10T09:20:00Z' } }
+  world(on, w)
+  await refresh($)
+  expect((await seen($, 'desktop')).words).toMatch(/<1m elapsed/)
+  w.now = '2026-01-10T09:30:00Z'
+  await poll($)
+  expect((await seen($, 'desktop')).words).toMatch(/5m elapsed/)
 })
 
 test('the user\'s own comments are not counted', async ($, on) => {
   world(on, { run: { ...WITH_PR, commentsReadUntil: SINCE }, comments: [OWN, OTHER] })
   await refresh($)
-  expect((await shown($)).comments).toMatch(/^ 1 new comment $/)
+  expect((await seen($)).words).toMatch(/Review comments \(1\)/)
 })
 
 test('without commentsReadUntil, comments count from the first round start', async ($, on) => {
   world(on, { run: { ...WITH_PR, rounds: [{ n: 1, startedAt: '2026-01-10T10:02:00Z' }] }, comments: [OTHER, { ...OTHER, at: '2026-01-10T10:03:00Z' }] })
   await refresh($)
-  expect((await shown($)).comments).toMatch(/^ 1 new comment $/)
+  expect((await seen($)).words).toMatch(/Review comments \(1\)/)
 })
 
 test('a failed login lookup or comment call shows no count, not zero', async ($, on) => {
@@ -260,44 +579,46 @@ test('a failed login lookup or comment call shows no count, not zero', async ($,
   world(on, w)
   w.login = null
   await refresh($)
-  expect((await shown($)).comments).toBe(undefined)
+  expect((await seen($)).buttons).not.toContain('comments')
   w.login = ME
   w.comments = 'fail'
   await refresh($)
-  const view = await shown($)
-  expect(view.comments).toBe(undefined)
-  expect(view.state).toBe(' Needs you ')
+  const view = await seen($)
+  expect(view.buttons).not.toContain('comments')
+  expect(view.words).toMatch(/Needs you/)
 })
 
 test('merge-tree: exit 0 is no conflict, exit 1 counts files, an error or a throw is unknown', async ($, on) => {
   const w: World = { run: WITH_PR }
   world(on, w)
+  const hasConflicts = async () => (await seen($)).buttons.includes('merge-main')
   await refresh($)
-  expect((await shown($)).conflicts).toBe(undefined)
+  expect(await hasConflicts()).toBe(false)
   w.conflicts = 'shop/pricing.py\nshop/cart.py'
   w.fetchFails = true
   await refresh($)
-  expect((await shown($)).conflicts).toMatch(/2 conflicts with main/)
+  expect(await hasConflicts()).toBe(true)
+  expect((await seen($)).words).toMatch(/Conflicts with main/)
   w.fetchFails = false
   w.mergeExit = 128
   await refresh($)
-  expect((await shown($)).conflicts).toBe(undefined)
+  expect(await hasConflicts()).toBe(false)
   w.mergeExit = 'throw'
   await refresh($)
-  expect((await shown($)).conflicts).toBe(undefined)
+  expect(await hasConflicts()).toBe(false)
 })
 
 test('network data belongs to its PR', async ($, on) => {
   const w: World = { run: WITH_PR, conflicts: 'shop/pricing.py' }
   world(on, w)
   await refresh($)
-  expect((await shown($)).conflicts).toMatch(/1 conflict with main/)
+  expect((await seen($)).buttons).toContain('merge-main')
   w.run = { ...WITH_PR, pr: 789 }
   w.conflicts = undefined
   await poll($)
-  const view = await shown($)
-  expect(view.conflicts).toBe(undefined)
-  expect(view.state).toBe(' Ready ')
+  const view = await seen($)
+  expect(view.buttons).not.toContain('merge-main')
+  expect(view.words).toMatch(/Ready/)
 })
 
 test('the mod only reads: git and gh calls are read-only or a fetch', async ($, on) => {
@@ -313,16 +634,17 @@ const AT = '2026-01-10T09:20:00Z'
 const PLAN_A: MyStatusRun = { ...PLANNING, worktree: '/work', step: 'research', updatedAt: AT }
 const PLAN_B: MyStatusRun = { ...PLANNING, worktree: '/work', step: 'approval', updatedAt: '2026-01-10T09:22:00Z' }
 const CHATS = { 'session-chat-a.json': PLAN_A, 'session-chat-b.json': PLAN_B }
+const planningStep = (view: Seen) => view.words.match(/Planning: (\w+)/)?.[1]
 
 test('two chats planning in the same folder each see only their own plan; a third sees none', async ($, on) => {
   const w: World = { files: CHATS }
   world(on, w)
-  for (const [chat, detail] of [['chat-a', 'Research'], ['chat-b', 'Waiting for approval'], ['chat-c', undefined]] as const) {
+  for (const [chat, step] of [['chat-a', 'Research'], ['chat-b', 'Approval'], ['chat-c', undefined]] as const) {
     w.sessionId = chat
     await refresh($)
-    const view = await shown($)
-    expect(view.band).toBe(detail !== undefined)
-    expect(view.detail).toBe(detail)
+    const view = await seen($, 'desktop')
+    expect(view.band).toBe(step !== undefined)
+    expect(planningStep(view)).toBe(step)
   }
 })
 
@@ -334,10 +656,11 @@ test('a chat shows its own activity, never another chat\'s', async ($, on) => {
     },
   }
   world(on, w)
-  for (const [chat, detail] of [['chat-a', 'pr:review'], ['chat-b', 'improve:run'], ['chat-c', undefined]] as const) {
+  for (const [chat, mode] of [['chat-a', 'pr:review'], ['chat-b', 'improve:run'], ['chat-c', undefined]] as const) {
     w.sessionId = chat
     await refresh($)
-    expect((await shown($)).detail).toBe(detail)
+    const view = await seen($, 'desktop')
+    expect(view.words.match(/(pr:review|improve:run)/)?.[1]).toBe(mode)
   }
 })
 
@@ -347,18 +670,18 @@ test('a folder-named planning file still shows, without a session id too; the ch
   for (const id of ['chat-c', null]) {
     w.sessionId = id
     await refresh($)
-    expect((await shown($)).detail).toBe('Interview')
+    expect(planningStep(await seen($, 'desktop'))).toBe('Interview')
   }
   w.sessionId = 'chat-a'
   w.files = CHATS
   await refresh($)
-  expect((await shown($)).detail).toBe('Research')
+  expect(planningStep(await seen($, 'desktop'))).toBe('Research')
 })
 
 test('a session planning file untouched for 7 hours draws no band', async ($, on) => {
   world(on, { files: CHATS, now: '2026-01-10T16:30:00Z' })
   await refresh($)
-  expect((await shown($)).band).toBe(false)
+  expect((await seen($)).band).toBe(false)
 })
 
 test('a leftover session planning file older than the folder\'s running file does not hide the run; a newer one still shows', async ($, on) => {
@@ -373,23 +696,9 @@ test('a leftover session planning file older than the folder\'s running file doe
   for (const leftover of leftovers) {
     w.files = { 'session-chat-a.json': leftover }
     await refresh($)
-    expect((await shown($)).percent).toMatch(/50%/)
+    expect((await seen($, 'desktop')).words).toMatch(/^Running: Part B/)
   }
   w.files = { 'session-chat-a.json': { ...PLANNING, step: 'approval', updatedAt: '2026-01-10T09:22:00Z' } }
   await refresh($)
-  expect((await shown($)).detail).toBe('Waiting for approval')
-})
-
-test('each tile has its hint drawn hidden over the band, after the tiles (the harness does not expose hover)', async ($, on) => {
-  const run: MyStatusRun = { ...READY, parts: [{ title: 'Part A', status: 'done', done: 3, total: 3 }, { title: 'Part B', status: 'running', done: 1, total: 2, left: ['Final report'] }] }
-  world(on, { run })
-  await refresh($)
-  for (const surface of SURFACES) {
-    const ui = await $.ui.mount({ plugin: 'my-status', surface, ...band(120) })
-    const card = await ui.find({ key: 'hint-1' })
-    expect(await ui.find({ key: 'tile-1' })).toBeDefined()
-    expect(card?.props).toMatchObject({ position: 'absolute', top: 0, left: 8, display: 'none' })
-    expect(card?.text.trim()).toBe('Part B · left: Final report')
-    await ui.unmount()
-  }
+  expect(planningStep(await seen($, 'desktop'))).toBe('Approval')
 })
