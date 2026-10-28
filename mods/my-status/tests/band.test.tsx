@@ -975,6 +975,23 @@ test('in Needs you, the newest assistant message off screen gives Show question,
   }
 })
 
+test('Show question with no message to scroll to says so, in the prototype\'s words, and does not scroll', async ($, on) => {
+  const toasts: string[] = []
+  world(on, { run: V2_NEEDS_YOU })
+  on('ui.toast', ($, e) => {
+    toasts.push(e.text)
+    return { value: undefined }
+  })
+  await refresh($)
+  // a message the transcript draws without an id leaves nothing to scroll to
+  const away = await $.ui.mount(message('desktop', '', null))
+  const ui = await $.ui.mount(band('desktop'))
+  await ui.press({ key: 'show-question' })
+  expect(toasts).toEqual(['No assistant message seen yet to scroll to.'])
+  await ui.unmount()
+  await away.unmount()
+})
+
 test('outside Needs you a message off screen changes nothing', async ($, on) => {
   world(on, { run: V2_RUNNING })
   await refresh($)

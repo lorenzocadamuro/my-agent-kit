@@ -280,7 +280,7 @@ async function editAgent($: EngineInterface, id: string, fn: (a: AgentView) => A
 async function showQuestion($: EngineInterface) {
   const id = question?.id
   if (!id) {
-    $.ui.toast('No question seen yet to scroll to.')
+    $.ui.toast('No assistant message seen yet to scroll to.')
     return
   }
   const moved = await $.ui.scroll({ to: { requestId: id }, block: 'start' })
@@ -667,7 +667,7 @@ export const register: Register = on => {
           )
       }
     }
-    const row = hasRow ? terminalRow() : null
+    const row = terminalRow()
     if (row) rows.push(row)
     return (
       <Box key="band" flexDirection="column">
