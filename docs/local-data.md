@@ -63,7 +63,11 @@ One file per change and folder, rewritten whole through a temp file and a rename
   "items": { "done": 3, "total": 6 },
   "state": "running",
   "reason": null,
-  "rounds": [ { "n": 1, "startedAt": "…", "endedAt": "…", "verdict": "block 1" } ],
+  "rounds": [
+    { "n": 1, "startedAt": "…", "endedAt": "…", "verdict": "block 1" },
+    { "n": 2, "startedAt": "…", "endedAt": "…", "verdict": "block 1" },
+    { "n": 3, "startedAt": "…" }
+  ],
   "pr": 456,
   "commentsReadUntil": "2026-01-10T09:00:00Z"
 }
@@ -71,12 +75,12 @@ One file per change and folder, rewritten whole through a temp file and a rename
 
 - `step`: `triage`, `check`, `execute`, `verify`, `review`, `push`, `report`.
 - `state`: `planning` (`/my:plan:scope` is at work; `step` is `research`, `interview`, `write`, `review` or `approval`), `ready` (the plan is approved, or a round ended and the next one can start), `running`, `needs_you` (a gate is waiting, `reason` says which), `stopped` (failed or capped, `reason` says why), `done` (the bar is met).
-- `parts[].status`: `todo`, `running`, `done`; a plan without parts has one part, the plan itself.
+- `parts[].status` and `parts[].done`: derived at every write from the part's boxes in `plan.md`: `done` counts the ticked ones; `status` is `done` when all are ticked, `running` when some are or one of its steps is `running`, else `todo`. A plan without parts has one part, the plan itself.
 - `startedAt`: when the work started. `plan:scope` writes it at its first step (a file that has one keeps it; a file left by a finished plan, `state: "done"`, counts as having none), carries it from the session file into the branch's file only when the branch's file has none, and nobody changes it afterwards.
 - `parts[].short`: the part's title in two or three words, from its heading after "Part X:" (`Checkout flow`). Written by `plan:scope` step 8, and whenever the plan's parts change.
-- `parts[].steps`: the part's steps in the plan's order, each `{ "label", "status" }`: `label` in two or three words (`Checkout test`); `status` `todo`, `running` (a round is implementing or reworking it), `done` (ticked) or `failed` (the item that implements or reworks it failed verification; the next round's start sets it back to `todo`). `plan:scope` step 8 writes them from the plan's checkboxes (ticked `done`, else `todo`); `plan:round` moves them (§ The state file, step 6). When the plan's steps change, a step keeps its status by label.
+- `parts[].steps`: the part's steps in the plan's order, each `{ "label", "status" }`, `label` in two or three words (`Checkout test`). `plan.md`'s boxes are the source of truth: every write, by `plan:scope` step 8 or `plan:round`, derives each `status` again, the first that holds: `failed` when it is already `failed` and its box is unticked (only `plan:round` step 6 sets it, on the step of an item to blame; adding a new round's entry to `rounds` clears it); `running` while a round without `endedAt` has an item that implements or reworks it, a ticked step included; `done` when its box is ticked; else `todo`. When the plan's steps change, `steps` is rewritten from the plan and derived again.
 - `parts[].left`: older files only. Kit 5.6.0 and before wrote the unticked steps here; no skill writes it now, and the status mod reads it only when `steps` is missing.
-- `rounds[]`: one entry per round, written by `plan:round`: `{ "n", "startedAt" }` at the round's start (with `--verify N`, when round N has none), `endedAt` and `verdict` at its end. `verdict` is the review's verdict against the bar, or `failed: <reason>` when verification failed.
+- `rounds[]`: one entry per round, written by `plan:round`: `{ "n", "startedAt" }` at the round's start (with `--verify N`, when round N has none), `endedAt` and `verdict` at its end; until `endedAt` is set the round is open. `verdict` is the review's verdict against the bar, or `failed: <reason>` when verification failed.
 - `ticketFrom`: the ticket's status before `plan:scope` moved it to the start status, so a cancelled plan can move it back.
 - `reason`: two or three words (`Plan approval`). The status band and line never show the work's name or the plan title; part titles and step labels, two or three words each, they may. A `name` left by an older version is ignored.
 - **Progress sidecar** `<same base>.progress.json`: `{ "round": 3, "items": { "done": 4, "total": 6 }, "updatedAt": "…" }`, written only by the round's executor after each item, at the path the coordinator gives it.
