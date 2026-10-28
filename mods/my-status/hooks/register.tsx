@@ -181,6 +181,9 @@ const network = new Map<string, Network>()
 let inFlight: Promise<void> | null = null
 // the activity under way and when the mod first saw it: its elapsed time counts from there
 let activitySeen: { mode: string; at: number } | null = null
+// the newest assistant message the transcript drew, and whether it is on screen: the gate's question, for Show question
+const seenMessages = new Set<string>()
+let question: { id: string; isOnScreen: boolean | undefined } | null = null
 // what the band last measured, for /my-status measure only (calibration); drawing never reads it
 let measured: { surface: string; maxRows: number; bodyRows: number; bodyColumns: number; columns?: number; rows?: number; level: number; height: number; budget: number } | null = null
 
@@ -274,6 +277,16 @@ async function editAgent($: EngineInterface, id: string, fn: (a: AgentView) => A
   await update($, agents, list => (list.some(a => a.id === id) ? list.map(a => (a.id === id ? fn(a) : a)) : list))
 }
 
+async function showQuestion($: EngineInterface) {
+  const id = question?.id
+  if (!id) {
+    $.ui.toast('No question seen yet to scroll to.')
+    return
+  }
+  const moved = await $.ui.scroll({ to: { requestId: id }, block: 'start' })
+  if ('deny' in moved && moved.deny) $.ui.toast(`Could not scroll to the question: ${moved.deny}`)
+}
+
 function shortTool(e: Record<string, unknown>): string {
   const tool = String(e.tool ?? '')
   const cmd = typeof e.command === 'string' ? e.command : ''
@@ -332,6 +345,8 @@ export const register: Register = on => {
     await $.command.register({ name: 'my-status', description: 'Refresh the my status line and open the plan, if one is running; "measure" shows what the band measured' })
     network.clear()
     activitySeen = null
+    seenMessages.clear()
+    question = null
     $.clock.every(POLL_MS, () => void poll($))
     $.clock.every(5000, () => void syncAgents($).catch(() => {}))
     void poll($)
@@ -395,12 +410,32 @@ export const register: Register = on => {
     return yield* next(e)
   })
 
+  // passes every assistant message through, noting the newest one and whether it is on screen (Show question)
+  on('ui.render', { component: 'AssistantMessage' }, ($, e, next) => {
+    let changed = false
+    if (!seenMessages.has(e.requestId)) {
+      seenMessages.add(e.requestId)
+      question = { id: e.requestId, isOnScreen: undefined }
+      changed = true
+    }
+    if (question?.id === e.requestId && e.props.onScreen !== undefined) {
+      const isOnScreen = e.props.onScreen !== null
+      if (question.isOnScreen !== isOnScreen) {
+        question.isOnScreen = isOnScreen
+        changed = true
+      }
+    }
+    // the band reads the question through `tick`; written from a timer, never while drawing
+    if (changed) $.clock.after(0, () => void update($, tick, n => n + 1).catch(() => {}))
+    return next(e)
+  })
+
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e)
     const snap = await read($, snapAtom)
     await read($, tick)
     const now = await $.clock.now()
-    const m = bandModel(snap, now)
+    const m = bandModel(snap, now, question?.isOnScreen === false)
     // the agents show only under kit work: with no model there is none, and the band stays the engine's
     if (!m) return next(e)
     const list = await read($, agents)
@@ -424,9 +459,11 @@ export const register: Register = on => {
             const plan = snap?.run?.plan
             if (plan?.path) await openPlan($, plan.path, plan.title || 'Plan')
           }
-        : c.kind === 'question' || c.kind === 'warning'
-          ? () => {}
-          : () => void $.prompt.fill({ text: c.command })
+        : c.kind === 'question'
+          ? () => showQuestion($)
+          : c.kind === 'warning'
+            ? () => {}
+            : () => void $.prompt.fill({ text: c.command })
     // the terminal's row: native Buttons and the notes as warning text, right-aligned
     const terminalRow = () =>
       actions.length > 0 ? (

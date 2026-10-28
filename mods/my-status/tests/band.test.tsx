@@ -923,3 +923,48 @@ test('the effort shows after an agent\'s first model request', async ($, on) => 
   expect(await source(ui, 'agents')).toContain('opus · high')
   await ui.unmount()
 })
+
+// ---------- Show question ----------
+
+/** An assistant message as the transcript draws it, on screen (its rows) or off it (null). */
+function message(surface: Surface, requestId: string, onScreen: { first: number; last: number; of: number } | null) {
+  return { plugin: 'my-status', surface, component: 'AssistantMessage' as const, requestId, props: { text: 'Shall I open the PR?', isFirstOfReply: true, onScreen } }
+}
+
+test('in Needs you, the newest assistant message off screen gives Show question, which scrolls to it; on screen, the band says to answer below', async ($, on) => {
+  const toasts: string[] = []
+  world(on, { run: V2_NEEDS_YOU })
+  on('ui.toast', ($, e) => {
+    toasts.push(e.text)
+    return { value: undefined }
+  })
+  await refresh($)
+  for (const surface of SURFACES) {
+    // the question in view: the note, no control
+    const shown = await $.ui.mount(message(surface, `m-${surface}`, { first: 0, last: 3, of: 4 }))
+    let view = await seen($, surface)
+    expect(view.words).toMatch(/Answer in the chat below/)
+    expect(view.buttons).not.toContain('show-question')
+    await shown.unmount()
+    // scrolled out of view: Show question, and pressing it scrolls the transcript to that message
+    const away = await $.ui.mount(message(surface, `m-${surface}`, null))
+    view = await seen($, surface)
+    expect(view.words).not.toMatch(/Answer in the chat below/)
+    expect(view.buttons).toEqual(['toggle', 'show-question', 'open-plan'])
+    // the kit has no transcript to scroll and no hook beneath `$.ui.scroll`: the press reaching it is what a test can
+    // see; with no question seen, it would toast instead and never scroll
+    const ui = await $.ui.mount(band(surface))
+    await expect(ui.press({ key: 'show-question' })).rejects.toThrow('no implementation for ui.scroll')
+    await ui.unmount()
+    await away.unmount()
+    expect(toasts).toEqual([])
+  }
+})
+
+test('outside Needs you a message off screen changes nothing', async ($, on) => {
+  world(on, { run: V2_RUNNING })
+  await refresh($)
+  const away = await $.ui.mount(message('desktop', 'm-1', null))
+  expect((await seen($, 'desktop')).buttons).toEqual(['toggle', 'open-plan'])
+  await away.unmount()
+})
