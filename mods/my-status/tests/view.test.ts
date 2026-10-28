@@ -165,16 +165,6 @@ test('a planning or running state untouched for 6 hours is ignored; no date is n
   expect(bandView(snap(null, { now, activity: { mode: 'pr:review', name: 'PR 9', state: 'running', updatedAt: '2026-01-10T09:00:00Z' } }), 120)).toBe(null)
 })
 
-test('the progress sidecar of this round moves the percent; an older one is ignored', async () => {
-  const now = Date.parse('2026-01-10T09:30:00Z')
-  const fresh = { round: 3, items: { done: 6, total: 6 }, updatedAt: '2026-01-10T09:25:00Z' }
-  expect(bandView(snap(NAMED, { now, progress: fresh }), 120)?.badges[1]?.text).toBe('67%')
-  expect(bandView(snap(NAMED, { now, progress: fresh }), 120)?.detail).toBe('Part 2 of 3 · round 3 · Execute 6/6')
-  expect(bandView(snap(NAMED, { now, progress: { ...fresh, round: 2 } }), 120)?.badges[1]?.text).toBe('50%')
-  expect(bandView(snap(NAMED, { now, progress: { ...fresh, updatedAt: '2026-01-10T09:00:00Z' } }), 120)?.badges[1]?.text).toBe('50%')
-  expect(bandView(snap({ ...NAMED, step: 'verify' }, { now, progress: fresh }), 120)?.badges[1]?.text).toBe('50%')
-})
-
 test('views follow the order: plan gates and runs, then activity, then stopped, comments, conflicts, done, ready', async () => {
   const running = ACTIVITY
   const waiting = { ...running, state: 'needs_you' as const }

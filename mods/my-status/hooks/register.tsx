@@ -2,11 +2,10 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register, RenderElement } from 'claude-code'
 
 import type { MyStatusActivity, MyStatusProgress, MyStatusRun, MyStatusSnapshot } from '../types'
-import { bandModel } from './adapter'
+import { bandModel, statusLine } from './adapter'
 import type { BandModel, Cta, State } from './adapter'
 import { headerPic, litPic, notePic, padBottom, pillPic, pulseBegin, stepsPic, trackChevronY, trackPic } from './draw'
 import type { Pic } from './draw'
-import { statusLine } from './view'
 
 // The my kit's status band, as the prototype approved on 2026-10-28 draws it, from the real state file. On the desktop
 // every part of the band is an SVG picture laid out to the CSS px (after plan-progress, github.com/zycck/claude-mods,
@@ -177,6 +176,8 @@ const network = new Map<string, Network>()
 let inFlight: Promise<void> | null = null
 // the activity under way and when the mod first saw it: its elapsed time counts from there
 let activitySeen: { mode: string; at: number } | null = null
+// what the band last measured, for /my-status measure only (calibration); drawing never reads it
+let measured: { surface: string; maxRows: number; bodyRows: number; bodyColumns: number; columns?: number; rows?: number; level: number; height: number; budget: number } | null = null
 
 function poll($: EngineInterface): Promise<void> {
   if (inFlight === null) {
@@ -282,7 +283,7 @@ function layout(m: BandModel, W: number, A: number, wantsOpen: boolean, budget: 
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
-    await $.command.register({ name: 'my-status', description: 'Refresh the my status line and open the plan, if one is running' })
+    await $.command.register({ name: 'my-status', description: 'Refresh the my status line and open the plan, if one is running; "measure" shows what the band measured' })
     network.clear()
     activitySeen = null
     $.clock.every(POLL_MS, () => void poll($))
@@ -302,7 +303,17 @@ export const register: Register = on => {
     return result
   })
 
-  on('command.run', { command: 'my-status' }, async $ => {
+  on('command.run', { command: 'my-status' }, async ($, e) => {
+    if (String(e.args ?? '').trim() === 'measure') {
+      const m = measured
+      const lines = [
+        `px per row: ${ROW_PX}; px per column: ${COL_PX}.`,
+        m
+          ? `last draw (${m.surface}): maxRows ${m.maxRows}, scroll.bodyRows ${m.bodyRows}, bodyColumns ${m.bodyColumns}, viewport ${m.columns ?? '?'}x${m.rows ?? '?'}; level L${m.level}, band ${m.height} ${m.surface === 'terminal' ? 'rows' : 'px'} of ${m.budget}`
+          : 'The band has not drawn yet.',
+      ]
+      return { text: lines.join('\n') }
+    }
     await poll($)
     const snap = await read($, snapAtom)
     if (snap?.run?.plan?.path) {
@@ -364,6 +375,7 @@ export const register: Register = on => {
       // the band may take what maxRows says, in the app's rows; only past that does anything fold
       const budget = maxRows > 0 ? maxRows * ROW_PX : Number.POSITIVE_INFINITY
       const lay = layout(m, W, A, wantsOpen, budget, now)
+      measured = { surface: e.surface, maxRows, bodyRows: e.props.scroll.bodyRows, bodyColumns: e.props.bodyColumns, columns: e.viewport?.columns, rows: e.viewport?.rows, level: lay.level, height: lay.heightPx, budget }
       // px gaps live in pictures, native spacing being whole cells: the last picture carries the 12 px above the row
       const pics = lay.hasRow ? lay.pics.map((p, i) => (i === lay.pics.length - 1 ? { ...p, pic: padBottom(p.pic, GAP_TO_ROW_PX) } : p)) : lay.pics
       // A picture that is a control: the picture; over it, what lights up, revealed by the keyed Box's own hover (a Box
@@ -426,6 +438,8 @@ export const register: Register = on => {
     const n = m.parts.length
     const pw = n > 0 ? Math.max(3, Math.floor((cols - ALIGN_COLS - (n - 1)) / n)) : 0
     const open = wantsOpen && canOpen
+    const height = 2 + (n > 0 ? (open ? 2 + n : 2) : 0) + (hasRow ? 1 : 0)
+    measured = { surface: e.surface, maxRows, bodyRows: e.props.scroll.bodyRows, bodyColumns: e.props.bodyColumns, columns: e.viewport?.columns, rows: e.viewport?.rows, level: 0, height, budget: maxRows }
 
     const stepColor = (status: string) => (status === 'done' ? 'success' : status === 'failed' ? 'error' : status === 'running' ? color : undefined)
     const gutter = (key: string, child: RenderElement | null) => (

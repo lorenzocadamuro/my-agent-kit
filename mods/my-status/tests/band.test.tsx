@@ -54,6 +54,8 @@ type World = {
   planText?: string
   /** The panes opened, by id. */
   opened?: string[]
+  /** Every status line the mod set, in order. */
+  status?: (string | undefined)[]
 }
 
 function rows(cmd: string, list: Row[]): string {
@@ -77,7 +79,10 @@ function world(on: On, w: World, ran: string[] = []): void {
   on('session.cwd', () => ({ value: '/work' }))
   on('session.id', () => (w.sessionId === null ? { deny: 'no session id' } : { value: w.sessionId ?? 'chat-a' }))
   on('clock.now', () => ({ value: Date.parse(w.now ?? '2026-01-10T09:25:00Z') }))
-  on('ui.status', () => ({ value: undefined }))
+  on('ui.status', ($, e) => {
+    w.status?.push(e.text)
+    return { value: undefined }
+  })
   on('ui.open', ($, e) => {
     w.opened?.push(e.id)
     return { value: { isPlaced: true as const } }
@@ -372,8 +377,8 @@ test('Open plan opens the plan pane with the plan file', async ($, on) => {
 
 const WORK_TEXTS = ['Learn from use', 'Webhook retries', 'PR 9', 'Charge retries', 'Discounts on carts', 'Make checkout', 'cart totals add up']
 
-test('no work name, plan title or PR title anywhere in the band: named plans, an activity, a plan without parts', async ($, on) => {
-  const w: World = {}
+test('no work name, plan title or PR title anywhere in the band or the status line: named plans, an activity, a plan without parts', async ($, on) => {
+  const w: World = { status: [] }
   world(on, w)
   const noParts: MyStatusRun = {
     ...V2_RUNNING,
@@ -401,6 +406,9 @@ test('no work name, plan title or PR title anywhere in the band: named plans, an
         await ui.unmount()
       }
     }
+    const line = w.status?.at(-1) ?? ''
+    expect(line).toMatch(/^my: /)
+    for (const work of WORK_TEXTS) expect(line.includes(work), `${work} in the status line`).toBe(false)
   }
 })
 
@@ -701,4 +709,49 @@ test('a leftover session planning file older than the folder\'s running file doe
   w.files = { 'session-chat-a.json': { ...PLANNING, step: 'approval', updatedAt: '2026-01-10T09:22:00Z' } }
   await refresh($)
   expect(planningStep(await seen($, 'desktop'))).toBe('Approval')
+})
+
+// ---------- the status line and the calibration reading ----------
+
+const NOTES = '## 20261028-01 Kit note one · open\n## 20261028-02 Kit note two · open\n## 20261027-01 Old note · fixed\n'
+
+test('the status line is my: <state>[ · extras] · <n> kit notes, comments and conflicts among the extras', async ($, on) => {
+  const status: (string | undefined)[] = []
+  const w: World = { status }
+  world(on, w)
+  const activity: MyStatusActivity = { mode: 'pr:review', state: 'running', updatedAt: '2026-01-10T09:20:00Z' }
+  const cases: [World, string | undefined][] = [
+    [{ run: { ...V2_READY, pr: 461, commentsReadUntil: SINCE }, comments: [OTHER, OTHER, OTHER], log: NOTES }, 'my: Ready · 3 comments · 2 kit notes'],
+    [{ run: V2_NEEDS_YOU, log: NOTES }, 'my: Needs you · 2 kit notes'],
+    [{ run: V2_PLANNING, log: '## 20261028-01 Kit note one · open\n' }, 'my: Planning · Interview · 1 kit notes'],
+    [{ activity, log: NOTES }, 'my: Running · pr:review · 2 kit notes'],
+    [{ run: V2_RUNNING }, 'my: Running · 82% · 6–10 min'],
+    [{ run: V2_RUNNING_SIX }, 'my: Running · 53% · estimating…'],
+    [{ run: V2_STOPPED }, 'my: Stopped'],
+    [{ run: { ...V2_DONE, pr: 462 }, conflicts: 'shop/pricing.py' }, 'my: Done · 1 conflict'],
+    [{ run: { ...V2_RUNNING, pr: 463, commentsReadUntil: SINCE }, comments: [OTHER], conflicts: 'a.py\nb.py' }, 'my: Running · 82% · 6–10 min · 1 comment · 2 conflicts'],
+    [{ log: NOTES }, 'my: 2 kit notes'],
+    [{}, undefined],
+  ]
+  for (const [next, line] of cases) {
+    Object.assign(w, { run: undefined, activity: undefined, comments: undefined, conflicts: undefined, log: undefined }, next)
+    await refresh($)
+    expect(status.at(-1)).toBe(line)
+  }
+})
+
+test('/my-status measure reports the calibration and what the band last measured', async ($, on) => {
+  world(on, { run: V2_RUNNING })
+  await refresh($)
+  const measure = async () =>
+    JSON.stringify(await $.command.run({ command: 'my-status', args: 'measure', origin: { kind: 'composer' }, presentation: { isFullscreen: false, columns: 120 } }))
+  const ui = await $.ui.mount(band('desktop', 10, 90))
+  await ui.unmount()
+  const text = await measure()
+  expect(text).toMatch(/px per row: 24; px per column: 8.33/)
+  expect(text).toMatch(/last draw \(desktop\): maxRows 10, scroll.bodyRows 9, bodyColumns 90/)
+  expect(text).toMatch(/level L0, band \d+ px of 240/)
+  const term = await $.ui.mount(band('terminal', 12, 80))
+  await term.unmount()
+  expect(await measure()).toMatch(/last draw \(terminal\): maxRows 12, .*band \d+ rows of 12/)
 })

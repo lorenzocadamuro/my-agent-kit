@@ -268,3 +268,26 @@ export function bandModel(snap: MyStatusSnapshot | null, now: number, isQuestion
     ctas.push(isQuestionAway ? { kind: 'question', key: 'show-question', label: 'Show question' } : { kind: 'warning', key: 'answer-below', label: 'Answer in the chat below ↓' })
   return { state, word: WORD[state], line2: line2(run, state, parts), metrics: metrics(run, state, parts, now), parts, isPlanning: false, hasPlanFile: true, ctas }
 }
+
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
+
+/**
+ * The status line: `my: <state>[ · extras] · <n> kit notes`, in the band's words. Extras: Planning's step, Running's
+ * percent and time left, an activity's mode, then new comments and conflicts with main.
+ */
+export function statusLine(snap: MyStatusSnapshot | null): string | undefined {
+  if (!snap) return undefined
+  const notes = snap.openNotes > 0 ? `${snap.openNotes} kit notes` : null
+  const top = lead(snap)
+  if (!top) return notes ? `my: ${notes}` : undefined
+  const bits: (string | null | undefined)[] = [WORD[top.state]]
+  if (top.activity) bits.push(top.activity.mode)
+  else if (top.state === 'planning') bits.push(PLANNING_STEPS.find(([key]) => key === (top.run.step ?? 'research'))?.[1] ?? 'Research')
+  else if (top.state === 'running') bits.push(progress(partsOf(top.run, top.state))?.value, (top.run.parts ?? []).length > 0 ? timeLeft(top.run) : null)
+  if (!top.activity) {
+    if ((snap.newComments ?? 0) > 0) bits.push(plural(snap.newComments ?? 0, 'comment'))
+    if ((snap.conflicts ?? 0) > 0) bits.push(plural(snap.conflicts ?? 0, 'conflict'))
+  }
+  bits.push(notes)
+  return `my: ${bits.filter(Boolean).join(' · ')}`
+}
