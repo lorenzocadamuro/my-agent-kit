@@ -22,6 +22,8 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 
 Write the state file (name and shape in `${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) at the start of each round, at each step below, at each gate and its answer, and at the end. Rewrite it whole, keeping every field you do not change, through a temp file and a rename, so a reader never sees half a file. It feeds the optional status mod, and a resuming run reads it. A gate's answer is a write too: the state leaves `needs_you` for `running` before you act on the answer. A `reason` is two or three words (`Tests failing`).
 
+**Rounds and steps.** At a round's start, append `{ n, startedAt }` to `rounds` (with `--verify N`, only when round N has no entry), and when a part has no `short` or `steps` (a file an older version wrote), fill them from the plan first. After the triage (step 3), mark `running` the plan steps the round's items implement; a round made of block findings marks none. At the round's end, a round that stops midway included, set its `endedAt` and `verdict` (the review's verdict against the bar, or `failed: <reason>` when verification failed), and set every step still `running` back to `todo`.
+
 At the end of a round or a run, set `state`: `done` when the bar is met and the ready-for-review gate is answered; `needs_you` with a `reason` when a gate or a question waits for the user; `stopped` with a `reason` when verification failed or the run hit its cap; otherwise `ready`, waiting for the next round.
 
 ## Steps
@@ -74,7 +76,8 @@ When the round's verification needs a manual check in the browser, follow the pr
 - **Check the summary's claims yourself:** audit counts, test results, and every decision taken alone.
   - A decision flagged boundary, rule or someone else's code, or one that relaxes a check or a stop condition, is a gate.
   - Any other decision is listed in the report.
-- **Tick the plan:** for each verified item that implements a step of a plan part, tick its checkbox in `plan.md`. A part is done when all its boxes are ticked; a plan without parts counts as one part. Then update that part in the state file: `status`, `done`, and `left`, its unticked steps in two or three words each (`Checkout test`), which the status band shows; the same whenever the plan's steps change.
+- **Tick the plan:** for each verified item that implements a step of a plan part, tick its checkbox in `plan.md`, in a failed round too. A part is done when all its boxes are ticked; a plan without parts counts as one part. Then update the state file: that step `done`, and the part's `status` and `done`. When the plan's steps change, rewrite the part's `steps`, each keeping its status by label.
+- **When verification fails,** set `state: "stopped"` with a two-or-three-word `reason` (`Tests failing`), and when an item is to blame (its tests fail, its commit is missing), set its step `failed`.
 - **Record signals** (principles: closing step) for rework, stopped items, and reversed decisions.
 
 ### 7. Review

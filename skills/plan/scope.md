@@ -11,7 +11,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 | `--adopt <branch\|PR>` | Plan for existing work: read its diff and description, and do not create a new branch                                                                                                    |
 | `--dry-run`            | Write the plan only. No worktree, no branch, no ticket change. Save it where the user says, or at `<data root>/plans/<slug>-<date>.md`                                                   |
 
-**Status:** from step 1 to the approval, keep the planning state file current (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file: the worktree branch's file once this session works in the worktree; otherwise, `--dry-run` included, `session-<session id>.json`) with `state: "planning"`, the plan's title once known, and `step`: `research` (steps 1–3), `interview` (4), `write` (5), `review` (6), `approval` (7). The status line then shows the plan being made.
+**Status:** from step 1 to the approval, keep the planning state file current (`${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file: the worktree branch's file once this session works in the worktree; otherwise, `--dry-run` included, `session-<session id>.json`) with `state: "planning"`, `startedAt` set at step 1 (a file that already has one keeps it: `--adopt`, a re-scope), the plan's title once known, and `step`: `research` (steps 1–3), `interview` (4), `write` (5), `review` (6), `approval` (7). Rewrite it whole, keeping every field you do not change, through a temp file and a rename. The status line then shows the plan being made.
 
 ## Steps
 
@@ -38,7 +38,7 @@ State the classification and its reason in one line; the user can override it in
 2. **Worktree:** `git fetch origin main`, then `git worktree add <profile worktree root>/<branch> -b <branch> origin/main`. If `.plans/` is not ignored there (`git check-ignore -q .plans/`), add it to `.git/info/exclude`, never to a tracked `.gitignore`. Copy what `.worktreeinclude` lists (principles: entering a worktree), then start the profile's setup command there, in the background, so the baseline runs on a ready worktree.
    - If the branch already exists locally or remotely, stop and offer `--adopt`; set the planning state file to `needs_you` with that reason.
    - With `--adopt`, reuse the existing worktree, or add one for the existing branch.
-3. **Move the session:** when the profile says the session follows the worktree, move this session into it as the principles say (entering a worktree: EnterWorktree, the app's change-directory tool, the check on the app's record, a Terminal tab there). From then on keep the worktree branch's state file, and delete this session's. Otherwise keep the session file, and plan from the worktree's files.
+3. **Move the session:** when the profile says the session follows the worktree, move this session into it as the principles say (entering a worktree: EnterWorktree, the app's change-directory tool, the check on the app's record, a Terminal tab there). From then on keep the worktree branch's state file, carrying this session's `startedAt` into it, and delete this session's. Otherwise keep the session file, and plan from the worktree's files.
 
 **Then the ticket,** when there is one, also without a worktree and never with `--dry-run`: the work has started, so move it to the profile's start status (Linear `save_issue` with `state`), unless it is already there or further on, and say so. Keep its previous status in the state file (`ticketFrom`). This is the only ticket change allowed without asking.
 
@@ -101,7 +101,7 @@ Show the plan's path and a summary of at most 12 lines: goal, boundary, bar, siz
 Skip this step for `--dry-run`, and delete the planning state file: there is nothing to run. The worktree exists since step 2; only this is left:
 
 1. **Setup:** make sure the setup command started in step 2 finished, or run it now if step 2 did not start it.
-2. **State:** write the worktree branch's state file with `state: "ready"`, its `repo`, `branch` and `worktree`, the plan's title and path, and its parts, each with `left`, its unticked steps in two or three words each, and delete this session's planning file if there is one. The bar then shows in any session working in the worktree.
+2. **State:** write the worktree branch's state file with `state: "ready"`, its `repo`, `branch` and `worktree`, `startedAt` as planning wrote it (from this session's planning file when there is one), the plan's title and path, and its parts, each with `short`, its title after "Part X:" in two or three words, and `steps`, one `{ label, status }` per step, the label in two or three words and the status from the plan's checkbox (ticked `done`, else `todo`); then delete this session's planning file if there is one. The bar then shows in any session working in the worktree.
 3. **Report:**
    - the worktree path and branch, and, when this session did not move there, that the run starts in a new session opened in the worktree;
    - the plan path;

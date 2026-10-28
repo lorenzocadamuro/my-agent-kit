@@ -47,5 +47,5 @@ $ git rev-parse --git-dir ; git rev-parse --git-common-dir
 /repo/.git
 P
 cat > kit-data/state/acme-shop-feature.json <<'P'
-{"repo":"acme/shop","branch":"feature","worktree":"./wt","session":"unknown","updatedAt":"2026-01-10T09:00:00Z","mode":"round","plan":{"title":"Make order totals consistent","path":"./wt/.plans/plan.md"},"parts":[{"title":"Part A: rounding","status":"running","done":0,"total":2},{"title":"Part B: discounts","status":"todo","done":0,"total":3}],"round":1,"step":"execute","state":"running","reason":null,"rounds":[{"n":1,"startedAt":"2026-01-10T08:30:00Z"}],"pr":null}
+{"repo":"acme/shop","branch":"feature","worktree":"./wt","session":"unknown","startedAt":"2026-01-10T07:00:00Z","updatedAt":"2026-01-10T09:00:00Z","mode":"round","plan":{"title":"Make order totals consistent","path":"./wt/.plans/plan.md"},"parts":[{"title":"Part A: rounding","short":"Rounding","status":"running","done":0,"total":2,"steps":[{"label":"Round totals","status":"todo"},{"label":"Rounding test","status":"todo"}]},{"title":"Part B: discounts","short":"Discounts","status":"todo","done":0,"total":3,"steps":[{"label":"Negative discounts","status":"todo"},{"label":"Checkout test","status":"todo"},{"label":"Pricing docs","status":"todo"}]}],"round":1,"step":"execute","state":"running","reason":null,"rounds":[{"n":1,"startedAt":"2026-01-10T08:30:00Z"}],"pr":null}
 P
