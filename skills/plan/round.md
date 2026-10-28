@@ -76,8 +76,8 @@ When the round's verification needs a manual check in the browser, follow the pr
 - **Check the summary's claims yourself:** audit counts, test results, and every decision taken alone.
   - A decision flagged boundary, rule or someone else's code, or one that relaxes a check or a stop condition, is a gate.
   - Any other decision is listed in the report.
-- **Tick the plan:** for each verified item that implements or reworks a step of a plan part, tick its checkbox in `plan.md`, in a failed round too. A part is done when all its boxes are ticked; a plan without parts counts as one part. Then update the state file: that step `done`, and the part's `status` and `done`. When the plan's steps change, rewrite the part's `steps`, each keeping its status by label.
-- **When verification fails,** set `state: "stopped"` with a two-or-three-word `reason` (`Tests failing`), and when an item is to blame (its tests fail, its commit is missing), set its step `failed`.
+- **Tick the plan:** for each verified item that implements or reworks a step of a plan part and is not to blame (below), tick its checkbox in `plan.md`, in a failed round too. A part is done when all its boxes are ticked; a plan without parts counts as one part. Then update the state file: that step `done`, and the part's `status` and `done`. When the plan's steps change, rewrite the part's `steps`, each keeping its status by label.
+- **When verification fails,** set `state: "stopped"` with a two-or-three-word `reason` (`Tests failing`), and when an item is to blame (its tests fail, its commit is missing), set its step `failed` and untick its box in `plan.md`, whoever ticked it and in whichever round; blame wins over another item's tick of the same step. Then update the part's `status` and `done`.
 - **Record signals** (principles: closing step) for rework, stopped items, and reversed decisions.
 
 ### 7. Review
