@@ -1,4 +1,4 @@
-import type { MyStatusPart, MyStatusRun, MyStatusSnapshot } from '../types'
+import type { MyStatusPart, MyStatusRun } from '../types'
 
 const PLAN = { title: 'Learn from use', path: '/work/.plans/plan.md' }
 
@@ -8,10 +8,6 @@ const PARTS_MID: MyStatusRun['parts'] = [
   { title: 'Part C', status: 'todo', done: 0, total: 2 },
 ]
 
-export function snap(run: MyStatusRun | null, extra: Partial<MyStatusSnapshot> = {}): MyStatusSnapshot {
-  return { run, newComments: 0, conflicts: 0, openNotes: 0, now: 0, ...extra }
-}
-
 export const READY: MyStatusRun = {
   plan: PLAN,
   state: 'ready',
@@ -20,20 +16,6 @@ export const READY: MyStatusRun = {
     { title: 'Part B', status: 'todo', done: 0, total: 6 },
     { title: 'Part C', status: 'todo', done: 0, total: 2 },
   ],
-}
-
-export const FIRST_ROUND: MyStatusRun = {
-  plan: PLAN,
-  state: 'running',
-  round: 1,
-  step: 'execute',
-  items: { done: 2, total: 4 },
-  parts: [
-    { title: 'Part A', status: 'running', done: 1, total: 2 },
-    { title: 'Part B', status: 'todo', done: 0, total: 6 },
-    { title: 'Part C', status: 'todo', done: 0, total: 2 },
-  ],
-  rounds: [{ n: 1, startedAt: '2026-01-10T09:00:00Z' }],
 }
 
 export const RUNNING: MyStatusRun = {
@@ -52,13 +34,6 @@ export const RUNNING: MyStatusRun = {
 
 export const NEEDS_YOU: MyStatusRun = { ...RUNNING, state: 'needs_you', reason: 'Verification failed: item 4 has no commit' }
 
-export const DONE: MyStatusRun = {
-  ...RUNNING,
-  state: 'done',
-  parts: PARTS_MID?.map(part => ({ ...part, status: 'done' as const, done: part.total })),
-  rounds: RUNNING.rounds?.map(round => ({ ...round, endedAt: round.endedAt ?? '2026-01-10T09:31:00Z' })),
-}
-
 export const WITH_PR: MyStatusRun = { ...READY, state: 'ready', pr: 456 }
 
 export const PLANNING: MyStatusRun = {
@@ -68,22 +43,11 @@ export const PLANNING: MyStatusRun = {
 }
 
 export const LONG_TITLE = 'Make checkout charging reliable across provider timeouts and retries'
-export const LONG_REASON = 'Verification failed: item 4 has no commit and the webhook retry tests are red'
+const LONG_REASON = 'Verification failed: item 4 has no commit and the webhook retry tests are red'
 
 export const OLD_NEEDS_YOU: MyStatusRun = { ...NEEDS_YOU, plan: { title: LONG_TITLE, path: '' }, reason: LONG_REASON }
 
 export const NAMED: MyStatusRun = { ...RUNNING, name: 'Webhook retries', updatedAt: '2026-01-10T09:20:00Z' }
-
-export const GATE: MyStatusRun = { ...NAMED, state: 'needs_you', reason: 'Plan approval' }
-
-export const ACTIVITY = { mode: 'pr:review', name: 'PR 9 Charge retries', state: 'running' as const }
-
-/** Texts about the work that the band and the status line never show. */
-export const WORK_TEXTS = ['Learn from use', 'Webhook retries', 'PR 9', 'Charge retries', 'Discounts on carts', 'PR 456', 'Make checkout']
-
-export const STOPPED: MyStatusRun = { ...RUNNING, state: 'stopped', reason: 'Tests failing' }
-
-export const AFTER_ROUND: MyStatusRun = { ...RUNNING, state: 'ready', step: 'report' }
 
 // ---------- state files as kit 5.7 writes them: start, short titles, steps with their status, rounds ----------
 

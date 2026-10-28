@@ -497,6 +497,36 @@ test('elapsed counts from startedAt, else the first round\'s start, at the clock
   expect((await seen($, 'desktop')).words).toMatch(/1h 31m total time/)
 })
 
+test('a reason shows only in Needs you and Stopped', async ($, on) => {
+  const w: World = {}
+  world(on, w)
+  const cases: [MyStatusRun, boolean][] = [
+    [{ ...V2_RUNNING, reason: 'Tests failing' }, false],
+    [{ ...V2_READY, reason: 'Tests failing' }, false],
+    [{ ...V2_DONE, reason: 'Tests failing' }, false],
+    [{ ...V2_STOPPED, reason: 'Tests failing' }, true],
+    [{ ...V2_NEEDS_YOU, reason: 'Tests failing' }, true],
+  ]
+  for (const [run, isShown] of cases) {
+    w.run = run
+    await refresh($)
+    for (const surface of SURFACES) expect((await seen($, surface)).words.includes('Tests failing'), `${run.state} on ${surface}`).toBe(isShown)
+  }
+})
+
+test('buttons carry names, and commands only behind them', async ($, on) => {
+  world(on, { run: { ...V2_READY, pr: 464, commentsReadUntil: SINCE }, comments: [OTHER], conflicts: 'shop/pricing.py' })
+  await refresh($)
+  for (const surface of SURFACES) {
+    const ui = await $.ui.mount(band(surface))
+    expect((await ui.findAll({ type: 'Button' })).map(b => b.key)).toEqual(['toggle', 'comments', 'merge-main', 'one-round', 'run-plan', 'open-plan'])
+    const shown = await everything(ui)
+    for (const name of ['Review comments (1)', 'Merge main', 'One round', 'Run plan', 'Open plan']) expect(shown, `${name} on ${surface}`).toContain(name)
+    expect(shown.includes('/my:'), surface).toBe(false)
+    await ui.unmount()
+  }
+})
+
 test('a needs-you header with no step under way shows the next step', async ($, on) => {
   const parts = V2_READY.parts
   world(on, { run: { ...V2_READY, state: 'needs_you', reason: 'Plan approval', parts } })
@@ -550,6 +580,23 @@ test('a running state untouched for 7 hours draws no band', async ($, on) => {
   world(on, { run: NAMED, now: '2026-01-10T16:30:00Z' })
   await refresh($)
   expect((await seen($)).band).toBe(false)
+})
+
+test('a running state without updatedAt never goes stale', async ($, on) => {
+  world(on, { run: V2_RUNNING, now: '2026-01-10T16:30:00Z' })
+  await refresh($)
+  for (const surface of SURFACES) expect((await seen($, surface)).words).toMatch(/Running/)
+})
+
+test('an activity untouched for 7 hours draws no band and leaves the status line', async ($, on) => {
+  const w: World = { status: [], activity: { mode: 'pr:review', state: 'running', updatedAt: '2026-01-10T09:20:00Z' } }
+  world(on, w)
+  await refresh($)
+  expect((await seen($, 'desktop')).words).toMatch(/Running: pr:review/)
+  w.now = '2026-01-10T16:30:00Z'
+  await refresh($)
+  for (const surface of SURFACES) expect((await seen($, surface)).band).toBe(false)
+  expect(w.status?.at(-1)).toBe(undefined)
 })
 
 test('a fresh progress sidecar keeps a running state untouched for 7 hours', async ($, on) => {
