@@ -1,4 +1,4 @@
-import type { MyStatusActivity, MyStatusPart, MyStatusProgress, MyStatusRun, MyStatusSnapshot } from '../types'
+import type { MyStatusActivity, MyStatusPart, MyStatusRun, MyStatusSnapshot } from '../types'
 
 export type Tone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger'
 
@@ -194,12 +194,6 @@ function isStale(updatedAt: string | undefined, now: number, newer?: string): bo
   return Number.isFinite(at) && now - at > STALE_MS
 }
 
-export function withProgress(run: MyStatusRun, progress: MyStatusProgress | null | undefined): MyStatusRun {
-  if (!progress?.items || !progress.updatedAt || progress.round !== run.round || run.step !== 'execute') return run
-  if (run.updatedAt && !(Date.parse(progress.updatedAt) > Date.parse(run.updatedAt))) return run
-  return { ...run, items: progress.items }
-}
-
 function readyLabel(run: MyStatusRun): string {
   return run.round && run.round > 0 ? `Round ${run.round} done` : 'Ready'
 }
@@ -225,7 +219,7 @@ function blockedActions(snap: MyStatusSnapshot, fallback: Action[]): Action[] {
 function view(snap: MyStatusSnapshot): BandView | null {
   const stored = snap.run
   const mayAge = stored && (stored.state === 'planning' || stored.state === 'running')
-  const run = stored && mayAge && isStale(stored.updatedAt, snap.now, snap.progress?.updatedAt) ? null : stored && withProgress(stored, snap.progress)
+  const run = stored && mayAge && isStale(stored.updatedAt, snap.now, snap.progress?.updatedAt) ? null : stored
   const activity = snap.activity && (snap.activity.state === 'running' || snap.activity.state === 'needs_you') && !isStale(snap.activity.updatedAt, snap.now) ? snap.activity : null
   const notes = snap.openNotes > 0 ? ` · ${snap.openNotes} kit notes` : ''
   const comments = snap.newComments ?? 0
