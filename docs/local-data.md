@@ -50,10 +50,14 @@ One file per change and folder, rewritten whole through a temp file and a rename
   "branch": "feature",
   "worktree": "/abs/path",
   "session": "<session id or unknown>",
+  "startedAt": "2026-01-09T15:00:00Z",
   "updatedAt": "2026-01-10T09:40:00Z",
   "mode": "run",
   "plan": { "title": "…", "path": "/abs/path/.plans/plan.md" },
-  "parts": [ { "title": "Part A: …", "status": "running", "done": 2, "total": 3, "left": ["Checkout test"] } ],
+  "parts": [ {
+    "title": "Part A: …", "short": "Checkout flow", "status": "running", "done": 2, "total": 3,
+    "steps": [ { "label": "Cart totals", "status": "done" }, { "label": "Payment retry", "status": "done" }, { "label": "Checkout test", "status": "running" } ]
+  } ],
   "round": 3,
   "step": "execute",
   "items": { "done": 3, "total": 6 },
@@ -68,8 +72,12 @@ One file per change and folder, rewritten whole through a temp file and a rename
 - `step`: `triage`, `check`, `execute`, `verify`, `review`, `push`, `report`.
 - `state`: `planning` (`/my:plan:scope` is at work; `step` is `research`, `interview`, `write`, `review` or `approval`), `ready` (the plan is approved, or a round ended and the next one can start), `running`, `needs_you` (a gate is waiting, `reason` says which), `stopped` (failed or capped, `reason` says why), `done` (the bar is met).
 - `parts[].status`: `todo`, `running`, `done`; a plan without parts has one part, the plan itself.
-- `parts[].left`: the part's unticked steps, two or three words each (`Checkout test`), empty when it is done; the status band shows them while the pointer is on the part's tile. Written with `done`, by `plan:scope` and at each tick or change of the plan's steps.
+- `startedAt`: when the work started. `plan:scope` writes it at its first step (a file that has one keeps it), carries it from the session file into the branch's file, and nobody changes it afterwards.
+- `parts[].short`: the part's title in two or three words, from its heading after "Part X:" (`Checkout flow`). Written by `plan:scope` step 8, and whenever the plan's parts change.
+- `parts[].steps`: the part's steps in the plan's order, each `{ "label", "status" }`: `label` in two or three words (`Checkout test`); `status` `todo`, `running` (a round is implementing it), `done` (ticked) or `failed` (the item that implements it failed verification). `plan:scope` step 8 writes them from the plan's checkboxes (ticked `done`, else `todo`); `plan:round` moves them (§ The state file, step 6). When the plan's steps change, a step keeps its status by label.
+- `parts[].left`: older files only. Kit 5.6.0 and before wrote the unticked steps here; no skill writes it now, and the status mod reads it only when `steps` is missing.
+- `rounds[]`: one entry per round, written by `plan:round`: `{ "n", "startedAt" }` at the round's start (with `--verify N`, when round N has none), `endedAt` and `verdict` at its end. `verdict` is the review's verdict against the bar, or `failed: <reason>` when verification failed.
 - `ticketFrom`: the ticket's status before `plan:scope` moved it to the start status, so a cancelled plan can move it back.
-- `reason`: two or three words (`Plan approval`). The status band and line show no work name or plan title; a `name` left by an older version is ignored.
+- `reason`: two or three words (`Plan approval`). The status band and line never show the work's name or the plan title; part titles and step labels, two or three words each, they may. A `name` left by an older version is ignored.
 - **Progress sidecar** `<same base>.progress.json`: `{ "round": 3, "items": { "done": 4, "total": 6 }, "updatedAt": "…" }`, written only by the round's executor after each item, at the path the coordinator gives it.
 - **Activity sidecar** `state/session-<session id>.activity.json`, or without a session id `<base>.activity.json`, `<base>` computed as above from the session's folder; the name is fixed once, when the mode starts, and kept for every later write of that mode: `{ "mode": "pr:review", "state": "running", "updatedAt": "…" }`, `state` being `running`, `needs_you` or `done`; written by the `pr:*` modes and `improve run`, each by the rule in its skill.
