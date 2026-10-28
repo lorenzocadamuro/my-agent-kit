@@ -1,0 +1,6 @@
+---
+type: regex
+target: {source: file, path: wt/.plans/plan.md}
+pattern: "- \\[ \\] Add a test that drives checkout"
+weight: 3
+---
