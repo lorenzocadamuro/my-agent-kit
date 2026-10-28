@@ -43,7 +43,7 @@ const FRAME_PX = 20
 // A blank Button's label: figure spaces (a digit wide, ~8.6 px at the desktop's 14 px), since the desktop presses a
 // Button on its label alone and collapses plain spaces; kept under the picture's width, a label wider than its box
 // being cut with an ellipsis (plan-progress's notes)
-const FIGURE_SPACE = ' '
+const FIGURE_SPACE = '\u2007'
 const FIGURE_PX = 8.6
 const blankLabel = (w: number) => FIGURE_SPACE.repeat(Math.max(1, Math.floor((w - 24) / FIGURE_PX)))
 // the blank Button's own hover plate, cleared: the desktop writes a Button's hover as !important rules on the button

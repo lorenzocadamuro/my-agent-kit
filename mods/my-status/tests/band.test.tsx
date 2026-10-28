@@ -182,6 +182,13 @@ async function source(ui: Drawing, key: string) {
   return String(box && kids(box).find(k => k.type === 'Svg')?.props?.source)
 }
 const labelRow = (svg: string) => svg.match(/<g class="labels">.*?<\/g>/)?.[0] ?? ''
+// every Button the desktop draws is blank: its label only figure spaces (U+2007), never a plain space, which the
+// desktop collapses, pressing a Button on its label alone
+async function expectBlankLabels(ui: Drawing) {
+  const buttons = all((await ui.drawn()) as El).filter(el => el.type === 'Button')
+  expect(buttons.length).toBeGreaterThan(0)
+  for (const b of buttons) expect(String(b.props?.label)).toMatch(/^\u2007+$/)
+}
 
 type Seen = { band: boolean; words: string; buttons: (string | undefined)[] }
 /** The band as each surface draws it. */
@@ -271,7 +278,9 @@ test('expanded, nothing lies over anything but its own lit picture and blank But
   world(on, { run: { ...V2_RUNNING_SIX, pr: 456 }, conflicts: 'shop/pricing.py' })
   await refresh($)
   const ui = await $.ui.mount(band('desktop'))
+  await expectBlankLabels(ui)
   await ui.press({ key: 'toggle' })
+  await expectBlankLabels(ui)
   const tree = (await ui.drawn()) as El
   // the band is a column of keyed pieces, the action row last
   expect(kids(tree).map(k => k.props?.key)).toEqual(['header', 'track', 'steps', 'actions'])
@@ -286,7 +295,7 @@ test('expanded, nothing lies over anything but its own lit picture and blank But
       if (only?.type === 'Button') {
         // the press: a plain Button, blank, its own hover plate cleared
         expect(only.props?.plain).toBe(true)
-        expect(String(only.props?.label).trim()).toBe('')
+        expect(String(only.props?.label)).toMatch(/^\u2007+$/)
         expect(only.hover?.backgroundColor).toBe('#0000')
         placed.push(String(only.props?.key))
       } else {
@@ -810,6 +819,11 @@ test('a spawned agent and its tool call appear in the agents rows, on both surfa
     expect(shown).toContain('Executor round 4')
     expect(shown).toContain('Bash pnpm test --filter cart')
     expect((await ui.findAll({ type: 'Button' })).map(b => b.key)).toEqual(['toggle', 'agents-fold', 'open-plan'])
+    if (surface === 'desktop') {
+      await expectBlankLabels(ui)
+      await ui.press({ key: 'agents-fold' })
+      await expectBlankLabels(ui)
+    }
     await ui.unmount()
   }
 })
