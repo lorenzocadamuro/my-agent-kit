@@ -4,6 +4,57 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [5.7.0] - 2026-10-28
+
+The status band shows the approved v2 design from real data: pictures on the desktop and characters on the terminal, each part's steps, how long the work has run and has left, and the session's background agents; the kit writes every datum it shows. Kit 5.7.0, minor: the state file gains fields, and nothing you rely on in the skills changes incompatibly. `my-status` 1.0.0, major: the band changes incompatibly.
+
+### State file and plans
+
+- `docs/local-data.md` § State file gains `startedAt`, `parts[].short` (the part's title after "Part X:" in two or three words) and `parts[].steps` (`{ label, status }`, the label in two or three words, the status `todo`, `running`, `done` or `failed`), and `rounds[]` gets a writer. The band rule becomes "never the work's name or the plan title; part titles and step labels, two or three words each, it may".
+- `plan:scope` writes `startedAt` at step 1, and at step 8 each part's `short` and `steps`. It no longer writes `parts[].left`, which `steps` replaces; the mod still reads `left` from older files. `startedAt` is carried from the session's planning file into the branch's file only when the branch's file has none, and a file left by a finished plan (`state: "done"`) counts as having none, so a new plan starts afresh.
+- Step statuses are derived, not set by transitions: every write derives each step's status from `plan.md`'s boxes and the open round, the first that holds: `failed` while it is already failed and its box unticked; `running` while an item of the open round implements or reworks it, a ticked step included; `done` when its box is ticked; else `todo`. The parts' `status` and `done` follow from the boxes.
+- `plan:round` appends `{ n, startedAt }` to `rounds` at a round's start (with `--verify N`, only when round N has none) and sets `endedAt` and `verdict` at its end; a gate pauses the round and does not end it. On a failed verification it sets `stopped` with a two-or-three-word reason, marks the step of the item to blame `failed` and unticks its box, whoever ticked it and in whichever round. A `failed` step clears when the next round starts. A file an older version wrote gets `short` and `steps` from the plan first.
+
+### Status band: `my-status` 1.0.0
+
+- The prototype approved on 2026-10-28 replaces the one-row band. On the desktop the band is pictures, in their own colours for the light or dark scheme: the header (state, a second line with the part and step, up to three figures with captions: steps done, time left, elapsed), the parts as capsules with a segment per step and a label row of letters and short titles, the steps opened under them by a chevron, the background agents, and an action row in the bottom-right corner with Open plan in the corner. Blank Buttons lie over the pictures that are controls. On the terminal the band says the same in characters. An adapter reads the real state file in place of the prototype's fake data; part of the drawing follows an MIT-licensed mod, credited in the code.
+- Nothing is cut on the desktop: the second line drops whole pieces, a short title shows whole or not at all, labels wrap. When the band is taller than `maxRows`, the agents fold to their head, then, with the steps open, each part not started shows as one "n to do" chip; past that the app scrolls. The terminal folds the agents when its rows run out and cuts a line too long for its width at the end.
+- A state file written by 5.6.0 still draws: numbered segments from `done` and `total`, labelled from `left`, the short title from the heading after "Part X:" (the letter alone when it does not fit, on the terminal too), the time left "estimating…".
+- Kept as they were: how the state file and its sidecars are found, the 6-hour staleness, the PR comment and conflict checks with their 10-minute cache, the status line's format, buttons that fill the prompt and never submit, `/my-status` and the Open plan pane.
+- Calibration: 24 px per app row and 8.33 px per column, estimated from screenshots; `/my-status measure` reports them and what the band last measured.
+
+Intentional changes:
+
+- The band's look and layout change entirely, and the hover hint of 5.4.0 is removed: the steps open under the capsules instead.
+- The band shows part short titles and step labels; the rule is "never the work's name or the plan title". The band's own text follows it; an agent's task shows as its spawner described it, and the Open plan pane keeps the plan's title as its title.
+- New PR comments and conflicts with main are no longer states of their own: they are "Review comments (n)" and "Conflicts with main" with "Merge main" beside the plan's state, and extras in the status line (`my: Ready · 3 comments · 2 kit notes`).
+- Running no longer shows the round number nor the executor's item progress: the percentage counts the plan's steps only. The progress sidecar's `items` is no longer read; its `updatedAt` still keeps a running file fresh.
+- Status-line words follow the prototype: "Ready" (no longer "Round N done"), "Done" (no longer "Bar met"), the time left without "~".
+- The background agents of the session (task, model and effort, tool in use, time) show below the band, only while there is kit work: a plan's state file, or a `pr:*` or `improve run` activity. In Running, and only then, the state mark, the step under way and the running agents pulse, with a still copy under reduced motion.
+- The "next" step Ready outlines is derived by the mod (the first step to do), not written by the kit. Reasons stay two or three words, as the kit writes them.
+- A part takes its letter from a "Part X" heading, else from its position (A, B, …); its short title comes only from such a heading, never from a plan title.
+- Decided while porting, and recorded here: Ready before any round reads "Plan approved"; a Needs you or Stopped header with no step under way or failed shows the next step, and Running the first step not done; the percentage needs steps and the time left needs parts, so a plan without them shows the elapsed time alone; Done's total time is the last round's end minus the start, and does not tick; an activity shows its mode and the time since the mod first saw it, with no actions and no comment or conflict extras; Open plan shows in Ready, Running, Needs you, Stopped and Done, and in Planning once the plan file exists, and does nothing when the state file has no plan path; a running file untouched for 6 hours is ignored even with new comments, so the band shows nothing (before, the comments showed alone).
+- New: Show question. In Needs you, when the newest assistant message the transcript drew has scrolled out of view, the band offers Show question, which scrolls back to it (with none seen, a toast says so); in view, it says "Answer in the chat below ↓". The test harness cannot scroll a transcript: the tests pin that the press reaches the scroll.
+- New: `/my-status measure`.
+
+Tests: `claude plugin test mods/my-status` mounts the band through the engine, on both surfaces, from state files read through the mod's own lookup: 47 tests before, 53 after. The old view code and its tests leave together; the tests that pinned columns, the drop order and the hover hints go with them, and four behaviours they pinned moved to the band tests: a stale activity draws nothing, a file without `updatedAt` never goes stale, a reason shows only in Needs you and Stopped, and buttons carry names, the commands only behind them.
+
+### Evals
+
+- `plan/state-says-what-is-left` extended to the new shape (steps with their status, short titles, the round's end): 0.5 and 0.5 before, 1.0 and 1.0 after. It failed before through `left`; its new steps-per-part grader passes before too.
+- New case `plan/failed-step-recorded` (a round's verification fails): before, 4 of 9 graders, all four new ones failing (recomputed offline from the stored evidence, the graders being regexes); after, 1.0 and 1.0. Its plan-ticks grader is a guard and passes before and after. Its LLM graders were replaced by regexes: the judge passed a wrong verdict and failed a correct file.
+- New case `plan/failed-step-reset` (a failed step clears when the next round starts): 0.4 and 0.4 before, 1.0 and 1.0 after.
+- New case `plan/failed-step-reworked` (a reworked step fails again): 0.73 and 0.45 before, 1.0 and 1.0 after.
+- Guards that pass before and after: `plan/failed-step-cleared`, `plan/skipped-rework-stays-done`, `plan/stale-step-follows-plan`.
+- An exception to "test first", approved by the user: deriving the step statuses from the plan's boxes (instead of transitions) shipped without a case that fails first, because none could: the default model already behaves as the derivation says. The two guards above and five earlier cases cover it, all passing after.
+- `run-carries-blocks` and `gate-answer-moves-state` pass (`run-carries-blocks` once 0.8, `round-2.md` not written in one run, then 1.0); `small-task` passes 2 of 3 (the plan judge's noise). The suite has 52 cases. Eval spend for this release: $29.36 so far (rounds 1–4); the full suite's spend is added after it runs.
+
+### Left for later
+
+- An eval variant of `plan/state-says-what-is-left` with a 5.6.0 fixture (no steps, short titles or `startedAt`): a round fills `short` and `steps` from the plan, appends to `rounds` at its start, and marks steps running after triage.
+- At a round's start, set `endedAt` on any earlier round still open (a gate never answered), then derive the statuses again.
+- `plan:scope` step 8 to point at the derivation, and `plan:round` to rewrite `short` too when the plan's parts change.
+
 ## [5.6.0] - 2026-10-27
 
 A worktree the app really shows, with the repository's include files; plans that price each option, quote the ticket instead of obeying it, check an overlapping PR before building on it, offer the design that removes a risk, and list the actions that will need your yes. Minor: new behaviour, nothing you rely on changes incompatibly.
