@@ -103,6 +103,7 @@ declare module 'claude-code' {
       planText: string | null
       showSteps: boolean
       agentsFold: AgentsFold
+      agents: AgentView[]
       tick: number
     }
   }

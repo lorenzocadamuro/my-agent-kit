@@ -1,17 +1,19 @@
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register, RenderElement } from 'claude-code'
 
-import type { MyStatusActivity, MyStatusProgress, MyStatusRun, MyStatusSnapshot } from '../types'
-import { bandModel, statusLine } from './adapter'
+import type { AgentsFold, AgentView, MyStatusActivity, MyStatusProgress, MyStatusRun, MyStatusSnapshot } from '../types'
+import { bandModel, minutes, statusLine } from './adapter'
 import type { BandModel, Cta, State } from './adapter'
-import { headerPic, litPic, notePic, padBottom, pillPic, pulseBegin, stepsPic, trackChevronY, trackPic } from './draw'
+import { agentCounts, agentsHeadPic, agentsPic, headerPic, litPic, notePic, padBottom, pillPic, pulseBegin, stepsPic, trackChevronY, trackPic } from './draw'
 import type { Pic } from './draw'
 
 // The my kit's status band, as the prototype approved on 2026-10-28 draws it, from the real state file. On the desktop
 // every part of the band is an SVG picture laid out to the CSS px (after plan-progress, github.com/zycck/claude-mods,
-// MIT): header, track, steps. The track is a control: a blank `plain` Button lies over its own picture and nothing
-// else. The action row, at the bottom, is pills drawn as pictures under blank Buttons, Open plan in the corner. The
-// terminal draws characters. The band folds the steps of the parts not under way only past the engine's maxRows.
+// MIT): header, track, steps, the agents' head and rows. Two of them are controls: a blank `plain` Button lies over the
+// track (steps open and close) and over the agents' head (they fold), each over its own picture and nothing else. The
+// action row, at the bottom, is pills drawn as pictures under blank Buttons, Open plan in the corner. The terminal
+// draws characters. The band folds the agents, then the steps of the parts not under way, only past maxRows. The
+// session's agents show only under kit work: a plan's state file, or a pr:* or improve activity.
 
 const PANE = 'my-status-plan'
 const POLL_MS = 60_000
@@ -22,6 +24,9 @@ export const snapAtom = atom({ plugin: 'my-status', key: 'snap' } as const, null
 export const planAtom = atom({ plugin: 'my-status', key: 'planText' } as const, null)
 const showSteps = atom({ plugin: 'my-status', key: 'showSteps' } as const, false)
 const tick = atom({ plugin: 'my-status', key: 'tick' } as const, 0)
+const agents = atom({ plugin: 'my-status', key: 'agents' } as const, [] as AgentView[])
+// the agents' fold as the person left it: 'auto' until they press the head, then 'open' or 'folded' for the session
+const agentsFold = atom({ plugin: 'my-status', key: 'agentsFold' } as const, 'auto' as AgentsFold)
 
 // Calibration from the prototype's screenshots: px per app row and per column on the desktop
 const ROW_PX = 24
@@ -246,16 +251,50 @@ async function openPlan($: EngineInterface, path: string, title: string): Promis
   await $.ui.open({ id: PANE, title })
 }
 
-type Level = 0 | 2
+async function syncAgents($: EngineInterface) {
+  const list = await read($, agents)
+  if (list.length === 0) return
+  const live = await $.agent.list().catch(() => [])
+  const now = await $.clock.now()
+  const next = list
+    .map(a => {
+      const s = live.find(x => x.id === a.id)?.status
+      const ended = s === 'completed' || s === 'failed' || s === 'killed'
+      if (ended && a.status !== 'done') return { ...a, status: 'done' as const, endedAt: now }
+      if (s === 'waiting' && a.status !== 'waiting') return { ...a, status: 'waiting' as const }
+      if (s === 'running' && a.status === 'waiting') return { ...a, status: 'running' as const }
+      return a
+    })
+    // a finished agent stays 10 s, then leaves
+    .filter(a => a.status !== 'done' || now - (a.endedAt ?? now) < 10_000)
+  if (JSON.stringify(next) !== JSON.stringify(list)) await update($, agents, () => next)
+}
+
+async function editAgent($: EngineInterface, id: string, fn: (a: AgentView) => AgentView) {
+  await update($, agents, list => (list.some(a => a.id === id) ? list.map(a => (a.id === id ? fn(a) : a)) : list))
+}
+
+function shortTool(e: Record<string, unknown>): string {
+  const tool = String(e.tool ?? '')
+  const cmd = typeof e.command === 'string' ? e.command : ''
+  const file = typeof e.file_path === 'string' ? e.file_path : ''
+  const pattern = typeof e.pattern === 'string' ? e.pattern : ''
+  const arg = (cmd || file || pattern || '').replace(/\s+/g, ' ').slice(0, 60)
+  return arg ? `${tool} ${arg}` : tool
+}
+
+type Level = 0 | 1 | 2
+type Control = 'toggle' | 'agents-fold'
 // a picture of the band; a control's has the Button over it and `lit`, what lights up under the pointer
-type Layout = { level: Level; pics: { key: string; pic: Pic; isToggle?: true; lit?: Pic }[]; hasRow: boolean; heightPx: number }
+type Layout = { level: Level; pics: { key: string; pic: Pic; control?: Control; lit?: Pic }[]; agentsShown: boolean; hasRow: boolean; heightPx: number }
 
 /**
- * The first height level whose band fits `budget` px: L2 shows the parts not started as one "to do" chip each. Nothing
- * else gives way: past L2 the engine scrolls.
+ * The first height level whose band fits `budget` px: L1 folds the agents to their head, unless the person set the
+ * fold; L2 shows the parts not started as one "to do" chip each. Nothing else gives way: past L2 the engine scrolls.
  */
-function layout(m: BandModel, W: number, A: number, wantsOpen: boolean, budget: number, now: number): Layout {
-  const isNarrow = W + FRAME_PX < 560
+function layout(m: BandModel, list: AgentView[], W: number, A: number, wantsOpen: boolean, fold: AgentsFold, budget: number, now: number): Layout {
+  const bandW = W + FRAME_PX
+  const isNarrow = bandW < 560
   // the pulse means "working right now": Running alone
   const pulse = m.state === 'running' ? pulseBegin(now) : undefined
   const header = headerPic(m, W, A, isNarrow, pulse)
@@ -265,14 +304,21 @@ function layout(m: BandModel, W: number, A: number, wantsOpen: boolean, budget: 
     const pics: Layout['pics'] = [{ key: 'header', pic: header }]
     if (m.parts.length > 0) {
       const track = trackPic(m, W, A, open, canOpen, pulse)
-      pics.push({ key: 'track', pic: track, ...(canOpen ? { isToggle: true as const, lit: litPic(m.state, W, track.h, A, trackChevronY(open), open) } : {}) })
+      pics.push({ key: 'track', pic: track, ...(canOpen ? { control: 'toggle' as const, lit: litPic(m.state, W, track.h, A, trackChevronY(open), open) } : {}) })
     }
     if (open) pics.push({ key: 'steps', pic: stepsPic(m, W, A, level >= 2, isNarrow) })
+    const agentsShown = list.length > 0 && (fold === 'open' || (fold === 'auto' && level < 1))
+    if (list.length > 0) {
+      const head = agentsHeadPic(m.state, list, W, A, agentsShown)
+      const lit = litPic(m.state, W, head.h, A, 33, agentsShown, { text: 'Background agents', baseline: 37 })
+      pics.push({ key: 'agents-head', pic: head, control: 'agents-fold', lit })
+      if (agentsShown) pics.push({ key: 'agents', pic: agentsPic(m.state, list, W, A, bandW < 800, m.state === 'needs_you', now, pulse) })
+    }
     const hasRow = m.hasPlanFile || m.ctas.length > 0
     const heightPx = pics.reduce((a, p) => a + p.pic.h, 0) + (hasRow ? GAP_TO_ROW_PX + ROW_H_PX : 0)
-    return { pics, hasRow, heightPx }
+    return { pics, agentsShown, hasRow, heightPx }
   }
-  const levels: Level[] = open ? [0, 2] : [0]
+  const levels: Level[] = open ? [0, 1, 2] : [0, 1]
   for (const level of levels) {
     const b = build(level)
     if (b.heightPx <= budget) return { level, ...b }
@@ -287,6 +333,7 @@ export const register: Register = on => {
     network.clear()
     activitySeen = null
     $.clock.every(POLL_MS, () => void poll($))
+    $.clock.every(5000, () => void syncAgents($).catch(() => {}))
     void poll($)
     // times are minutes: redraw on each minute boundary
     const now = await $.clock.now()
@@ -323,20 +370,49 @@ export const register: Register = on => {
     return { text: 'No plan is running in this repository.' }
   })
 
+  on('agent.spawn', async ($, e, next) => {
+    const started = await next(e)
+    if (!('agentId' in started) || !started.agentId) return started
+    const now = await $.clock.now()
+    const a: AgentView = { id: started.agentId, description: (e.description || e.subagentType || 'agent').slice(0, 60), type: e.subagentType || 'agent', model: String(started.model ?? ''), tool: 'Starting', status: 'running', startedAt: now }
+    await update($, agents, l => [...l.filter(x => x.id !== a.id), a])
+    return started
+  })
+
+  on('tool.call', async ($, e, next) => {
+    if (!e.agentId) return next(e)
+    await editAgent($, e.agentId, a => ({ ...a, tool: shortTool(e as unknown as Record<string, unknown>), status: 'running' }))
+    return next(e)
+  })
+
+  // the effort shows after an agent's first model request: the spawn does not carry it, each request does
+  on('turn.step', async function* ($, e, next) {
+    if (e.agentId && e.effort !== undefined) {
+      const effort = String(e.effort)
+      const id = e.agentId
+      void editAgent($, id, a => (a.effort === effort ? a : { ...a, effort })).catch(() => {})
+    }
+    return yield* next(e)
+  })
+
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e)
     const snap = await read($, snapAtom)
     await read($, tick)
     const now = await $.clock.now()
     const m = bandModel(snap, now)
+    // the agents show only under kit work: with no model there is none, and the band stays the engine's
     if (!m) return next(e)
+    const list = await read($, agents)
     const wantsOpen = await read($, showSteps)
+    const fold = await read($, agentsFold)
     const maxRows = e.props.maxRows
     const t = $.ui.resolve(e)
     const { Box, Button, Text } = t
     const canOpen = !m.isPlanning && m.parts.length > 0
     const hasRow = m.hasPlanFile || m.ctas.length > 0
-    const toggle = () => update($, showSteps, v => !v)
+    const press = (control: Control, isAgentsShown: boolean) =>
+      control === 'toggle' ? () => update($, showSteps, v => !v) : () => update($, agentsFold, () => (isAgentsShown ? 'folded' : 'open'))
 
     // the action row, all in the bottom-right corner: the signals and the state's actions, then Open plan in the corner
     // itself, where it never moves; the one primary action stays rightmost of the state's actions
@@ -374,7 +450,7 @@ export const register: Register = on => {
       const A = ALIGN_COLS * COL_PX
       // the band may take what maxRows says, in the app's rows; only past that does anything fold
       const budget = maxRows > 0 ? maxRows * ROW_PX : Number.POSITIVE_INFINITY
-      const lay = layout(m, W, A, wantsOpen, budget, now)
+      const lay = layout(m, list, W, A, wantsOpen, fold, budget, now)
       measured = { surface: e.surface, maxRows, bodyRows: e.props.scroll.bodyRows, bodyColumns: e.props.bodyColumns, columns: e.viewport?.columns, rows: e.viewport?.rows, level: lay.level, height: lay.heightPx, budget }
       // px gaps live in pictures, native spacing being whole cells: the last picture carries the 12 px above the row
       const pics = lay.hasRow ? lay.pics.map((p, i) => (i === lay.pics.length - 1 ? { ...p, pic: padBottom(p.pic, GAP_TO_ROW_PX) } : p)) : lay.pics
@@ -417,9 +493,9 @@ export const register: Register = on => {
       ) : null
       return (
         <Box key="band" flexDirection="column">
-          {pics.map(({ key, pic: p, isToggle, lit }) =>
-            isToggle ? (
-              control(key, p, lit, blank('toggle', p.w, toggle))
+          {pics.map(({ key, pic: p, control: c, lit }) =>
+            c ? (
+              control(key, p, lit, blank(c, p.w, press(c, lay.agentsShown)))
             ) : (
               // each picture in a keyed Box (an Svg keeps no key)
               <Box key={key} flexShrink={0}>
@@ -438,8 +514,11 @@ export const register: Register = on => {
     const n = m.parts.length
     const pw = n > 0 ? Math.max(3, Math.floor((cols - ALIGN_COLS - (n - 1)) / n)) : 0
     const open = wantsOpen && canOpen
-    const height = 2 + (n > 0 ? (open ? 2 + n : 2) : 0) + (hasRow ? 1 : 0)
-    measured = { surface: e.surface, maxRows, bodyRows: e.props.scroll.bodyRows, bodyColumns: e.props.bodyColumns, columns: e.viewport?.columns, rows: e.viewport?.rows, level: 0, height, budget: maxRows }
+    const agentRows = (shown: boolean) => (list.length === 0 ? 0 : 1 + (shown ? Math.min(4, list.length) + (list.length > 4 ? 1 : 0) : 0))
+    const rowsFor = (shown: boolean) => 2 + (n > 0 ? (open ? 2 + n : 2) : 0) + (hasRow ? 1 : 0) + agentRows(shown)
+    const budgetRows = maxRows > 0 ? maxRows : Number.POSITIVE_INFINITY
+    const agentsShown = list.length > 0 && (fold === 'open' || (fold === 'auto' && rowsFor(true) <= budgetRows))
+    measured = { surface: e.surface, maxRows, bodyRows: e.props.scroll.bodyRows, bodyColumns: e.props.bodyColumns, columns: e.viewport?.columns, rows: e.viewport?.rows, level: agentsShown || list.length === 0 ? 0 : 1, height: rowsFor(agentsShown), budget: budgetRows }
 
     const stepColor = (status: string) => (status === 'done' ? 'success' : status === 'failed' ? 'error' : status === 'running' ? color : undefined)
     const gutter = (key: string, child: RenderElement | null) => (
@@ -472,7 +551,7 @@ export const register: Register = on => {
     if (n > 0) {
       rows.push(
         <Box key="track" flexDirection="row">
-          {gutter('track-gutter', canOpen ? <Button key="toggle" plain dimColor label={open ? '▾' : '▸'} onPress={toggle} /> : null)}
+          {gutter('track-gutter', canOpen ? <Button key="toggle" plain dimColor label={open ? '▾' : '▸'} onPress={press('toggle', agentsShown)} /> : null)}
           <Box key="track-caps" flexDirection="row" gap={1}>
             {m.parts.map((p, i) => {
               const k = p.steps.length
@@ -517,6 +596,39 @@ export const register: Register = on => {
             </Box>,
           ),
         )
+    }
+    if (list.length > 0) {
+      // the head row is the fold control, its chevron hanging in the gutter
+      rows.push(
+        <Box key="agents-head" flexDirection="row">
+          <Button key="agents-fold" plain dimColor label={`${agentsShown ? '▾' : '▸'} Background agents  ·  ${agentCounts(list)}`} onPress={press('agents-fold', agentsShown)} />
+        </Box>,
+      )
+      if (agentsShown) {
+        for (const a of list.slice(0, 4)) {
+          const tool = a.status === 'waiting' ? (m.state === 'needs_you' ? 'Waiting for your answer' : 'Waiting') : a.status === 'done' ? 'Finished' : a.tool
+          rows.push(
+            <Box key={`agent-${a.id}`} flexDirection="row" gap={2}>
+              <Box flexGrow={1}>
+                <Text wrap="truncate-end">
+                  <Text color={a.status === 'running' ? 'suggestion' : a.status === 'waiting' ? 'warning' : 'success'}>{a.status === 'running' ? '●' : a.status === 'waiting' ? '○' : '✓'}</Text>
+                  <Text dimColor={a.status === 'done'}>{` ${a.description}`}</Text>
+                  <Text dimColor>{`  ${[a.model.match(/opus|sonnet|haiku|fable/i)?.[0] ?? a.model, a.effort].filter(Boolean).join(' · ')}  ${tool}`}</Text>
+                </Text>
+              </Box>
+              <Box flexShrink={0}>
+                <Text dimColor>{minutes((a.endedAt ?? now) - a.startedAt)}</Text>
+              </Box>
+            </Box>,
+          )
+        }
+        if (list.length > 4)
+          rows.push(
+            <Box key="agents-more" paddingLeft={ALIGN_COLS}>
+              <Text dimColor>{`+ ${list.length - 4} more`}</Text>
+            </Box>,
+          )
+      }
     }
     const row = hasRow ? terminalRow() : null
     if (row) rows.push(row)

@@ -1,5 +1,5 @@
 import type { On } from 'claude-code'
-import { expect, test } from 'claude-code/testing'
+import { expect, mock, test } from 'claude-code/testing'
 import type { Engine } from 'claude-code/testing'
 
 import type { MyStatusActivity, MyStatusProgress, MyStatusRun } from '../types'
@@ -56,6 +56,8 @@ type World = {
   opened?: string[]
   /** Every status line the mod set, in order. */
   status?: (string | undefined)[]
+  /** The test moves the clock itself (mock.clock) instead of the world's fixed one. */
+  isClockMocked?: boolean
 }
 
 function rows(cmd: string, list: Row[]): string {
@@ -78,7 +80,7 @@ function world(on: On, w: World, ran: string[] = []): void {
   const out = (stdout: string, exitCode = 0) => ({ value: { exitCode, stdout, stderr: '', isStdoutTruncated: false, isStderrTruncated: false } })
   on('session.cwd', () => ({ value: '/work' }))
   on('session.id', () => (w.sessionId === null ? { deny: 'no session id' } : { value: w.sessionId ?? 'chat-a' }))
-  on('clock.now', () => ({ value: Date.parse(w.now ?? '2026-01-10T09:25:00Z') }))
+  if (!w.isClockMocked) on('clock.now', () => ({ value: Date.parse(w.now ?? '2026-01-10T09:25:00Z') }))
   on('ui.status', ($, e) => {
     w.status?.push(e.text)
     return { value: undefined }
@@ -127,8 +129,10 @@ function world(on: On, w: World, ran: string[] = []): void {
     return <Box key="engine" />
   })
   on('command.register', ($, e) => ({ value: { command: e.name } }))
-  on('clock.every', () => ({ value: undefined }))
-  on('clock.after', () => ({ value: undefined }))
+  if (!w.isClockMocked) {
+    on('clock.every', () => ({ value: undefined }))
+    on('clock.after', () => ({ value: undefined }))
+  }
   on('session.start', ($, e) => ({ cwd: e.cwd }))
 }
 
@@ -754,4 +758,168 @@ test('/my-status measure reports the calibration and what the band last measured
   const term = await $.ui.mount(band('terminal', 12, 80))
   await term.unmount()
   expect(await measure()).toMatch(/last draw \(terminal\): maxRows 12, .*band \d+ rows of 12/)
+})
+
+// ---------- the session's background agents, only with kit work ----------
+
+type AgentStatusNow = 'running' | 'waiting' | 'completed'
+/** The engine's agents: a spawn answers its id and model, `$.agent.list()` their status now, a tool call passes. */
+function agentsWorld(on: On, status: Record<string, AgentStatusNow>) {
+  on('agent.spawn', ($, e) => ({ model: e.description.startsWith('Reviewer') ? 'claude-sonnet-4-5' : 'claude-opus-4-5', agentId: `id-${e.description.split(' ')[0]!.toLowerCase()}` }))
+  on('agent.list', () => ({
+    value: Object.entries(status).map(([id, now]) => ({ id, description: id, type: 'general-purpose', status: now })),
+  }))
+  on('tool.call', () => ({ result: '' }))
+}
+
+async function spawn($: Engine, description: string, tool?: { tool: string; command?: string; file_path?: string }) {
+  const started = await $.agent.spawn({
+    tool_use_id: `t-${description}`,
+    prompt: 'Do the work',
+    description,
+    subagentType: 'general-purpose',
+    provider: { plugin: 'engine', tier: 'core' },
+    parentModel: 'claude-opus-4-5',
+    background: true,
+    fork: false,
+  })
+  const id = 'agentId' in started ? String(started.agentId) : ''
+  if (tool) await $.tool.call({ ...tool, agentId: id } as Parameters<Engine['tool']['call']>[0])
+  return id
+}
+
+const FOUR_AGENTS: [string, { tool: string; command?: string; file_path?: string }][] = [
+  ['Executor round 6', { tool: 'Edit', file_path: '/work/src/grid/CardGrid.tsx' }],
+  ['Second executor', { tool: 'Edit', file_path: '/work/src/grid/Skeleton.tsx' }],
+  ['Reviewer fresh', { tool: 'Bash', command: 'pnpm test' }],
+  ['Researcher', { tool: 'Grep' }],
+]
+
+test('a spawned agent and its tool call appear in the agents rows, on both surfaces', async ($, on) => {
+  const status: Record<string, AgentStatusNow> = {}
+  world(on, { run: V2_RUNNING })
+  agentsWorld(on, status)
+  await refresh($)
+  const id = await spawn($, 'Executor round 4', { tool: 'Bash', command: 'pnpm test --filter cart' })
+  status[id] = 'running'
+  for (const surface of SURFACES) {
+    const ui = await $.ui.mount(band(surface))
+    if (surface === 'desktop') expect(Object.keys(await pictures(ui))).toEqual(['header', 'track', 'agents-head', 'agents'])
+    const shown = await words(ui)
+    expect(shown).toMatch(/Background agents.*1 running/)
+    expect(shown).toContain('Executor round 4')
+    expect(shown).toContain('Bash pnpm test --filter cart')
+    expect((await ui.findAll({ type: 'Button' })).map(b => b.key)).toEqual(['toggle', 'agents-fold', 'open-plan'])
+    await ui.unmount()
+  }
+})
+
+test('no agents section without kit work, even when agents run', async ($, on) => {
+  const w: World = {}
+  world(on, w)
+  agentsWorld(on, {})
+  await refresh($)
+  await spawn($, 'Executor round 4', { tool: 'Bash', command: 'pnpm test' })
+  for (const surface of SURFACES) expect((await seen($, surface)).band).toBe(false)
+  w.activity = { mode: 'pr:review', state: 'done', updatedAt: '2026-01-10T09:20:00Z' }
+  await refresh($)
+  for (const surface of SURFACES) expect((await seen($, surface)).band).toBe(false)
+  // a pr:* activity under way is kit work: the agents show under its header
+  w.activity = { ...w.activity, state: 'running' }
+  await refresh($)
+  for (const surface of SURFACES) expect((await seen($, surface)).words).toMatch(/Running.*pr:review.*Background agents/)
+})
+
+test('the agents fold to their head only past maxRows; the head opens and folds them', async ($, on) => {
+  world(on, { run: V2_RUNNING })
+  agentsWorld(on, {})
+  await refresh($)
+  await spawn($, 'Executor round 4', { tool: 'Edit', file_path: '/work/src/ui/ChatPanel.tsx' })
+  await spawn($, 'Reviewer fresh', { tool: 'Bash', command: 'pnpm test' })
+  // desktop at 24 px a row: 400 rows hold everything; 8 rows (192 px) hold the band with the agents folded
+  const roomy = await $.ui.mount(band('desktop', 400))
+  expect(Object.keys(await pictures(roomy))).toEqual(['header', 'track', 'agents-head', 'agents'])
+  await roomy.unmount()
+
+  // terminal, in rows: running closed with 2 agents takes 8 rows, so 6 fold them to the head
+  const term = await $.ui.mount(band('terminal', 6))
+  expect((await term.find({ type: 'Button', key: 'agents-fold' }))?.text).toMatch(/Background agents {2}· {2}2 running/)
+  expect(await term.find({ type: 'Box', key: 'agent-id-executor' })).toBeUndefined()
+  await term.unmount()
+
+  const tight = await $.ui.mount(band('desktop', 8))
+  expect(Object.keys(await pictures(tight))).toEqual(['header', 'track', 'agents-head'])
+  expect((await tight.findAll({ type: 'Button' })).map(b => b.key)).toEqual(['toggle', 'agents-fold', 'open-plan'])
+  await tight.press({ key: 'agents-fold' })
+  // opened by the person, the agents stay whole: the band may scroll, the person asked for them
+  expect(Object.keys(await pictures(tight))).toEqual(['header', 'track', 'agents-head', 'agents'])
+  await tight.press({ key: 'agents-fold' })
+  expect(Object.keys(await pictures(tight))).toEqual(['header', 'track', 'agents-head'])
+  await tight.unmount()
+})
+
+test('four agents show whole, a fifth as "+ 1 more"; the running ones pulse in Running alone', async ($, on) => {
+  const w: World = { run: V2_RUNNING, now: '2026-01-10T09:25:01.300Z' }
+  world(on, w)
+  agentsWorld(on, {})
+  await refresh($)
+  for (const [description, tool] of FOUR_AGENTS) await spawn($, description, tool)
+  const ui = await $.ui.mount(band('desktop'))
+  const rows = await source(ui, 'agents')
+  for (const [description] of FOUR_AGENTS) expect(rows).toContain(description)
+  expect(rows).not.toContain('more')
+  expect((rows.match(/<animate attributeName="opacity"/g) ?? []).length).toBe(4)
+  expect(rows).toContain('begin="-1.300s"')
+  await ui.unmount()
+  await spawn($, 'Fifth helper', { tool: 'Read', file_path: '/work/README.md' })
+  const five = await $.ui.mount(band('desktop'))
+  expect(await source(five, 'agents')).toContain('+ 1 more')
+  expect(await source(five, 'agents')).not.toContain('Fifth helper')
+  await five.unmount()
+  w.run = V2_NEEDS_YOU
+  await refresh($)
+  const still = await $.ui.mount(band('desktop'))
+  expect((await source(still, 'agents')).match(/<animate attributeName="opacity"/g) ?? []).toHaveLength(0)
+  await still.unmount()
+})
+
+test('the agents poll: a waiting one reads "Waiting for your answer" in Needs you, a finished one fades after 10 s', async ($, on) => {
+  const clock = mock.clock(on, { now: Date.parse('2026-01-10T09:25:00Z') })
+  const status: Record<string, AgentStatusNow> = {}
+  world(on, { run: V2_NEEDS_YOU, isClockMocked: true })
+  agentsWorld(on, status)
+  await refresh($)
+  const a = await spawn($, 'Executor round 4', { tool: 'Bash', command: 'pnpm test' })
+  const b = await spawn($, 'Reviewer fresh', { tool: 'Grep' })
+  status[a] = 'waiting'
+  status[b] = 'completed'
+  await clock.advance(5_000)
+  const shown = (await seen($, 'desktop')).words
+  expect(shown).toMatch(/Background agents.*1 waiting, 1 finished/)
+  expect(shown).toContain('Executor round 4, waiting')
+  const rows = await $.ui.mount(band('desktop'))
+  expect(await source(rows, 'agents')).toContain('Waiting for your answer')
+  await rows.unmount()
+  await clock.advance(10_000)
+  const later = (await seen($, 'desktop')).words
+  expect(later).not.toContain('Reviewer fresh')
+  expect(later).toMatch(/1 waiting/)
+})
+
+test('the effort shows after an agent\'s first model request', async ($, on) => {
+  world(on, { run: V2_RUNNING })
+  agentsWorld(on, {})
+  on('turn.step', async function* ($, e) {
+    return { turnId: e.turnId, index: e.index, answer: '', toolUses: [], stopReason: 'end_turn', usage: null }
+  })
+  await refresh($)
+  const id = await spawn($, 'Executor round 4', { tool: 'Bash', command: 'pnpm test' })
+  const before = await $.ui.mount(band('desktop'))
+  expect(await source(before, 'agents')).not.toContain('high')
+  await before.unmount()
+  const stream = $.turn.step({ turnId: 'turn-1', index: 0, model: 'claude-opus-4-5', effort: 'high', messageCount: 1, agentId: id })
+  for await (const _ of stream) void _
+  const ui = await $.ui.mount(band('desktop'))
+  expect(await source(ui, 'agents')).toContain('opus · high')
+  await ui.unmount()
 })
