@@ -287,6 +287,14 @@ async function showQuestion($: EngineInterface) {
   if ('deny' in moved && moved.deny) $.ui.toast(`Could not scroll to the question: ${moved.deny}`)
 }
 
+/** An agent's task: whole words within 60 characters; a single longer word keeps its first 60, the only cut. */
+function task(text: string): string {
+  const t = text.replace(/\s+/g, ' ').trim()
+  if (t.length <= 60) return t
+  const end = t.slice(0, 61).lastIndexOf(' ')
+  return end > 0 ? t.slice(0, end).trim() : t.slice(0, 60)
+}
+
 function shortTool(e: Record<string, unknown>): string {
   const tool = String(e.tool ?? '')
   const cmd = typeof e.command === 'string' ? e.command : ''
@@ -389,7 +397,7 @@ export const register: Register = on => {
     const started = await next(e)
     if (!('agentId' in started) || !started.agentId) return started
     const now = await $.clock.now()
-    const a: AgentView = { id: started.agentId, description: (e.description || e.subagentType || 'agent').slice(0, 60), type: e.subagentType || 'agent', model: String(started.model ?? ''), tool: 'Starting', status: 'running', startedAt: now }
+    const a: AgentView = { id: started.agentId, description: task(e.description || e.subagentType || 'agent'), type: e.subagentType || 'agent', model: String(started.model ?? ''), tool: 'Starting', status: 'running', startedAt: now }
     await update($, agents, l => [...l.filter(x => x.id !== a.id), a])
     return started
   })

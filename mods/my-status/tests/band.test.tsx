@@ -1008,6 +1008,31 @@ test('the effort shows after an agent\'s first model request', async ($, on) => 
   await ui.unmount()
 })
 
+test('an agent\'s task keeps whole words within 60 characters; a single longer word keeps its first 60', async ($, on) => {
+  world(on, { run: V2_RUNNING })
+  agentsWorld(on, {})
+  await refresh($)
+  // 78 characters once its spaces are collapsed; "description" crosses the 60th
+  await spawn($, 'Check  the agents row keeps whole words when a task description runs past sixty', { tool: 'Grep' })
+  await spawn($, 'src/components/checkout/payment/PaymentMethodSelectorWithSavedCards.tsx', { tool: 'Grep' })
+  const task = 'Check the agents row keeps whole words when a task'
+  const word = 'src/components/checkout/payment/PaymentMethodSelectorWithSav'
+  // a band under 800 px (80 body columns) draws two lines an agent, with room for all 60 characters
+  const ui = await $.ui.mount(band('desktop', 400, 80))
+  const rows = await source(ui, 'agents')
+  expect(rows).toContain(`>${task}</text>`)
+  expect(rows).toContain(`>${word}</text>`)
+  const alt = String(all((await ui.drawn()) as El).find(el => el.type === 'Svg' && String(el.props?.alt).startsWith('Background agents:'))?.props?.alt)
+  expect(alt).toBe(`Background agents: ${task}, Grep; ${word}, Grep`)
+  await ui.unmount()
+  const term = await $.ui.mount(band('terminal', 400, 80))
+  const shown = await words(term)
+  expect(shown).toContain(` ${task} | `)
+  expect(shown).toContain(` ${word} | `)
+  expect(shown).not.toContain('descripti')
+  await term.unmount()
+})
+
 // ---------- Show question ----------
 
 /** An assistant message as the transcript draws it, on screen (its rows) or off it (null). */
