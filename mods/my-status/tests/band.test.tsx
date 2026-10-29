@@ -258,6 +258,29 @@ test('the terminal says the same in characters: the state, line 2, the figures a
   expect(view.words).toMatch(/A Cart totals.*D Old form/)
 })
 
+// V2_RUNNING's time left is 0.4 of a finished round's mean length, shown from 0.7 to 1.3 of it; span() turns to hours at 90 min
+const withRounds = (minutes: number): MyStatusRun => {
+  const at = (m: number) => new Date(Date.parse('2026-01-10T09:00:00Z') - (2 - m) * minutes * 60_000).toISOString()
+  return { ...V2_RUNNING, rounds: [{ n: 1, startedAt: at(0), endedAt: at(1) }, { n: 2, startedAt: at(1), endedAt: at(2) }, { n: 3, startedAt: at(2) }] }
+}
+
+test('time left drops the low end’s unit only when both ends share it, in the band and the status line', async ($, on) => {
+  const status: (string | undefined)[] = []
+  const w: World = { status }
+  world(on, w)
+  const cases: [MyStatusRun, string][] = [
+    [V2_RUNNING, '6–10 min'],
+    [withRounds(200), '56 min–2 h'],
+    [withRounds(450), '2–4 h'],
+  ]
+  for (const [run, left] of cases) {
+    w.run = run
+    await refresh($)
+    for (const surface of SURFACES) expect((await seen($, surface)).words).toContain(`${left} left (estimate)`)
+    expect(status.at(-1)).toBe(`my: Running · 82% · ${left}`)
+  }
+})
+
 test('the capsule strip opens the steps under it and closes them', async ($, on) => {
   world(on, { run: V2_RUNNING })
   await refresh($)

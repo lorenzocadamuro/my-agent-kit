@@ -169,7 +169,9 @@ export function timeLeft(run: MyStatusRun): string {
   const left = perRound * (finished.length / doneShare) * (parts.length - doneShare)
   const low = Math.max(MINUTE, left * 0.7)
   const high = Math.max(low + MINUTE, left * 1.3)
-  return `${span(low).replace(/ (min|h)$/, '')}–${span(high)}`
+  const [from, to] = [span(low), span(high)]
+  const unit = / (min|h)$/
+  return `${from.match(unit)?.[1] === to.match(unit)?.[1] ? from.replace(unit, '') : from}–${to}`
 }
 
 function startOf(run: MyStatusRun): number | null {

@@ -22,6 +22,7 @@ The status band shows the approved v2 design from real data: pictures on the des
 - A state file written by 5.6.0 still draws: numbered segments from `done` and `total`, labelled from `left`, the short title from the heading after "Part X:" (the letter alone when it does not fit, on the terminal too), the time left "estimating…".
 - Kept as they were: how the state file and its sidecars are found, the 6-hour staleness, the PR comment and conflict checks with their 10-minute cache, the status line's format, buttons that fill the prompt and never submit, `/my-status` and the Open plan pane.
 - Calibration: 24 px per app row and 8.33 px per column, estimated from screenshots; `/my-status measure` reports them and what the band last measured.
+- Fixed: the time left keeps both units when its two ends differ. 5.6.0 showed "~48–2 h" for 48 minutes to 2 hours; 5.7.0 shows "48 min–2 h", and drops the first unit only when both ends share it ("10–19 min", "2–3 h"). The status line shows the same text.
 
 Intentional changes:
 
@@ -37,7 +38,7 @@ Intentional changes:
 - New: Show question. In Needs you, when the newest assistant message the transcript drew has scrolled out of view, the band offers Show question, which scrolls back to it (with none seen, a toast says so); in view, it says "Answer in the chat below ↓". The test harness cannot scroll a transcript: the tests pin that the press reaches the scroll.
 - New: `/my-status measure`.
 
-Tests: `claude plugin test mods/my-status` mounts the band through the engine, on both surfaces, from state files read through the mod's own lookup: 47 tests before, 53 after. The old view code and its tests leave together; the tests that pinned columns, the drop order and the hover hints go with them, and four behaviours they pinned moved to the band tests: a stale activity draws nothing, a file without `updatedAt` never goes stale, a reason shows only in Needs you and Stopped, and buttons carry names, the commands only behind them.
+Tests: `claude plugin test mods/my-status` mounts the band through the engine, on both surfaces, from state files read through the mod's own lookup: 47 tests before, 54 after. The old view code and its tests leave together; the tests that pinned columns, the drop order and the hover hints go with them, and four behaviours they pinned moved to the band tests: a stale activity draws nothing, a file without `updatedAt` never goes stale, a reason shows only in Needs you and Stopped, and buttons carry names, the commands only behind them.
 
 ### Evals
 
