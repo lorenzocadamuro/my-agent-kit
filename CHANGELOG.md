@@ -4,6 +4,51 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [5.8.0] - 2026-10-30
+
+Fifteen fixes from 31 open notes: plans research deeper and try their checks first, the user sees cases before questions, each promise of a plan gets a test per clause, the band's statuses and the kit's ids are produced by scripts instead of by hand, and reviews judge a PR as it is. Kit 5.8.0, minor: new behaviour, nothing you rely on changes incompatibly. `my-status` 1.0.1, patch: a fix.
+
+### Planning (`plan:scope`)
+
+- Research also checks what happens when new work fails or times out, what bounds it, which writers run at once, whether clients already deployed accept what the change sends in the rollout order, and whether new state mirrors a source it can be derived from. For the cases the change means to move, it classifies which rule decides each one today and checks the change reaches it.
+- The rules to load include the repository's own rule files and the tests that enforce them.
+- The baseline runs the local command of every CI job on the touched paths, and every command the bar relies on runs once in the worktree with its prerequisites; one that needs a later authorisation runs its safe part.
+- The approval summary says how far the plan moved from the ticket's ask, and lists the follow-ups already consolidated.
+- A part's short title is at most 16 characters, so it shows under its part in the band.
+
+### Questions (`docs/question-format.md`)
+
+- "Explore first" covers behaviours and premises too: two or three of the user's own cases walked through, with what is proven and what is not, before the questions. A question that can stop or postpone the work is asked alone, first. An option's effect names every place it shows.
+
+### Rounds (`plan:round`, `plan:run`)
+
+- The triage pins each invariant or boundary clause an item touches with a test that fails when that clause alone is broken; "flag off equals main" covers what runs, not only what renders; a copy of an approved artefact is diffed against its frozen source; a rule rewritten in prose lists every other sentence stating it.
+- Claims in "Not this round" and in rows carried from earlier rounds are verified like items; a claim about a comment, a ticket or a doc is quoted from it. The triage check looks at both.
+- Parts go in plan order: the default source is the open block findings, then the next unfinished part in plan order, and a round that takes a later part first says why ("next round" is not a reason).
+- A review note on a text the next round rewrites goes with that item.
+- A run that stops on a decision explains it after its summary so it can be answered cold: the terms, why the plan needs it, what each option changes.
+- The chapter title's goal is in the user's language.
+- New `scripts/state-steps.sh` derives the state file's step and part statuses from `plan.md`'s boxes, the running steps passed by the coordinator, and a kept failed mark; `plan:scope` and every `plan:round` write call it, so no status is set by hand.
+
+### Principles
+
+- A text that reports findings (a plan or a question written mid-run, a summary, a comment draft, a deferred row) is checked claim by claim against its source before it is reviewed or shown.
+- A worktree is created and set up with absolute paths or `git -C`, never a `cd`, which would make EnterWorktree refuse.
+- Text the kit writes into the app (chapter titles, notifications) is in the user's language.
+
+### Reviews (`pr:review`)
+
+- The verdict judges the PR at its head: facts about its base (another open PR, the merge order) are information, not conditions. The drafts state the current state, with no thanks for fixes and no courtesy praise; a point a newer commit fixed leaves them.
+
+### Improvement loop (`improve`)
+
+- New `scripts/append-entry.sh` appends a log note or a method kind numbered under a lock, so two sessions writing at once never share an id, and lists duplicate ids. `note`, `digest` and the method use it. The log entry template's heading is `## <id> · <skill> · open`.
+- `run` opens each group with a concrete case of what went wrong, in plain words, then what changes for the user and what it costs in time, before the rule and the change.
+
+### Status band: `my-status` 1.0.1
+
+- Fixed: with the steps open and the room short, a part half done (a step done, none under way, as at a gate) folded into an "n to do" chip like a part not started, counting all its steps. Only parts with every step to do fold now, and the chip counts the steps left.
+
 ## [5.7.0] - 2026-10-29
 
 The status band shows the approved v2 design from real data: pictures on the desktop and characters on the terminal, each part's steps, how long the work has run and has left, and the session's background agents; the kit writes every datum it shows. Kit 5.7.0, minor: the state file gains fields, and nothing you rely on in the skills changes incompatibly. `my-status` 1.0.0, major: the band changes incompatibly.

@@ -1,4 +1,4 @@
-## <id: YYYYMMDD-NN> · <skill> · open
+## <id> · <skill> · open
 
 - When: <date time>
 - Kit: <`version` in ${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json, read when the writing skill started (the version the session follows), or "unknown">

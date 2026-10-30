@@ -12,7 +12,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 
 | Argument        | Effect                                                                                                                                                                                          |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| source          | `part B` of the plan; a file (`.plans/comments-<date>.md`, a review file); or a list in plain words. By default, the open block findings of the last review (`.plans/round-<N>-review.md`), or else the next unfinished plan part. In `run`, the first round starts there and the next ones follow the plan |
+| source          | `part B` of the plan; a file (`.plans/comments-<date>.md`, a review file); or a list in plain words. By default, the open block findings of the last review (`.plans/round-<N>-review.md`), then the next unfinished part in plan order. In `run`, the first round starts there and the next ones follow the plan |
 | `--triage-only` | Build (and, above S, check) the triage, then stop and show it. Refused with `run`                                                                                                             |
 | `--verify N`    | Skip to step 6 for round N, when its executor has already finished. In `run`, resume there and then loop                                                                                       |
 | `--deep`        | Also run the deep review: this round; in `run`, when a part finishes and at the ready-for-review gate                                                                                         |
@@ -22,7 +22,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 
 Write the state file (name and shape in `${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file) at the start of each round, at each step below, at each gate and its answer, and at the end. Rewrite it whole, keeping every field you do not change, through a temp file and a rename, so a reader never sees half a file. It feeds the optional status mod, and a resuming run reads it. A gate's answer is a write too: the state leaves `needs_you` for `running` before you act on the answer. A `reason` is two or three words (`Tests failing`).
 
-**Rounds and steps.** At a round's start, `--verify N` included, append `{ n, startedAt }` to `rounds` (with `--verify N`, only when round N has no entry), and when a part has no `short` or `steps` (a file an older version wrote), fill them from the plan first. Every write derives the steps' and parts' statuses again from `plan.md`'s boxes and the open round, as local-data.md says (`parts[].steps`); keep only what cannot be derived: the `rounds` entries, the plan steps the open round's items implement or rework (from the triage, step 3; a block item that fixes a step reworks it), and the `failed` mark of step 6. A gate pauses the round and does not end it: the round ends at step 9's report, a round stopped by failed verification included, or when the user's answer to a gate stops the run, and only then set its `endedAt` and `verdict` (the review's verdict against the bar, or `failed: <reason>` when verification failed).
+**Rounds and steps.** At a round's start, `--verify N` included, append `{ n, startedAt }` to `rounds` (with `--verify N`, only when round N has no entry), and when a part has no `short` or `steps` (a file an older version wrote), fill them from the plan first (`short` at most 16 characters, as local-data.md says). Every write ends with `${CLAUDE_PLUGIN_ROOT}/scripts/state-steps.sh <state file> <plan.md> --running <steps>` (adding `--new-round` right after appending a round's entry), which derives the steps' and parts' statuses from `plan.md`'s boxes, never by hand. Only what cannot be derived is yours: the `rounds` entries, the steps the open round's items implement or rework, passed as `--running` (part letter and step number, from the triage, step 3; a block item that fixes a step reworks it), and the `failed` mark of step 6. A gate pauses the round and does not end it: the round ends at step 9's report, a round stopped by failed verification included, or when the user's answer to a gate stops the run, and only then set its `endedAt` and `verdict` (the review's verdict against the bar, or `failed: <reason>` when verification failed).
 
 At the end of a round or a run, set `state`: `done` when the bar is met and the ready-for-review gate is answered; `needs_you` with a `reason` when a gate or a question waits for the user; `stopped` with a `reason` when verification failed or the run hit its cap; otherwise `ready`, waiting for the next round.
 
@@ -47,9 +47,11 @@ At the end of a round or a run, set `state`: `done` when the bar is met and the 
 
 Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, where N is the next unused number, and copy its `Comments read until` time into the state file's `commentsReadUntil` (`none` leaves the field as it was). For every item:
 
-- **Verify the claim against the code at HEAD,** and drop or rewrite what does not hold.
+- **Verify the claim against the code at HEAD,** and drop or rewrite what does not hold; the same for every claim in "Not this round" and in rows carried from earlier rounds, a claim about an outside source (a comment, a ticket, a doc) quoted from it as read now, or marked unverified.
+- **Plan order:** a round that takes a later part before the next unfinished one says why in its trigger; "next round" is not a reason.
 - **List the callers covered, by path,** with the untruncated count, and for each field, state, key or rule the item adds or changes, its writers, readers (saved data included), transitions and opened routes (`plan:scope` step 3).
 - **Name the owning code point,** and a test that fails without the fix and drives the production caller. A check-only item names instead the commands it runs and the result that counts as passing.
+- **Pin each clause.** For each invariant or boundary clause the item touches, name the test that fails when that clause alone is broken (removed one at a time); a boundary like "flag off equals main" covers what runs (hooks, subscriptions, effects, requests), not only what renders. An item that copies an approved artefact diffs the copy against its frozen source and lists every difference the plan does not name. An item that rewrites a rule in prose lists every other sentence stating it, and what the new wording covers against the old.
 - **Estimate the production lines** each item adds (tests apart). When the drift so far plus the estimate passes the plan's split trigger, step 2's drift gate comes now, before executing, unless step 2 already asked it this round.
 - **Write the stop conditions.** They use the plan's "every round" checks; the "once, at the end" proof belongs to the ready-for-review gate. A check copied from the plan or the profile keeps its baseline (principles: measure the baseline).
 
@@ -61,7 +63,7 @@ In the S lane, skip this check and write `Triage check: skipped (size S)` in the
 
 ### 5. Execute
 
-- Mark a session chapter `Round N · <goal>` with the app's chapter tool; skip it when the tool is missing.
+- Mark a session chapter `Round N · <goal>`, the goal in the user's language, with the app's chapter tool; skip it when the tool is missing.
 - Tell the user in one line, in their language, that round N started with k items and that they will hear from you at a gate or at the end. In `run`, say it for the first round only.
 - **S lane:** make the changes yourself, following [executor.md](executor.md) § How, except its Progress line, and § Stop and report, except that you ask the user (a gate) where it says to stop. After each item, update `items` in the state file (no progress sidecar); at the end, write `.plans/round-<N>-summary.md` in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`. Steps 6–8 follow as in the full lane: a change you make yourself, however small or directly asked, gets step 7's fresh review before the push.
 - **Full lane:** launch a **background** general-purpose agent with [executor.md](executor.md), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
@@ -88,7 +90,7 @@ When the round's verification needs a manual check in the browser, follow the pr
 - **Sort the findings:**
   - **block** → next round's items;
   - **ticket** → append to `.plans/tickets.md`;
-  - **note** → listed in the report.
+  - **note** → listed in the report; a note on a text the next round rewrites goes with that item.
 - A block finding the plan did not foresee is a signal.
 
 ### 8. Push
@@ -128,7 +130,7 @@ Follow the principles. In `round`, the digest already ran in step 9; run it agai
 `run` repeats steps 1–9 without the user, round after round. Each round reports one line (`Round N: k done · verdict · next`) instead of the six-line report; the full summary comes at the end.
 
 - **A round succeeds** when verification passed, the push is done or disabled, and no question is open.
-- **After a round that succeeds,** start the next one at once: the block findings in `.plans/round-<N>-review.md` first, then the next unfinished part. Finishing a part does not stop the run, unless the plan puts a gate there.
+- **After a round that succeeds,** start the next one at once: the block findings in `.plans/round-<N>-review.md` first, then the next unfinished part in plan order. Finishing a part does not stop the run, unless the plan puts a gate there.
 - **Stop the run** at the first of:
   - a gate the plan or the principles name, and any decision for the user (boundary, a repository rule, someone else's code), unless the method lets you decide it alone (principles: the method): then decide it and list it;
   - failed verification;
@@ -151,3 +153,5 @@ Stopped: <why, in one plain phrase, and what is needed from the user>
 Lessons: <note ids from the digest | none>
 Next: <the action that unblocks it>
 ```
+
+When it stops on a decision, introduce it after the summary as question-format § Shape says, so the user can answer it cold after a break: its terms in plain words, why the plan needs it, and what each option changes.

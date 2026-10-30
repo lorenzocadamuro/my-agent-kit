@@ -7,7 +7,8 @@ Every decision put to the user follows this format. A question the user cannot a
 - **Ask only real decisions:** scope, boundary, the bar, product behaviour, anything published, and trade-offs where the user's priorities decide.
 - **Do not ask what the code, the plan or a sensible default can answer.** Pick the default, and state it in one line.
 - **Batch related questions** (up to four at a time), and ask a decision only when the work needs it: a choice that belongs to a later part, or depends on what an earlier part will learn, waits for that part's gate.
-- **Explore first, then decide.** While a design is still taking shape (a UI, a layout, a naming scheme), iterate in the chat on a mockup or a draft, and apply the user's corrections as plain chat replies; ask with the tool once the shape is stable and a real choice is left.
+- **Explore first, then decide.** While a design or a behaviour is still taking shape (a UI, a naming scheme, a mechanism the user has not seen work, an experiment's premise), show it first: a mockup or a draft, or two or three of the user's own cases walked through (the edge they care about included), saying what is proven, with its evidence, and what is not. Apply the user's corrections as plain chat replies; ask with the tool once the user can predict what it does and a real choice is left.
+- **A question that can stop or postpone the work** (wait for another ticket, a dependency, cancel) is asked alone, before the others: its answer can make them moot.
 
 ## Shape
 
@@ -16,7 +17,7 @@ Every decision put to the user follows this format. A question the user cannot a
 - **Introduce the questions in chat, right before them in the same message,** in the user's language, so the user arrives prepared: the situation in plain words (what is happening, what the user would see, why it matters now), what the kit prescribes here and why it asks, and what the choice changes. For a deploy or rollout, first say what the deployed thing does and what users see when it is missing or early.
 - **Then keep each question short.** The question window covers the chat above it, so the question still opens with the situation in one plain line, its essential context only.
 - **Each option states, in a few words each:**
-  - **Effect:** what changes for the user, or in behaviour, if this is chosen. Verified, or marked unverified (principles: verify).
+  - **Effect:** what changes for the user, or in behaviour, if this is chosen, everywhere it shows (the page, logs, data). Verified, or marked unverified (principles: verify).
   - **Today:** what happens now without the change, on the main branch or in production.
   - **Pros** and **Cons**, written as labels inside each option (in the user's language, for example "Pro" / "Contro"), one short clause each; a shared header row does not count. Every option has both; an option with only a con is incomplete.
   - **Severity** when there is risk: how likely, how bad, and how easy to undo.

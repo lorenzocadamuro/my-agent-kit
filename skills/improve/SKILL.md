@@ -52,10 +52,10 @@ Goal: under a minute, no questions unless the text is empty.
    - the session id if known.
 3. **Fill the entry** from `${CLAUDE_PLUGIN_ROOT}/templates/log-entry.md`.
    - The reasoning fields are what happened, why it was a problem, missing question and expected (principles: language). Keep a short quote of the user's words when the exact meaning matters.
-   - The id is `YYYYMMDD-NN`: re-read the log right before appending, and take the next number after today's highest, starting at 01. Another session may have written since you last read it.
+   - The heading reads `## <id> · <skill> · open`, with `<id>` left as it is: the script of step 4 numbers it.
    - "What happened" and "Expected" are concrete: what was done or said, not an opinion. "Why it was a problem" says what it cost the user, in plain words. "Missing question" is a question someone should have asked at the start, not a fix; `unknown` when it is not clear.
    - "Suspected cause" names a step, principle, template or profile line when you can point to it; otherwise `unknown`. Do not investigate deeply here.
-4. **Append** the entry to the log, then re-read it: if another entry has the same id, give the entry just written the next free number of that day, changing only its header. Change nothing else: no skill, doc, template or profile.
+4. **Append** the entry, written to a scratch file, with `${CLAUDE_PLUGIN_ROOT}/scripts/append-entry.sh log <log> <file>`: it gives it the next `YYYYMMDD-NN` after today's highest under a lock, so two sessions writing at once never share an id, and prints it. Change nothing else: no skill, doc, template or profile.
 5. **Confirm in exactly one line,** and nothing else: `Logged <id> · <skill> · <n> open`. Missing context goes in the entry as `unknown`; do not explain it in the reply.
 
 ## Digest
@@ -67,7 +67,7 @@ Run at the end of every other skill (principles: closing step), or by the user. 
 3. **Group by upstream cause:** the missing question or directive behind the signals, not the surface event. A session usually yields one to three groups.
 4. **For each group,** re-read the log first.
    - If an open entry has the same cause, append one `- Evidence: <date> · <skill> · <what happened> · <source> · kit <version>` line per signal at its end, the version copied from the signal (none when it has none). Never change its other lines.
-   - Otherwise write a new entry as in Note steps 3–4 (its id checked again after appending, so the marks of step 5 below carry the final one), with the signals as Evidence lines. Its "Where" comes from the signals file's heading, its `Kit:` from the newest version its signals carry (else the digest's own).
+   - Otherwise write a new entry as in Note steps 3–4 (the marks of step 5 below carry the id the script prints), with the signals as Evidence lines. Its "Where" comes from the signals file's heading, its `Kit:` from the newest version its signals carry (else the digest's own).
 5. **Mark each digested signal** `→ <entry id>`.
 6. **Reply in one line:** `Digested <k> signals → <ids>`. With no pending signals, reply nothing.
 
@@ -99,7 +99,8 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
    - **Project profile** (`<data root>/projects/<owner>-<repo>.md`) only for a fact about one repository: propose the change like any other, and apply it only after approval, with no version bump.
    - **No change** when the kit behaved as designed: explain why, and propose `wontfix`.
 4. **Propose,** following the question format: one question per group, with up to four options.
-   - Show the missing question and the rule first, then the concrete change, its pros and cons, and what it costs (skill length, extra steps).
+   - **Write for a reader who never saw the notes,** in the whole report, step 2's classification included: plain words first, file paths, line numbers and rule names only after them, never in their place.
+   - Open each group with one concrete case of what went wrong, from its notes; then what will change for the user and what it costs in time; then the missing question, the rule and the change in the kit, every term explained. Each option says its pros, its cons and its cost in the user's time first (minutes per round, a step more, none), and only then in skill length.
    - Always offer "Defer" and "Won't fix".
    - **Prefer removing or merging a rule to adding one.** If the change makes a skill longer than about 200 lines, say so and propose what to cut.
 5. **For each approved change.** At the first one, create the kit worktree from `origin/main`: `<kit source>/.claude/worktrees/improve-<date>-<time>`, on a branch of the same name. Make sure `.claude/worktrees/` is ignored (`git check-ignore`, else add it to `.git/info/exclude`), and run `git config core.hooksPath .githooks` in it. This is `<kit worktree>`, used by absolute path: the session is not moved into it, since it may belong to another project: every later edit, eval and gate (5.1–5.3, 6) uses it, never the main checkout.
