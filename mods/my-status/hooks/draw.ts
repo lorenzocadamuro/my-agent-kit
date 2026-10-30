@@ -228,6 +228,9 @@ function roleOf(p: Part): Role {
   if (p.steps.some(s => s.status === 'running' || s.status === 'failed' || s.status === 'next')) return 'cur'
   return 'todo'
 }
+/** A part folds into one chip only when not started: every step still to do. The chip counts the steps left. */
+const isUnstarted = (p: Part) => p.steps.every(s => s.status === 'todo')
+const leftOf = (p: Part) => p.steps.filter(s => s.status !== 'done').length
 const segTok = (s: Step): Tok => (s.status === 'done' ? 'sDone' : s.status === 'running' ? 'sf' : s.status === 'failed' ? 'sStop' : 'sEmpty')
 const isFilled = (s: Step) => s.status === 'done' || s.status === 'running' || s.status === 'failed'
 const num = (x: number, y: number, n: string, filled: boolean) => txt(x, y, n, 10, filled ? 'num' : 'numEmpty', { weight: 600, anchor: 'middle' })
@@ -343,7 +346,7 @@ function partLabel(p: Part, x: number, y: number, room: number): string {
 /**
  * Picture 3, the open steps, right under the label row: under each capsule a chip and label per step, every step of
  * every part listed, done parts included (round 5); or one row per part (`isRowsView`). `fold` is height level L2:
- * parts not started yet show one "3 to do" chip.
+ * parts not started yet (every step to do) show one "3 to do" chip.
  */
 export function stepsPic(m: BandModel, W: number, A: number, fold: boolean, isNarrowBand: boolean): Pic {
   const alt = `Steps: ${m.parts.map(p => `${p.letter} ${p.steps.map(s => `${s.label} ${s.status}`).join(', ')}`).join('; ')}`
@@ -354,8 +357,8 @@ export function stepsPic(m: BandModel, W: number, A: number, fold: boolean, isNa
   m.parts.forEach((p, i) => {
     const px = A + i * (pw + 12)
     let y = 6
-    if (fold && roleOf(p) === 'todo') {
-      const k = p.steps.length
+    if (fold && isUnstarted(p)) {
+      const k = leftOf(p)
       out.push(chip(px, y, String(k), 'todo-all'))
       out.push(txt(px + 24, y + 12, `${k} to do`, 12.5, 't3'))
       y += 22
@@ -384,11 +387,11 @@ function rowsSteps(m: BandModel, W: number, A: number, fold: boolean): Omit<Pic,
     let x = X0
     let line = y
     const items: { w: number; draw: (x: number, y: number) => string }[] =
-      fold && r === 'todo'
+      fold && isUnstarted(p)
         ? [
             {
-              w: 24 + tw(`${p.steps.length} to do`, 12.5) * FIT,
-              draw: (x, y) => chip(x, y + 1, String(p.steps.length), 'todo-all') + txt(x + 24, y + 13, `${p.steps.length} to do`, 12.5, 't3'),
+              w: 24 + tw(`${leftOf(p)} to do`, 12.5) * FIT,
+              draw: (x, y) => chip(x, y + 1, String(leftOf(p)), 'todo-all') + txt(x + 24, y + 13, `${leftOf(p)} to do`, 12.5, 't3'),
             },
           ]
         : p.steps.map((s, j) => ({

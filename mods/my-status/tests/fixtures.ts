@@ -91,6 +91,20 @@ export const V2_NEEDS_YOU: MyStatusRun = {
   parts: [...FOUR.slice(0, 3), part('D', 'the old payment form is gone', 'Old form', [S('Hide form'), S('Remove form'), S('Open the PR', 'running')])],
 }
 
+/** At a gate, with parts out of order: A and E done, B half done with nothing under way, C and D not started. */
+export const V2_NEEDS_YOU_HALF: MyStatusRun = {
+  ...V2_RUNNING,
+  state: 'needs_you',
+  reason: 'Field decision',
+  parts: [
+    part('A', 'the ledger', 'Ledger', [S('Write entry'), S('Replay entry')]),
+    part('B', 'ledger telemetry', 'Telemetry', [S('Ledger events'), S('Region field', 'todo')]),
+    part('C', 'the not-saved log', 'Not-saved log', [S('Typed error', 'todo')]),
+    part('D', 'the lifecycle doc', 'Lifecycle doc', [S('Doc rule', 'todo'), S('Doc cost', 'todo'), S('Doc example', 'todo')]),
+    part('E', 'the save retry', 'Save retry', [S('Retry save')]),
+  ],
+}
+
 export const V2_STOPPED: MyStatusRun = {
   ...V2_RUNNING,
   state: 'stopped',

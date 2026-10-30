@@ -14,6 +14,7 @@ import {
   RUNNING,
   V2_DONE,
   V2_NEEDS_YOU,
+  V2_NEEDS_YOU_HALF,
   V2_PLANNING,
   V2_READY,
   V2_RUNNING,
@@ -367,6 +368,23 @@ test('opening the steps keeps the label row, grows the capsules, and lists every
   for (const label of done) expect(steps).toContain(label)
   expect(steps).not.toContain('done</text>')
   expect(steps).toContain('to do')
+  await tight.unmount()
+})
+
+test('a part half done keeps its steps listed when the parts not started fold, and a fold counts the steps left', async ($, on) => {
+  world(on, { run: V2_NEEDS_YOU_HALF })
+  await refresh($)
+  const tight = await $.ui.mount(band('desktop', 6))
+  await tight.press({ key: 'toggle' })
+  const steps = await source(tight, 'steps')
+  // B has a step done and none under way: started, so never a "to do" chip
+  expect(steps).toContain('Ledger events')
+  expect(steps).toContain('Region field')
+  expect(steps).not.toContain('2 to do</text>')
+  // C and D are not started: one chip each, counting their steps
+  expect(steps).toContain('1 to do</text>')
+  expect(steps).toContain('3 to do</text>')
+  expect(steps).not.toContain('Doc rule')
   await tight.unmount()
 })
 
