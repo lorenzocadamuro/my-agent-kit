@@ -43,11 +43,16 @@ Fifteen fixes from 31 open notes: plans research deeper and try their checks fir
 ### Improvement loop (`improve`)
 
 - New `scripts/append-entry.sh` appends a log note or a method kind numbered under a lock, so two sessions writing at once never share an id, and lists duplicate ids. `note`, `digest` and the method use it. The log entry template's heading is `## <id> · <skill> · open`.
+- `list` first reports ids held twice in the log or the method. A method row is rewritten under the same lock.
 - `run` opens each group with a concrete case of what went wrong, in plain words, then what changes for the user and what it costs in time, before the rule and the change.
+
+### Scripts
+
+- `scripts/check.sh`, and so the pre-commit hook, also runs the scripts' own tests, with git's hook variables cleared: inside a hook, `GIT_DIR` and `GIT_INDEX_FILE` would point a test's scratch repositories at the kit's own. `drift.test.sh` clears them itself too.
 
 ### Status band: `my-status` 1.0.1
 
-- Fixed: with the steps open and the room short, a part half done (a step done, none under way, as at a gate) folded into an "n to do" chip like a part not started, counting all its steps. Only parts with every step to do fold now, and the chip counts the steps left.
+- Fixed: with the steps open and the room short, a part half done (a step done, none under way, as at a gate) folded into an "n to do" chip like a part not started, counting all its steps. Only parts with every step to do fold now.
 
 ## [5.7.0] - 2026-10-29
 

@@ -5,7 +5,7 @@ export type MyStatusStep = { label: string; status: MyStatusStepStatus }
 
 export type MyStatusPart = {
   title: string
-  /** The part's title in two or three words, from its heading after "Part X:". */
+  /** The part's title in two or three words and at most 16 characters, from its heading after "Part X:". */
   short?: string
   status: 'todo' | 'running' | 'done'
   done: number
@@ -78,7 +78,7 @@ export type MyStatusSnapshot = {
 // step Ready starts with, derived by the mod.
 export type StepStatus = 'todo' | 'next' | 'running' | 'done' | 'failed'
 export type Step = { label: string; status: StepStatus }
-// One part of the plan: its letter, its short title (2-4 words) and its steps; `name` replaces the letter in Planning.
+// One part of the plan: its letter, its short title (two or three words, at most 16 characters) and its steps; `name` replaces the letter in Planning.
 export type Part = { letter: string; short: string; steps: Step[]; name?: string }
 
 // how the person left the agents' fold this session: 'auto' lets the height decide

@@ -228,9 +228,8 @@ function roleOf(p: Part): Role {
   if (p.steps.some(s => s.status === 'running' || s.status === 'failed' || s.status === 'next')) return 'cur'
   return 'todo'
 }
-/** A part folds into one chip only when not started: every step still to do. The chip counts the steps left. */
+/** A part folds into one chip only when not started: every step still to do. */
 const isUnstarted = (p: Part) => p.steps.every(s => s.status === 'todo')
-const leftOf = (p: Part) => p.steps.filter(s => s.status !== 'done').length
 const segTok = (s: Step): Tok => (s.status === 'done' ? 'sDone' : s.status === 'running' ? 'sf' : s.status === 'failed' ? 'sStop' : 'sEmpty')
 const isFilled = (s: Step) => s.status === 'done' || s.status === 'running' || s.status === 'failed'
 const num = (x: number, y: number, n: string, filled: boolean) => txt(x, y, n, 10, filled ? 'num' : 'numEmpty', { weight: 600, anchor: 'middle' })
@@ -358,7 +357,7 @@ export function stepsPic(m: BandModel, W: number, A: number, fold: boolean, isNa
     const px = A + i * (pw + 12)
     let y = 6
     if (fold && isUnstarted(p)) {
-      const k = leftOf(p)
+      const k = p.steps.length
       out.push(chip(px, y, String(k), 'todo-all'))
       out.push(txt(px + 24, y + 12, `${k} to do`, 12.5, 't3'))
       y += 22
@@ -390,8 +389,8 @@ function rowsSteps(m: BandModel, W: number, A: number, fold: boolean): Omit<Pic,
       fold && isUnstarted(p)
         ? [
             {
-              w: 24 + tw(`${leftOf(p)} to do`, 12.5) * FIT,
-              draw: (x, y) => chip(x, y + 1, String(leftOf(p)), 'todo-all') + txt(x + 24, y + 13, `${leftOf(p)} to do`, 12.5, 't3'),
+              w: 24 + tw(`${p.steps.length} to do`, 12.5) * FIT,
+              draw: (x, y) => chip(x, y + 1, String(p.steps.length), 'todo-all') + txt(x + 24, y + 13, `${p.steps.length} to do`, 12.5, 't3'),
             },
           ]
         : p.steps.map((s, j) => ({

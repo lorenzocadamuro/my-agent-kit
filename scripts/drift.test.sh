@@ -9,7 +9,9 @@ fail=0
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
-# A repository of its own, unaffected by the user's git configuration.
+# A repository of its own, unaffected by the user's git configuration, and by a git hook's GIT_DIR
+# and GIT_INDEX_FILE, which would point every command below at the repository running the hook.
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_PREFIX GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES
 export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
 export GIT_AUTHOR_NAME=test GIT_AUTHOR_EMAIL=test@example.com GIT_COMMITTER_NAME=test GIT_COMMITTER_EMAIL=test@example.com
 lines() { for ((i = 1; i <= $2; i++)); do echo "line $i"; done > "$1"; }

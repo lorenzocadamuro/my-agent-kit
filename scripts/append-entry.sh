@@ -37,13 +37,21 @@ if [[ "$mode" != log && "$mode" != kind ]] || [[ ! -f "$entry" ]]; then
   sed -n '4,7p' "$0" >&2
   exit 2
 fi
+if [[ "$mode" == log ]] && ! head -1 "$entry" | grep -q '^## <id> · '; then
+  echo "append-entry.sh: the entry's first line must read '## <id> · ...'" >&2
+  exit 2
+fi
+if [[ "$mode" == kind ]] && ! head -1 "$entry" | grep -q '^| <id> |'; then
+  echo "append-entry.sh: the row must read '| <id> | ...'" >&2
+  exit 2
+fi
 if [[ "$mode" == kind ]] && ! grep -q '^| Kind' "$file" 2>/dev/null; then
   echo "append-entry.sh: $file has no kinds table" >&2
   exit 2
 fi
 
-# The lock is a folder: mkdir either creates it or fails, in one step. A lock older than a minute
-# was left by a session that died.
+# The lock is a folder: mkdir either creates it or fails, in one step. A lock older than 10 seconds
+# was left by a session that died (an append takes milliseconds); a writer waits up to 30 seconds.
 lock="$file.lock"
 held=0
 for _ in $(seq 1 300); do
@@ -52,7 +60,9 @@ for _ in $(seq 1 300); do
     trap 'rmdir "$lock" 2>/dev/null || true' EXIT
     break
   fi
-  if [[ -n "$(find "$lock" -maxdepth 0 -mmin +1 2>/dev/null)" ]]; then rmdir "$lock" 2>/dev/null || true; fi
+  if [[ -d "$lock" ]] && (($(date +%s) - $(stat -f %m "$lock" 2>/dev/null || stat -c %Y "$lock" 2>/dev/null || date +%s) > 10)); then
+    rmdir "$lock" 2>/dev/null || true
+  fi
   sleep 0.1
 done
 if [[ "$held" != 1 ]]; then
@@ -72,6 +82,11 @@ case "$mode" in
     last="$(ids kind "$file" | tr -d K | sort -n | tail -1)"
     id="K$((${last:-0} + 1))"
     # the kinds table ends the file
+    if ! grep -v '^[[:space:]]*$' "$file" | tail -1 | grep -q '^|'; then
+      echo "append-entry.sh: $file does not end with its kinds table" >&2
+      exit 2
+    fi
+    [[ -z "$(tail -c 1 "$file")" ]] || printf '\n' >> "$file"
     sed "1s/<id>/$id/" "$entry" >> "$file"
     ;;
 esac

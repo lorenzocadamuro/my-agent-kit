@@ -55,7 +55,7 @@ Goal: under a minute, no questions unless the text is empty.
    - The heading reads `## <id> · <skill> · open`, with `<id>` left as it is: the script of step 4 numbers it.
    - "What happened" and "Expected" are concrete: what was done or said, not an opinion. "Why it was a problem" says what it cost the user, in plain words. "Missing question" is a question someone should have asked at the start, not a fix; `unknown` when it is not clear.
    - "Suspected cause" names a step, principle, template or profile line when you can point to it; otherwise `unknown`. Do not investigate deeply here.
-4. **Append** the entry, written to a scratch file, with `${CLAUDE_PLUGIN_ROOT}/scripts/append-entry.sh log <log> <file>`: it gives it the next `YYYYMMDD-NN` after today's highest under a lock, so two sessions writing at once never share an id, and prints it. Change nothing else: no skill, doc, template or profile.
+4. **Append** the entry, written to a scratch file, with `${CLAUDE_PLUGIN_ROOT}/scripts/append-entry.sh log <log> <file>`: it gives it the next `YYYYMMDD-NN` after today's highest under a lock, so two sessions writing at once never share an id, and prints it; if it cannot take the lock, try once more, then say so. Change nothing else: no skill, doc, template or profile.
 5. **Confirm in exactly one line,** and nothing else: `Logged <id> · <skill> · <n> open`. Missing context goes in the entry as `unknown`; do not explain it in the reply.
 
 ## Digest
@@ -81,6 +81,8 @@ List and Log share one view. Each entry shows its id, skill, state as a coloured
 - **Without it:** a Markdown table with the columns `Id · Skill · State · Problem`, states as `🟢 open`, `✅ fixed`, `⏸ deferred`, `⚪ wontfix`. Closed entries follow the open ones in a separate table under `Closed (<n>)`.
 
 ## List (no argument)
+
+First run `${CLAUDE_PLUGIN_ROOT}/scripts/append-entry.sh check` on the log and on `<data root>/method.md`: ids held twice are listed in one line before the entries, with the offer to renumber the later ones.
 
 Show the open entries, grouped by skill and then by suspected cause. End with the count, and one line saying whether a run looks worthwhile. Three or more notes on the same cause are a strong signal; a single vague note may need more evidence first.
 

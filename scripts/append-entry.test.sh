@@ -41,4 +41,15 @@ expect "check finds a duplicate kind" "$(bash "$script" check "$tmp/dup-method.m
 printf '## 20261029-05 · a · open\n\n## 20261029-05 · b · open\n' > "$tmp/dup-log.md"
 expect "check finds a duplicate entry" "$(bash "$script" check "$tmp/dup-log.md" | tr '\n' ' '; echo "${PIPESTATUS[0]}")" "20261029-05 1"
 
+# A row lands on its own line when the file has no final newline; a bad entry is refused.
+printf '| Kind |\n| --- |\n| K1 | a |' > "$tmp/nonl.md"
+bash "$script" kind "$tmp/nonl.md" "$tmp/row.md" > /dev/null
+expect "a row after a missing final newline" "$(tail -1 "$tmp/nonl.md")" "| K2 | For X, choose Y |"
+printf '## 20261030-01 · pr:review · open\n' > "$tmp/bad.md"
+expect "an entry without <id> is refused" "$(bash "$script" log "$tmp/log.md" "$tmp/bad.md" 2>/dev/null; echo $?)" "2"
+printf '| Kind |\n| --- |\n| K1 | a |\n\nA note after the table.\n' > "$tmp/after.md"
+expect "a table that does not end the file is refused" "$(bash "$script" kind "$tmp/after.md" "$tmp/row.md" 2>/dev/null; echo $?)" "2"
+mkdir "$tmp/log.md.lock" && touch -t 202001010000 "$tmp/log.md.lock"
+expect "a stale lock is taken over" "$(bash "$script" log "$tmp/log.md" "$tmp/entry.md" | cut -c1-8)" "$today"
+
 exit "$fail"

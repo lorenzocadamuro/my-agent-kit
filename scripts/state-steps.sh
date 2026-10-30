@@ -2,15 +2,16 @@
 # Derives the state file's parts from plan.md's boxes (docs/local-data.md § State file, parts[].steps),
 # so no status is ever set by hand: each step is failed (already failed and unticked), running (named
 # by --running), done (ticked) or todo, in that order; each part's done, total and status follow.
-# Labels and short titles the coordinator wrote are kept; a step the plan added gets its first words
-# until one is written. Every other field is kept. The file is rewritten through a temp file and a rename.
+# Labels and short titles the coordinator wrote are kept by position; a step past the last label gets
+# its first words until one is written. Every other field is kept. Rewritten through a temp file and a rename.
 # Usage: state-steps.sh <state.json> <plan.md> [--running A2,B1] [--new-round]
 #   --running    the steps the open round's items implement or rework: part letter and step number
+#                (a bare number in a plan without parts); none once the round has ended
 #   --new-round  a round entry was just added to rounds: failed marks are cleared
 set -euo pipefail
 
 if [[ $# -lt 2 || ! -f "$2" ]]; then
-  sed -n '7,9p' "$0" >&2
+  sed -n '7,10p' "$0" >&2
   exit 2
 fi
 
@@ -29,30 +30,33 @@ while args:
     else:
         sys.exit(f"state-steps.sh: unknown argument {a}")
 
-# The plan's parts: "Part X: title" headings, each with its top-level boxes in order. Without parts,
-# the plan is one part, its boxes outside the bar for done.
-parts, cur, section = [], None, ""
-for line in open(plan_path, encoding="utf-8"):
-    head = re.match(r"^#{2,4}\s+(.*?)\s*$", line)
+# The plan's parts: "Part X: title" headings, each with its top-level boxes in order (a deeper heading
+# stays inside its part). A plan with no part heading at all is one part: its boxes outside the bar for done.
+lines = open(plan_path, encoding="utf-8").read().splitlines()
+has_parts = any(re.match(r"^#{2,4}\s+Part [A-Z]:", l) for l in lines)
+whole = {"letter": "", "title": "", "boxes": []}
+parts, cur, level, section = ([] if has_parts else [whole]), None, 0, ""
+for line in lines:
+    head = re.match(r"^(#{2,4})\s+(.*?)\s*$", line)
     if head:
-        section = head.group(1)
+        section = head.group(2)
         m = re.match(r"Part ([A-Z]):\s*(.*)", section)
         if m:
-            cur = {"letter": m.group(1), "title": f"Part {m.group(1)}: {m.group(2)}", "boxes": []}
+            cur, level = {"letter": m.group(1), "title": f"Part {m.group(1)}: {m.group(2)}", "boxes": []}, len(head.group(1))
             parts.append(cur)
-        elif parts:
+        elif cur is not None and len(head.group(1)) <= level:
             cur = None
         continue
     box = re.match(r"^- \[( |x|X)\]\s+(.*)", line)
     if not box:
         continue
-    if cur is None and not parts and not section.lower().startswith("bar for done"):
-        cur = {"letter": "", "title": "", "boxes": [], "whole": True}
-        parts.append(cur)
-    if cur is not None:
+    if has_parts and cur is not None:
         cur["boxes"].append((box.group(1) != " ", box.group(2)))
+    elif not has_parts and not section.lower().startswith("bar for done"):
+        whole["boxes"].append((box.group(1) != " ", box.group(2)))
 
 def first_words(text):
+    text = re.split(r"\s+[—–]\s+", text)[0]
     text = re.sub(r"^\*\*[^*]+\*\*\s*", "", text)
     text = re.sub(r"[`*_]", "", text)
     return " ".join(re.findall(r"[\w'’-]+", text)[:3]) or "Step"
@@ -69,12 +73,12 @@ for part in parts:
     prev_steps = prev.get("steps") or []
     steps = []
     for i, (ticked, text) in enumerate(part["boxes"]):
-        was = prev_steps[i] if i < len(prev_steps) and len(prev_steps) == len(part["boxes"]) else {}
+        was = prev_steps[i] if i < len(prev_steps) else {}
         label = was.get("label")
         if not label:
             label = first_words(text)
             unlabelled.append(f"{part['letter'] or 'plan'}{i + 1}")
-        if was.get("status") == "failed" and not ticked and not new_round:
+        if was.get("status") == "failed" and not ticked and not new_round and len(prev_steps) == len(part["boxes"]):
             status = "failed"
         elif f"{part['letter']}{i + 1}" in running:
             status = "running"
@@ -96,8 +100,13 @@ for part in parts:
     entry.pop("left", None)
     out.append(entry)
 
+known = {f"{p['letter']}{i + 1}" for p in parts for i in range(len(p["boxes"]))}
+for step in sorted(running - known):
+    print(f"state-steps.sh: --running {step} names no step of the plan", file=sys.stderr)
+
 state["parts"] = out
 folder = os.path.dirname(os.path.abspath(state_path))
+os.makedirs(folder, exist_ok=True)
 fd, tmp = tempfile.mkstemp(dir=folder, prefix=".state-", suffix=".json")
 with os.fdopen(fd, "w", encoding="utf-8") as f:
     json.dump(state, f, indent=2, ensure_ascii=False)

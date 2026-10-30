@@ -64,4 +64,23 @@ bash "$script" "$tmp/state.json" "$tmp/small.md" > /dev/null 2>&1
 expect "a plan without parts is one part of its own steps" "$(q '.parts | length') $(q '.parts[0].done')/$(q '.parts[0].total')" "1 1/2"
 
 expect "no temp file is left" "$(ls -a "$tmp" | grep -c '^\.state-')" "0"
+# A box in an earlier section is no part; a deeper heading stays inside its part; labels stay by position.
+cat > "$tmp/gates.md" <<'P'
+## Gates
+- [ ] approve the rollout
+
+### Part A: Ledger
+- [x] **A1** Write entry — test first: test_write
+#### Notes
+- [ ] **A2** Replay entry — test first: test_replay
+P
+printf '{"parts":[{"title":"Part A: Ledger","steps":[{"label":"Write entry","status":"done"}]}]}' > "$tmp/state.json"
+bash "$script" "$tmp/state.json" "$tmp/gates.md" --running Z9 > /dev/null 2> "$tmp/err"
+expect "a box outside the parts makes no part" "$(q '.parts | length') $(q '.parts[0].title')" "1 Part A: Ledger"
+expect "a deeper heading stays inside its part" "$(q '.parts[0].total')" "2"
+expect "a kept label stays when a step is added" "$(q '.parts[0].steps[0].label')" "Write entry"
+expect "a new label stops before the test note" "$(q '.parts[0].steps[1].label')" "Replay entry"
+expect "an unknown running step is reported" "$(grep -c 'Z9' "$tmp/err")" "1"
+expect "a missing state folder is created" "$(bash "$script" "$tmp/new/dir/state.json" "$tmp/gates.md" > /dev/null 2>&1; echo $?)" "0"
+
 exit "$fail"
