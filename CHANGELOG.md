@@ -44,11 +44,15 @@ Fifteen fixes from 31 open notes: plans research deeper and try their checks fir
 
 - New `scripts/append-entry.sh` appends a log note or a method kind numbered under a lock, so two sessions writing at once never share an id, and lists duplicate ids. `note`, `digest` and the method use it. The log entry template's heading is `## <id> · <skill> · open`.
 - `list` first reports ids held twice in the log or the method. A method row is rewritten under the same lock.
-- `run` opens each group with a concrete case of what went wrong, in plain words, then what changes for the user and what it costs in time, before the rule and the change.
+- `run` writes its whole report for a reader who never saw the notes: each group opens with a concrete case of what went wrong and the notes it joins, then what changes for the user and what it costs in time, then the rule quoted in its own words and the change; each option's cost is in the user's time first.
 
 ### Scripts
 
 - `scripts/check.sh`, and so the pre-commit hook, also runs the scripts' own tests, with git's hook variables cleared: inside a hook, `GIT_DIR` and `GIT_INDEX_FILE` would point a test's scratch repositories at the kit's own. `drift.test.sh` clears them itself too.
+
+### Evals
+
+- 13 new cases, one per fix that an eval can reach; five of them (research failure paths, CI checks in the bar, the invariant clause, the deferred row, the decision explained cold) already pass on 5.7.0 with small fixtures and stay as guards. LLM judges that failed good and bad replies alike were replaced by regex graders checked against every collected reply. `run-finds-upstream-lesson` accepts synonyms of "same cause" and the rule's other sentence. Not reachable by an eval (no question tool, chapter tool or worktree in the sandbox): the question order, the chapter title's language and the worktree without `cd`.
 
 ### Status band: `my-status` 1.0.1
 
