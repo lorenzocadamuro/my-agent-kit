@@ -6,7 +6,7 @@ set -uo pipefail
 
 root="$(cd "${1:-$(dirname "$0")/..}" && pwd)"
 allow="$root/scripts/no-form-rules.allow"
-pattern="user's language|your language|their language|my language|in Italian|Italian:|plain words|plain line|plain phrase|plain explanation|translated and summarised"
+pattern="user's language|your language|their language|my language|in Italian|Italian:|plain words|plain line|plain phrase|plain explanation|translated and summarised|plainly|plain meaning"
 
 cd "$root" || exit 1
 paths=()
