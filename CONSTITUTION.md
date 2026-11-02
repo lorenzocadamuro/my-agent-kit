@@ -19,7 +19,7 @@
 
 **6. It never changes itself without me.** The kit records and proposes; I approve changes to the kit.
 
-**7. It speaks my language.** Reasoning is in my language, in plain words, the why before the what. Code and repository names are never translated.
+**7. It speaks the language I choose.** I choose the language and the style of everything the kit explains to me, and I can change them at any moment; the kit adds no rule of its own on the language or the sentence form of that text. It explains the why before the what. Code and repository names are never translated.
 
 **8. I always see where we are.** While I use the kit, the state of the work is visible at every moment.
 

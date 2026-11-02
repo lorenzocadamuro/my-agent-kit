@@ -4,6 +4,8 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+Constitution clause 7 amended at the user's explicit request: the language and style of what the kit explains come from the output style the user chooses (`my-language`), and the kit adds no language rule of its own.
+
 ## [5.8.0] - 2026-10-30
 
 Fifteen fixes from 31 open notes: plans research deeper and try their checks first, the user sees cases before questions, each promise of a plan gets a test per clause, the band's statuses and the kit's ids are produced by scripts instead of by hand, and reviews judge a PR as it is. Kit 5.8.0, minor: new behaviour, nothing you rely on changes incompatibly. `my-status` 1.0.1, patch: a fix.
