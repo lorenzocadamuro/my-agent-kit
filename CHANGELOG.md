@@ -45,7 +45,7 @@ Intentional changes:
 
 ### Measurement
 
-Six prompts (a round report, a question with two options, a term explained, a short chat answer, a failing test, an agent's report summarised), each in an Italian and an English version, one run per prompt and arm, `claude -p --model claude-opus-5-5 --tools ""`, the style's body through `--append-system-prompt` (close to the mod, not the mod itself). off-IT and ITE use the Italian prompts, off-EN and STE the English ones. Tokens in count input, cache creation and cache read; the ITE findings come from `ite-check.py`; the English forms are should/may/might/would/could, ";", "—" and contractions.
+Six prompts (a round report, a question with two options, a term explained, a short chat answer, a failing test, an agent's report summarised), each in an Italian and an English version, one run per prompt and arm (one run took 323,716 input tokens in one turn, cause unknown; it was excluded and the four report arms were run again), `claude -p --model claude-opus-5-5 --tools ""`, the style's body through `--append-system-prompt` (close to the mod, not the mod itself). off-IT and ITE use the Italian prompts, off-EN and STE the English ones. Tokens in count input, cache creation and cache read; the ITE findings come from `ite-check.py`; the English forms are should/may/might/would/could, ";", "—" and contractions.
 
 | Arm | Runs | Tokens in | Tokens out | Words | Time (s) | Cost ($) | ITE findings /100 words (hard+soft) | ITE sentence-length | English forms /100 words (count): modal · ; · — · contraction |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
@@ -55,7 +55,7 @@ Six prompts (a round report, a question with two options, a term explained, a sh
 | STE | 6 | 30518 | 3497 | 1468 | 53.7 | 0.16 | - | - | 0 · 0 · 0 · 0 |
 
 - Each style's own size: ITE about 947 tokens, STE about 1,016 (the input of a styled run minus the off run on the same prompt).
-- ITE: 16% fewer words, but output tokens rose 56% and time 31%, likely reasoning. STE: 19% fewer words, output tokens and time each fell 19%.
+- ITE: 16% fewer words, but output tokens rose 56% and time 31%, cause not measured. STE: 19% fewer words, output tokens and time each fell 19%.
 - ITE's 20- and 25-word limits: no sentence-length finding with ITE, 3 without it. The replies read as short sentences, sometimes repetitive ("Il sistema scrive le note di rilascio. Il sistema usa i titoli delle pull request."); one run each, so a later style version may revisit the limits.
 
 | Prompt | Arm | Tokens in | Tokens out | Words | Time (s) | ITE findings /100 words (hard+soft) | ITE sentence-length | English forms /100 words: modal · ; · — · contraction |
