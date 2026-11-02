@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Checks the my-language mod's packs and manifest: every output style's front matter and scope (I5), no
-# content rule in a style (I6), STE's notice and THIRD-PARTY.md (I7), and that the mod validates and hooks
-# only session.start and command.run (I4).
+# content rule in a style (I6), STE's notice and THIRD-PARTY.md (I7), the style text the kit's language eval
+# cases carry (I8), and that the mod validates and hooks only session.start and command.run (I4).
 # Usage: bash mods/my-language/scripts/packs.test.sh [mod folder]  (default: this script's mod)
 set -uo pipefail
 
@@ -54,6 +54,33 @@ if [[ -f "$third" ]]; then
   grep -qF "ASD-STE100 is a registered trademark of ASD" "$third" || bad "THIRD-PARTY.md: no trademark line (I7)"
 else
   bad "no THIRD-PARTY.md in $mod (I7)"
+fi
+
+# I8: each eval case in the kit's evals/language/ carries its style's body, exactly, as append_system_prompt.
+# The case folder names the style: `<style in lowercase>-<what>`. A copy of the mod with no evals/ beside it
+# skips this check.
+# The body of a style: the text after its front matter, leading and trailing blank lines removed.
+body() { awk 'NR == 1 && $0 == "---" { fm = 1; next } fm && $0 == "---" { fm = 0; next } fm { next }
+  !seen && $0 ~ /^[[:space:]]*$/ { next } { seen = 1; print }' "$1"; }
+# append_system_prompt of a prompt.md front matter, a `|` block scalar, dedented.
+appended() { awk 'NR == 1 { if ($0 != "---") exit; next } $0 == "---" { exit }
+  inblk && $0 ~ /^[^ ]/ { inblk = 0 }
+  inblk { if (ind == "" && $0 ~ /[^ ]/) { match($0, /^ */); ind = RLENGTH }; print (ind == "" ? "" : substr($0, ind + 1)); next }
+  /^append_system_prompt:[ ]*\|[-+]?[ ]*$/ { inblk = 1 }' "$1"; }
+kit_evals="$mod/../../evals"
+if [[ -d "$kit_evals" ]]; then
+  cases=("$kit_evals"/language/*/prompt.md)
+  [[ -e "${cases[0]}" ]] || bad "no eval case in evals/language/ (I8)"
+  for c in "${cases[@]}"; do
+    [[ -e "$c" ]] || continue
+    name="$(basename "$(dirname "$c")")"
+    style="$(tr '[:lower:]' '[:upper:]' <<<"${name%%-*}")"
+    if [[ ! -f "$mod/output-styles/$style.md" ]]; then
+      bad "evals/language/$name: no style $style.md for this case (I8)"
+    elif [[ "$(appended "$c")" != "$(body "$mod/output-styles/$style.md")" ]]; then
+      bad "evals/language/$name: append_system_prompt differs from the body of $style.md (I8)"
+    fi
+  done
 fi
 
 # I4: the mod validates, and its hooks are only session.start and command.run (no prompt event).
