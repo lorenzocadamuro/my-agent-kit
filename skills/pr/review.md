@@ -39,7 +39,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 
 4. **Verify every finding** against the code at the head commit before keeping it: read the lines, the callers, and the tests. Before calling a shape wrong or proposing a refactor, find why the code is shaped this way (a comment, a commit, a contract); a deliberate design is not a finding. Drop what does not hold, or turn it into a question when it is plausible but unproven.
 5. **Grade each finding** as **block**, **ticket** or **note**, by the lenses doc § Grading a finding, weighing who can trigger it and what it costs.
-6. **The analysis, first:** private, in chat, in the user's language. No text for GitHub yet.
+6. **The analysis, first:** private, in chat. No text for GitHub yet.
    - **The verdict:** ready to merge or not, and why, in two lines, judged on the PR as it is at its head: facts about its base (another open PR, the merge order, a rebase) are information for the author, not conditions, unless they break the PR's promise.
    - **Since the last review,** when the PR was already reviewed (an earlier analysis, or reviews by others), before anything new: each point raised then, and whether the head fixes it (with the commit or line), leaves it open, or the author answered it.
    - **The main scenario,** followed end to end: where it holds, and where it breaks.

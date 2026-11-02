@@ -12,7 +12,7 @@ PR: <owner/name#n> · Review date: <date> · Reading time: <~N min>
 
 ### 1. "<short quote>" — <weight>
 
-**In plain words:** <≤ 40 words>
+**In short:** <≤ 40 words>
 
 **How they reason:** <≤ 30 words>
 
@@ -30,7 +30,7 @@ PR: <owner/name#n> · Review date: <date> · Reading time: <~N min>
 
 ### The other comments
 
-| Comment | In plain words | Weight | State |
+| Comment | In short | Weight | State |
 | ------- | -------------- | ------ | ----- |
 
 <details><summary>Layer 2: go deeper</summary>

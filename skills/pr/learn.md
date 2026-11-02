@@ -65,7 +65,7 @@ This mode explains; it does not judge. Write hypotheses as questions, never as f
 5. **Anchor each in-depth comment.** Find the file and function, read it, and read who calls it and what happens when it fails.
 6. **Write the page** from `${CLAUDE_PLUGIN_ROOT}/templates/study-page.md`, at `study/<yyyy-mm-dd>-<repo>-pr<n>-<reviewer>.md`.
    - **Layer 0:** verdict and weights, what the user owes (at most 3 items), one move worth learning.
-   - **Layer 1:** for each in-depth comment, "in plain words" (at most 40 words) and "how they reason" (at most 30 words, named after a lens), with the code in `<details>`.
+   - **Layer 1:** for each in-depth comment, "in short" (at most 40 words) and "how they reason" (at most 30 words, named after a lens), with the code in `<details>`.
    - **Layer 2:** new terms, at most 2 new reasoning moves, at most 3 check questions. Add a flow map (at most 6 steps) only when 3 or more comments touch the same flow.
    - **Mark what is negotiable:** where a request widens the scope, or the criticism is debatable, say how to argue for a follow-up.
 7. **Update the cumulative files:**

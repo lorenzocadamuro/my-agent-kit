@@ -4,7 +4,7 @@
 - Kit: <`version` in ${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json, read when the writing skill started (the version the session follows), or "unknown">
 - Where: <repo> · <branch or PR> · session <id if known>
 - What happened: <one to three sentences, concrete>
-- Why it was a problem: <what it cost the user, in plain words: time lost, a wrong decision, a question asked again>
+- Why it was a problem: <what it cost the user: time lost, a wrong decision, a question asked again>
 - Missing question: <the question or directive that, asked or applied at the start, would have avoided it, or "unknown">
 - Expected: <what the kit should have done>
 - Suspected cause: <skill step, principle, template, project profile, or "unknown">

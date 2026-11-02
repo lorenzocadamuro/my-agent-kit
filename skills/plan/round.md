@@ -63,8 +63,8 @@ In the S lane, skip this check and write `Triage check: skipped (size S)` in the
 
 ### 5. Execute
 
-- Mark a session chapter `Round N · <goal>`, the goal in the user's language, with the app's chapter tool; skip it when the tool is missing.
-- Tell the user in one line, in their language, that round N started with k items and that they will hear from you at a gate or at the end. In `run`, say it for the first round only.
+- Mark a session chapter `Round N · <goal>` with the app's chapter tool; skip it when the tool is missing.
+- Tell the user in one line that round N started with k items and that they will hear from you at a gate or at the end. In `run`, say it for the first round only.
 - **S lane:** make the changes yourself, following [executor.md](executor.md) § How, except its Progress line, and § Stop and report, except that you ask the user (a gate) where it says to stop. After each item, update `items` in the state file (no progress sidecar); at the end, write `.plans/round-<N>-summary.md` in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`. Steps 6–8 follow as in the full lane: a change you make yourself, however small or directly asked, gets step 7's fresh review before the push.
 - **Full lane:** launch a **background** general-purpose agent with [executor.md](executor.md), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
   - **When the agent stops with questions,** ask the user (gate, with a notification), then continue the same agent with `SendMessage`.
@@ -102,7 +102,7 @@ When the round's verification needs a manual check in the browser, follow the pr
 
 In `round`, first run `/my:improve digest` on this session's signals file (principles: closing step). In `run`, the digest waits for the end of the run.
 
-Six lines, labels as shown and sentences in the user's language, and a desktop notification when the round ran long (in `run`, the notification waits for the end):
+Six lines, labels as shown, and a desktop notification when the round ran long (in `run`, the notification waits for the end):
 
 ```
 Round N: <k done / c checked / m stopped / s skipped>  ·  HEAD <sha> (pushed | not pushed: why)
@@ -143,15 +143,15 @@ Follow the principles. In `round`, the digest already ran in step 9; run it agai
   - any other round that does not succeed (a rejected push, an executor that stopped).
 - **After the user answers a gate,** the run goes on under the same rules, unless the answer ends it.
 - **At each round start,** re-read this section, the plan and the state file, so a compacted session resumes where it was.
-- **At the end:** run `/my:improve digest` once, send one desktop notification, set the state file to `needs_you`, `stopped` or `done`, and give one summary, labels as shown and sentences in the user's language:
+- **At the end:** run `/my:improve digest` once, send one desktop notification, set the state file to `needs_you`, `stopped` or `done`, and give one summary, labels as shown:
 
 ```
 Run: <r> rounds · <parts done>/<parts> parts · <elapsed>
 Rounds: <one line each: N, items done, verdict>
 Decided alone: <as the round report's "Decisions taken alone" line, for the whole run>
-Stopped: <why, in one plain phrase, and what is needed from the user>
+Stopped: <why, in one phrase, and what is needed from the user>
 Lessons: <note ids from the digest | none>
 Next: <the action that unblocks it>
 ```
 
-When it stops on a decision, introduce it after the summary as question-format § Shape says, so the user can answer it cold after a break: its terms in plain words, why the plan needs it, and what each option changes.
+When it stops on a decision, introduce it after the summary as question-format § Shape says, so the user can answer it cold after a break: what its terms mean, why the plan needs it, and what each option changes.

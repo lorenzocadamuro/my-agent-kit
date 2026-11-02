@@ -14,12 +14,12 @@ Every decision put to the user follows this format. A question the user cannot a
 
 - **Use the multiple-choice question tool,** with the recommended option first and marked "(Recommended)". A free answer stays possible.
 - **One decision per question.** A question that bundles two decisions (when to merge, and what a lagging environment runs) is split in two.
-- **Introduce the questions in chat, right before them in the same message,** in the user's language, so the user arrives prepared: the situation in plain words (what is happening, what the user would see, why it matters now), what the kit prescribes here and why it asks, and what the choice changes. For a deploy or rollout, first say what the deployed thing does and what users see when it is missing or early.
-- **Then keep each question short.** The question window covers the chat above it, so the question still opens with the situation in one plain line, its essential context only.
+- **Introduce the questions in chat, right before them in the same message,** so the user arrives prepared: the situation (what is happening, what the user would see, why it matters now), what the kit prescribes here and why it asks, and what the choice changes. For a deploy or rollout, first say what the deployed thing does and what users see when it is missing or early.
+- **Then keep each question short.** The question window covers the chat above it, so the question still opens with the situation in one line, its essential context only.
 - **Each option states, in a few words each:**
   - **Effect:** what changes for the user, or in behaviour, if this is chosen, everywhere it shows (the page, logs, data). Verified, or marked unverified (principles: verify).
   - **Today:** what happens now without the change, on the main branch or in production.
-  - **Pros** and **Cons**, written as labels inside each option (in the user's language, for example "Pro" / "Contro"), one short clause each; a shared header row does not count. Every option has both; an option with only a con is incomplete.
+  - **Pros** and **Cons**, written as labels inside each option (their wording follows the active output style), one short clause each; a shared header row does not count. Every option has both; an option with only a con is incomplete.
   - **Severity** when there is risk: how likely, how bad, and how easy to undo.
 - **Keep terms as they are** (principles: language). The first time a repository or kit term, an internal id, an acronym, or an idea introduced earlier in this conversation appears, give its plain meaning in one line; never paraphrase it away.
 - **Show the case.** One concrete example beats an abstract description ("a user drags the batch while it loads"). For a structural or visual rule, show it: a small before/after (two trees, two rows, a mockup), and say in one line what it shows.
@@ -27,7 +27,7 @@ Every decision put to the user follows this format. A question the user cannot a
 
 ## When the user dismisses the questions or asks back
 
-A dismissed batch, an answer like "I don't understand", or a free answer that holds a question or a doubt means "explain first", and is a signal. Answer in chat, in plain words, with the context the user is missing, and end the turn: no new question, with the tool or in text, until the user says it is clear. Then ask again with the tool, introduced as in § Shape. Never fall back to options in plain text.
+A dismissed batch, an answer like "I don't understand", or a free answer that holds a question or a doubt means "explain first", and is a signal. Answer in chat with the context the user is missing, and end the turn: no new question, with the tool or in text, until the user says it is clear. Then ask again with the tool, introduced as in § Shape. Never fall back to options in plain text.
 
 ## After the answer
 

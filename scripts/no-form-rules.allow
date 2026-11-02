@@ -1,0 +1,9 @@
+# Lines of the kit that no-form-rules.test.sh lets pass: they describe what the user types, not how
+# the kit writes. One entry a line, `<path>:<fixed text of the line>`; a hit passes when its path is
+# <path> and its line contains the text.
+commands/pr/learn.md:argument-hint: "<PR> [area in plain words
+commands/pr/review.md:argument-hint: "<PR number or URL> [instructions in plain words]"
+commands/pr/sync.md:argument-hint: "[context in plain words] [--no-push]"
+skills/plan/round.md:or a list in plain words.
+skills/pr/learn.md:an area, in plain words: the reading below goes deeper there
+README.md:ask in plain words ("explain PR 456", "run the plan")
