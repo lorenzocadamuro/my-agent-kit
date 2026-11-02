@@ -128,7 +128,7 @@ Leave Claude Code's own `language` setting (the "Language" row of `/config`) at 
 
 **Measure a reply** against ITE's rules: `python3 mods/my-language/scripts/ite-check.py reply.md` (or the reply on stdin) prints one finding per line and the findings per 100 words. It measures and never blocks.
 
-**Stop or roll back.** To stop using a style, run `/language off`, or remove `outputStyle` from `~/.claude/settings.json` (and from a folder's `.claude/settings.local.json`, where `/language` writes it). To return to 5.8.0, where the kit set its own language rules, run `claude plugin uninstall my-language@my-agent-kit`, check out `v5.8.0` in your clone, and restart.
+**Stop or roll back.** `/language off` stops the style in this folder only. To stop it everywhere, remove `outputStyle` from `~/.claude/settings.json` and from each folder's `.claude/settings.local.json`, where `/language` writes it, then run `claude plugin uninstall my-language@my-agent-kit`. To return to 5.8.0, where the kit set its own language rules, do all of that first. With the install from a clone (the symlink in [Install](#install)), check out `v5.8.0` in the clone and restart. The install from GitHub follows the repository and has no version option: `claude plugin install` and `claude plugin marketplace add` take none.
 
 ASD-STE100 is a registered trademark of ASD. The STE style follows its spirit; it is not the official standard, and ASD did not certify it. STE is adapted from AminBlg/SimpleEnglish (MIT): see `mods/my-language/THIRD-PARTY.md`.
 
