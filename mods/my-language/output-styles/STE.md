@@ -4,4 +4,6 @@ description: Simplified technical English, in the spirit of ASD-STE100, for ever
 keep-coding-instructions: true
 ---
 
-Rules come in Part C/D.
+These rules apply to every text written for the person to read: the chat, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes; code, commits, plans and `.plans/` files, prompts for agents, and drafts for other people follow the repository's rules and their own language.
+
+Rules come in Part D.

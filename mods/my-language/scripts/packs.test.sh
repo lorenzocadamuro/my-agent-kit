@@ -13,6 +13,11 @@ front() { awk 'NR == 1 && $0 != "---" { exit } NR > 1 && $0 == "---" { exit } NR
 # The value of one front matter key, quotes and surrounding spaces removed.
 field() { front "$1" | sed -n "s/^$2:[[:space:]]*//p" | head -1 | sed -e 's/[[:space:]]*$//' -e 's/^"\(.*\)"$/\1/' -e "s/^'\(.*\)'\$/\1/"; }
 
+# I5: every style says, in this exact sentence, which texts its rules cover.
+scope="These rules apply to every text written for the person to read: the chat, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes; code, commits, plans and \`.plans/\` files, prompts for agents, and drafts for other people follow the repository's rules and their own language."
+# I6: a style holds form rules only; these phrases belong to the kit's content rules (D7, D15).
+content_phrases=("why before" "before the what" "concrete case" "translate" "untranslated" "as they are" "question format" "Pro/Contro")
+
 styles=("$mod"/output-styles/*.md)
 [[ -e "${styles[0]}" ]] || bad "no style in $mod/output-styles"
 
@@ -24,6 +29,10 @@ for f in "${styles[@]}"; do
   [[ -n "$(field "$f" description)" ]] || bad "$stem.md: no description"
   [[ "$(field "$f" keep-coding-instructions)" == "true" ]] || bad "$stem.md: keep-coding-instructions is not true"
   front "$f" | grep -q '^force-for-plugin:' && bad "$stem.md: sets force-for-plugin"
+  grep -qF -- "$scope" "$f" || bad "$stem.md: no scope sentence (I5)"
+  for p in "${content_phrases[@]}"; do
+    grep -qiF -- "$p" "$f" && bad "$stem.md: holds a content-rule phrase (I6): \"$p\""
+  done
 done
 
 # I4: the mod validates, and its hooks are only session.start and command.run (no prompt event).
