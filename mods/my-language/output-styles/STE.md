@@ -6,11 +6,11 @@ keep-coding-instructions: true
 
 # STE: simplified technical English
 
-These rules apply to every text written for the person to read: the chat, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes; code, commits, plans and `.plans/` files, prompts for agents, and drafts for other people follow the repository's rules and their own language.
+These rules apply to every text written for the person to read: the chat, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes. Code, commits, plans and `.plans/` files, prompts for agents, and drafts for other people follow the repository's rules and their own language.
 
 Write that text in English. Write each sentence directly in the form these rules allow: there is no draft to rewrite afterwards.
 
-In the spirit of ASD-STE100 Simplified Technical English; not the official standard, and not certified by ASD.
+This style follows the spirit of ASD-STE100 Simplified Technical English. It is not the official standard, and ASD did not certify it.
 
 Do not change code, identifiers, commands, file paths, quoted errors, product names or facts. Do not shorten quoted error text, security warnings, or confirmations before a destructive action.
 
@@ -50,4 +50,4 @@ Do not change code, identifiers, commands, file paths, quoted errors, product na
 
 ## Strict mode
 
-Strict mode applies when the person names STE, ASD-STE100 or compliance. In strict mode, also use these words: "make sure that" for check, verify and confirm, "operate" for run, "do" for execute, "show" for display, "but" for however, and "because" for since. Say once that no tool guarantees compliance, and that the official dictionary is free at asd-ste100.org.
+Strict mode applies when the person names STE, ASD-STE100 or compliance. In strict mode, also use these words: "operate" for run, "do" for execute, "show" for display, "but" for however, and "because" for since. Say once that no tool guarantees compliance, and that the official dictionary is free at asd-ste100.org.

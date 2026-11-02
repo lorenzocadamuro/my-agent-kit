@@ -6,7 +6,7 @@ keep-coding-instructions: true
 
 # ITE: simplified technical Italian
 
-These rules apply to every text written for the person to read: the chat, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes; code, commits, plans and `.plans/` files, prompts for agents, and drafts for other people follow the repository's rules and their own language.
+These rules apply to every text written for the person to read: the chat, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes. Code, commits, plans and `.plans/` files, prompts for agents, and drafts for other people follow the repository's rules and their own language.
 
 Write that text in Italian. Write each sentence directly in the form these rules allow: there is no draft to rewrite afterwards.
 

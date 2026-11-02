@@ -15,7 +15,7 @@ front() { awk 'NR == 1 && $0 != "---" { exit } NR > 1 && $0 == "---" { exit } NR
 field() { front "$1" | sed -n "s/^$2:[[:space:]]*//p" | head -1 | sed -e 's/[[:space:]]*$//' -e 's/^"\(.*\)"$/\1/' -e "s/^'\(.*\)'\$/\1/"; }
 
 # I5: every style says, in this exact sentence, which texts its rules cover.
-scope="These rules apply to every text written for the person to read: the chat, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes; code, commits, plans and \`.plans/\` files, prompts for agents, and drafts for other people follow the repository's rules and their own language."
+scope="These rules apply to every text written for the person to read: the chat, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes. Code, commits, plans and \`.plans/\` files, prompts for agents, and drafts for other people follow the repository's rules and their own language."
 # I6: a style holds form rules only; these phrases belong to the kit's content rules (D7, D15).
 content_phrases=("why before" "before the what" "concrete case" "translate" "untranslated" "as they are" "question format" "Pro/Contro"
   "first sentence gives the answer" "answer first" "define a concept term")
@@ -37,9 +37,14 @@ for f in "${styles[@]}"; do
   done
 done
 
-# I7: STE says it is not the official standard, and THIRD-PARTY.md carries AminBlg's source and MIT notice.
-grep -qF "not the official standard" "$mod/output-styles/STE.md" 2>/dev/null \
-  || bad "STE.md: no \"not the official standard\" line (I7)"
+# I7: STE says, in this exact text, that it is not the official standard, and THIRD-PARTY.md carries
+# AminBlg's source and MIT notice.
+notice="This style follows the spirit of ASD-STE100 Simplified Technical English. It is not the official standard, and ASD did not certify it."
+grep -qF -- "$notice" "$mod/output-styles/STE.md" 2>/dev/null || bad "STE.md: no \"not the official standard\" notice (I7)"
+# STE's strict mode adds words only: the check/verify/confirm rule is in its Words section already.
+strict="$(awk '/^## Strict mode/ { on = 1; next } /^## / { on = 0 } on' "$mod/output-styles/STE.md" 2>/dev/null)"
+[[ -n "$strict" ]] || bad "STE.md: no \"## Strict mode\" section"
+grep -qiF "make sure that" <<<"$strict" && bad "STE.md: strict mode repeats the \"make sure that\" rule"
 third="$mod/THIRD-PARTY.md"
 if [[ -f "$third" ]]; then
   grep -qF "https://github.com/AminBlg/SimpleEnglish" "$third" || bad "THIRD-PARTY.md: no source URL (I7)"

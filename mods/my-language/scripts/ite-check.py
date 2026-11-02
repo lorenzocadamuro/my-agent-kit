@@ -28,7 +28,7 @@ PASSIVE_ADVERBS = {"subito", "già", "sempre", "poi", "anche"}
 # Regular endings, and irregular participles as word endings, so prefixed forms count (riscritto, tradotto).
 PARTICIPLE = re.compile(
     r"(at|it|ut|scritt|lett|apert|chius|mess|fatt|pres|dett|scelt|risolt|inclus|esclus|corrett|rimoss"
-    r"|moss|spent|acces|vist|rott|tolt|aggiunt|richiest|decis|post|dott)[oaie]$"
+    r"|moss|spent|acces|vist|rott|tolt|aggiunt|richiest|decis|post|dott|condivis|chiest|copert|offert)[oaie]$"
 )
 DI_WORDS = {"di", "del", "della", "dei", "degli", "delle", "dello"}
 # Nouns that may follow "si" without making it a passive "si".
@@ -39,8 +39,10 @@ SI_NOUN_STOP = {
 # "esegu..." and "proced..." are support verbs only before one of these links and an action noun.
 SUPPORT_LINKS = {"una", "un", "il", "la", "lo", "i", "gli", "le", "a", "al", "alla", "alle", "ai", "agli"}
 ACTION_NOUNS = {
-    "verifica", "controllo", "analisi", "modifica", "aggiornamento", "correzione", "revisione", "prova",
+    "verifica", "controllo", "analisi", "modifica", "aggiornamento", "correzione", "revisione",
     "valutazione", "installazione", "configurazione", "cancellazione", "rimozione", "creazione", "pulizia",
+    "verifiche", "controlli", "modifiche", "aggiornamenti", "correzioni", "revisioni",
+    "valutazioni", "installazioni", "configurazioni", "cancellazioni", "rimozioni", "creazioni", "pulizie",
 }
 # An elided link glued to its noun: "un'analisi", "l’installazione".
 ELIDED = re.compile(r"^(un|l|all)['’](\w+)$")
