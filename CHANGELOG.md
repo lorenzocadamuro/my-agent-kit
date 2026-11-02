@@ -2,9 +2,97 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [6.0.0] - 2026-11-02
 
-Constitution clause 7 amended at the user's explicit request: the language and style of what the kit explains come from the output style the user chooses (`my-language`), and the kit adds no language rule of its own.
+You choose the language and the writing style of everything Claude explains to you, in any session, with or without a `/my` command: the new `my-language` mod ships two output styles, ITE (simplified technical Italian) and STE (simplified technical English), and `/language` switches between them in the terminal and in the desktop app, from your next message. The kit itself no longer sets any language or sentence form: it keeps only its content rules (the why before the what, the question format, terms kept as they are), so two rule sets never overlap, and Claude Code puts the style in the system prompt, so each reply is written once, with no translation or rewrite afterwards. Kit 6.0.0, major: without the mod, or with `/language off`, the kit stops guaranteeing Italian replies, a behaviour you relied on. `my-language` 0.1.0, its first release.
+
+Intentional changes:
+
+- The kit no longer sets the language or the sentence form of text for the user, in every session.
+- New mod `my-language` with the ITE and STE output styles and the `/language` command; the user-level default is ITE (`"outputStyle": "my-language:ITE"` in `~/.claude/settings.json`); a switch stays for the folder until switched again, and two sessions in the same folder share it.
+- `CONSTITUTION.md` clause 7 amended (below).
+- `.claude/CLAUDE.md` "English only" gains an exception: the ITE files of the mod hold Italian examples and word lists on purpose.
+- Eval graders that checked the language or "plain words" became content graders, or moved to the style cases.
+- `/my:improve` takes `style:<name>` as a note target.
+
+### Constitution
+
+- Clause 7 amended at the user's explicit request (2026-11-02): "It speaks the language I choose." The user chooses the language and the style of everything the kit explains, and can change them at any moment; the kit adds no rule of its own on the language or the sentence form of that text. It still explains the why before the what, and code and repository names are never translated. The reason: the language and style of what the kit explains come from the output style the user chooses (`my-language`), and the kit adds no language rule of its own.
+
+### Principles
+
+- The form rules are removed: "reasoning is in the user's language", "plain words" and "translated and summarised" leave `docs/principles.md`, `docs/question-format.md`, the skills, the commands and the templates; each line keeps its content part. An agent's report still reaches the user summarised, never forwarded as it is.
+- § Language is rewritten: working texts (skills, prompts for agents, plans and `.plans/` files, hand-off files, commit messages, drafts, the band's labels) stay English; text written for the user has no language or sentence-form rule from the kit, only the active output style's; vocabulary is never translated, and a term is defined in one line at first use.
+- Option labels for pros and cons stay required (content); their wording follows the active style.
+
+### Improvement loop (`improve`)
+
+- `note` takes `style:<name>` for a reply that broke an output style's rules (`style:ITE`, never `style:my-language:ITE`), and `mod` as before. `run` reads the style file, its cases in `evals/language/` and, for ITE, measures the quoted reply with the ITE checker; a fix to a style bumps the mod's version.
+
+### Evals
+
+- Language graders became content graders: `plan/skipped-item-caught` drops `language.md` and `chat-language.md` for an llm grader `summarised.md` (the report is summarised, not pasted); `improve/note-explains-why` drops `reasoning-in-italian.md` for `why-says-cost.md` (the note says what the problem cost: time, a reversed decision, rework), which fails on a cause-only line; `plan/free-answer-gets-an-answer`, `pr/budget-and-known-term` and `improve/note-logs-without-changing` drop the language from one criterion each.
+- New case `improve/note-targets-style`: a note about an ITE reply is logged as `style:ITE` (0/3 before, target `mod`; 3/3 after).
+- New `evals/language/ite-report` and `ste-report`: a report with steps, the style's body as `append_system_prompt`, graded by regexes for the style's form rules only (ITE: no gerund, no "viene" passive, no "effettu-", sentences of at most 25 words outside table rows, numbered steps; STE: no contraction, no weak modal, no semicolon or em-dash, a vertical list). Without the style 0/3 and 0/3; with it 3/3 and 3/3. They grade form only (D24): ITE's one idea per sentence puts reasons in sentences of their own, which a word regex cannot see, so the "why" check stays in the kit's own cases. `packs.test.sh` checks that each case's text equals its style's body, in `prompt.md` or in `case.yaml`.
+- New `scripts/evals-with-pack.sh <style>`: a git-ignored copy `evals-<style>/` of the suite with the style's body added to every case, run with `--eval-dir evals-<style>`; it approximates a session with that style.
+- Baseline before any kit edit (Claude Code 2.1.290, Default style): 62 cases, 53 passed in one run, the 9 failures rerun 3 times; one baseline failure (`plan/state-says-what-is-left`). The full suite with no style and with ITE's text, against this baseline, runs at the release gate.
+- Eval and measurement spend recorded so far: $64.62 ($51.50 for the baseline and its reruns, $1.63, $5.29 and $6.20 in the rounds after it).
+
+### Scripts
+
+- New `scripts/no-form-rules.test.sh` (with `scripts/no-form-rules.allow`, the lines that describe what the user types): no skill, doc, template, command or README line sets the language or the sentence form of text for the user.
+- `scripts/check.sh`, and so the pre-commit hook, also runs the mods' script tests (`mods/*/scripts/*.test.sh`); `check.test.sh` proves a failing mod test fails it.
+
+### Measurement
+
+Six prompts (a round report, a question with two options, a term explained, a short chat answer, a failing test, an agent's report summarised), each in an Italian and an English version, one run per prompt and arm, `claude -p --model claude-opus-5-5 --tools ""`, the style's body through `--append-system-prompt` (close to the mod, not the mod itself). off-IT and ITE use the Italian prompts, off-EN and STE the English ones. Tokens in count input, cache creation and cache read; the ITE findings come from `ite-check.py`; the English forms are should/may/might/would/could, ";", "—" and contractions.
+
+| Arm | Runs | Tokens in | Tokens out | Words | Time (s) | Cost ($) | ITE findings /100 words (hard+soft) | ITE sentence-length | English forms /100 words (count): modal · ; · — · contraction |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| off-IT | 6 | 24707 | 5202 | 1627 | 72.9 | 0.18 | 1.0 (9+8) | 3 | - |
+| ITE | 6 | 30391 | 8121 | 1367 | 95.2 | 0.24 | 0.0 (0+0) | 0 | - |
+| off-EN | 6 | 24424 | 4313 | 1809 | 66.5 | 0.17 | - | - | 0.6 (10) · 0.2 (3) · 0.0 (0) · 0.4 (7) |
+| STE | 6 | 30518 | 3497 | 1468 | 53.7 | 0.16 | - | - | 0 · 0 · 0 · 0 |
+
+- Each style's own size: ITE about 947 tokens, STE about 1,016 (the input of a styled run minus the off run on the same prompt).
+- ITE: 16% fewer words, but output tokens rose 56% and time 31%, likely reasoning. STE: 19% fewer words, output tokens and time each fell 19%.
+- ITE's 20- and 25-word limits: no sentence-length finding with ITE, 3 without it. The replies read as short sentences, sometimes repetitive ("Il sistema scrive le note di rilascio. Il sistema usa i titoli delle pull request."); one run each, so a later style version may revisit the limits.
+
+| Prompt | Arm | Tokens in | Tokens out | Words | Time (s) | ITE findings /100 words (hard+soft) | ITE sentence-length | English forms /100 words: modal · ; · — · contraction |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| report | off-IT | 4215 | 726 | 224 | 10.7 | 1.0 (2+0) | 1 | - |
+| report | ITE | 5162 | 1422 | 191 | 16.1 | 0.0 (0+0) | 0 | - |
+| report | off-EN | 4099 | 597 | 247 | 9.2 | - | - | 0.4 · 0.4 · 0.0 · 1.2 |
+| report | STE | 5113 | 437 | 193 | 6.3 | - | - | 0 · 0 · 0 · 0 |
+| question | off-IT | 4153 | 1284 | 386 | 16.2 | 2.3 (2+7) | 1 | - |
+| question | ITE | 5098 | 1818 | 300 | 18.0 | 0.0 (0+0) | 0 | - |
+| question | off-EN | 4076 | 932 | 466 | 12.0 | - | - | 0.2 · 0.2 · 0.0 · 0.0 |
+| question | STE | 5091 | 725 | 347 | 9.6 | - | - | 0 · 0 · 0 · 0 |
+| term | off-IT | 3994 | 1127 | 397 | 14.8 | 0.4 (0+1) | 0 | - |
+| term | ITE | 4942 | 1482 | 272 | 16.7 | 0.0 (0+0) | 0 | - |
+| term | off-EN | 3984 | 993 | 452 | 13.4 | - | - | 0.9 · 0.0 · 0.0 · 0.9 |
+| term | STE | 5001 | 734 | 353 | 12.4 | - | - | 0 · 0 · 0 · 0 |
+| short answer | off-IT | 3981 | 205 | 76 | 5.1 | 0.0 (0+0) | 0 | - |
+| short answer | ITE | 4933 | 223 | 76 | 5.9 | 0.0 (0+0) | 0 | - |
+| short answer | off-EN | 3969 | 202 | 78 | 4.9 | - | - | 0.0 · 1.3 · 0.0 · 0.0 |
+| short answer | STE | 4985 | 242 | 105 | 4.7 | - | - | 0 · 0 · 0 · 0 |
+| failing test | off-IT | 4099 | 1233 | 327 | 16.9 | 1.6 (5+0) | 1 | - |
+| failing test | ITE | 5048 | 1560 | 279 | 19.7 | 0.0 (0+0) | 0 | - |
+| failing test | off-EN | 4073 | 1069 | 332 | 18.8 | - | - | 0.6 · 0.0 · 0.0 · 0.0 |
+| failing test | STE | 5090 | 825 | 261 | 11.8 | - | - | 0 · 0 · 0 · 0 |
+| agent summary | off-IT | 4265 | 627 | 217 | 9.2 | 0.0 (0+0) | 0 | - |
+| agent summary | ITE | 5208 | 1616 | 249 | 18.8 | 0.0 (0+0) | 0 | - |
+| agent summary | off-EN | 4223 | 520 | 234 | 8.2 | - | - | 0.9 · 0.0 · 0.0 · 0.0 |
+| agent summary | STE | 5238 | 534 | 209 | 8.9 | - | - | 0 · 0 · 0 · 0 |
+
+### Output languages: `my-language` 0.1.0
+
+- Two output styles in `output-styles/`, each with `keep-coding-instructions: true` and the same scope sentence: the rules cover every text written for the person to read (chat, reports, questions, notifications, chapter titles, study pages, signals, the reasoning in log notes); code, commits, plans, prompts for agents and drafts for other people keep the repository's rules. They hold form rules only.
+- ITE, simplified technical Italian: one idea per sentence; at most 20 words in an instruction, 25 in a description; active voice; the `tu` imperative; no gerund, no "viene/vengono" + participle, no passive "si", no support verbs, at most two chained "di", no construction that needs the congiuntivo, no idioms; examples in Italian.
+- STE, simplified technical English in the spirit of ASD-STE100, adapted from AminBlg/SimpleEnglish (MIT, credited with its source commit in `THIRD-PARTY.md`): imperative procedures, at most 20 or 25 words a sentence, no contractions, no should/may/would/might/could, no semicolons or em-dashes, a strict mode for compliance. It says it is not the official standard and ASD did not certify it; ASD-STE100 is a registered trademark of ASD.
+- `/language` lists the styles and `off`, marking the active one; `/language <name>` writes `outputStyle` (`my-language:<name>`) into the folder's `.claude/settings.local.json`, keeping every other key, and the style applies from the next message (Claude Code's settings watcher picks it up about a second later); `off` writes `default`. An unknown name, or a settings file that is not valid JSON, writes nothing and says why. The command answers without a model turn, and the mod hooks no prompt event (only `session.start` and `command.run`), so the organization's built-in guard does not block it. The choice survives `/clear` and `/compact` (checked live in the desktop app).
+- `scripts/ite-check.py` measures a reply against ITE's rules: one finding per line and the findings per 100 words; it never blocks. `scripts/packs.test.sh` checks every style's front matter, scope sentence and notice, that no style holds a content rule, and that the eval cases carry each style's text exactly; `scripts/ite-check.test.sh` fires each checker rule on a wrong sample and keeps it silent on a clean one. `claude plugin test mods/my-language`: 22 tests.
+- Leave Claude Code's own `language` setting at its default: once set, it adds a second language rule beside the style.
 
 ## [5.8.0] - 2026-10-30
 

@@ -25,6 +25,12 @@ execution:
     /my:<skill> ...
 ```
 
+## Output style cases
+
+`evals/language/<style>-<what>/` holds the cases of an output style of `mods/my-language` (`ite-report`, `ste-report`): the folder name starts with the style's name in lowercase, and `append_system_prompt` (`prompt.md` front matter, or `execution.append_system_prompt` in `case.yaml`) equals the style's body exactly, which `mods/my-language/scripts/packs.test.sh` checks. Their graders check form only (regexes for the style's rules); the kit's content rules are graded by the kit's own cases.
+
+`scripts/evals-with-pack.sh <style>` writes `evals-<style>/` (git-ignored): a copy of the suite with the style's body added to every case as `append_system_prompt`, without `evals/language/`, `results/` and `runs/`. Run it with `--eval-dir evals-<style>`. It approximates a session with that style; the mod itself attaches the style differently.
+
 ## Running
 
 Always local-only, one run per case (2–3 for a noisy grader: principles § Verify, don't assume, "Stop and report"), with no spend cap: each release reports what it spent. `--ablation none` skips the no-plugin baseline, which doubles the cost and rarely helps here.
