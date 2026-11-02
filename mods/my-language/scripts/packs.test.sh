@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Checks the my-language mod's packs and manifest: every output style's front matter (I5), and that the
-# mod validates and hooks only session.start and command.run (I4).
+# Checks the my-language mod's packs and manifest: every output style's front matter and scope (I5), no
+# content rule in a style (I6), STE's notice and THIRD-PARTY.md (I7), and that the mod validates and hooks
+# only session.start and command.run (I4).
 # Usage: bash mods/my-language/scripts/packs.test.sh [mod folder]  (default: this script's mod)
 set -uo pipefail
 
@@ -16,7 +17,8 @@ field() { front "$1" | sed -n "s/^$2:[[:space:]]*//p" | head -1 | sed -e 's/[[:s
 # I5: every style says, in this exact sentence, which texts its rules cover.
 scope="These rules apply to every text written for the person to read: the chat, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes; code, commits, plans and \`.plans/\` files, prompts for agents, and drafts for other people follow the repository's rules and their own language."
 # I6: a style holds form rules only; these phrases belong to the kit's content rules (D7, D15).
-content_phrases=("why before" "before the what" "concrete case" "translate" "untranslated" "as they are" "question format" "Pro/Contro")
+content_phrases=("why before" "before the what" "concrete case" "translate" "untranslated" "as they are" "question format" "Pro/Contro"
+  "first sentence gives the answer" "answer first" "define a concept term")
 
 styles=("$mod"/output-styles/*.md)
 [[ -e "${styles[0]}" ]] || bad "no style in $mod/output-styles"
@@ -34,6 +36,20 @@ for f in "${styles[@]}"; do
     grep -qiF -- "$p" "$f" && bad "$stem.md: holds a content-rule phrase (I6): \"$p\""
   done
 done
+
+# I7: STE says it is not the official standard, and THIRD-PARTY.md carries AminBlg's source and MIT notice.
+grep -qF "not the official standard" "$mod/output-styles/STE.md" 2>/dev/null \
+  || bad "STE.md: no \"not the official standard\" line (I7)"
+third="$mod/THIRD-PARTY.md"
+if [[ -f "$third" ]]; then
+  grep -qF "https://github.com/AminBlg/SimpleEnglish" "$third" || bad "THIRD-PARTY.md: no source URL (I7)"
+  grep -qE '(^|[^0-9a-f])[0-9a-f]{40}([^0-9a-f]|$)' "$third" || bad "THIRD-PARTY.md: no 40-hex source commit (I7)"
+  grep -qF "MIT License" "$third" || bad "THIRD-PARTY.md: no \"MIT License\" (I7)"
+  grep -qF "Copyright (c)" "$third" || bad "THIRD-PARTY.md: no copyright line (I7)"
+  grep -qF "ASD-STE100 is a registered trademark of ASD" "$third" || bad "THIRD-PARTY.md: no trademark line (I7)"
+else
+  bad "no THIRD-PARTY.md in $mod (I7)"
+fi
 
 # I4: the mod validates, and its hooks are only session.start and command.run (no prompt event).
 out="$(claude plugin validate "$mod" --strict 2>&1)" || bad "claude plugin validate --strict failed:"$'\n'"$out"
