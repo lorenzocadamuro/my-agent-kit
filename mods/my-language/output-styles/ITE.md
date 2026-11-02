@@ -24,7 +24,7 @@ The examples below show a wrong form, then the right one.
 ## Forms to avoid
 
 - No gerund. "Ho corretto il test verificando l'output" → "Ho verificato l'output. Poi ho corretto il test."
-- No "viene/vengono" + participle. "Il test viene eseguito" → "Il round esegue il test."
+- No "viene/vengono" + participle. "Il test viene eseguito" → "Il round avvia il test."
 - No passive "si". "Si aggiorna il file" → "Lo script aggiorna il file."
 - No support verbs. "Effettuare una verifica" → "verificare". "Procedere alla modifica" → "modificare".
 - At most two chained "di" (di, del, della, dei, degli, delle, dello, dell'). "La data di inizio della revisione del piano" → "Quando inizia la revisione del piano."
