@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Tests evals-with-pack.sh: on a scratch kit, every case of the copy carries the style's body as
-# append_system_prompt (prompt.md front matter, case.yaml execution), appended to one that exists, with every
-# other key kept; evals/language/ and results/ are not copied; the originals stay as they were; an unknown
-# style writes nothing.
+# append_system_prompt (prompt.md front matter, case.yaml execution), appended to one that exists (a block, a
+# double-quoted value with YAML escapes, an empty block), with every other key kept; evals/language/, results/
+# and runs/ are not copied; the originals stay as they were; an unknown style writes nothing.
 # Usage: bash scripts/evals-with-pack.test.sh
 set -uo pipefail
 
@@ -14,7 +14,8 @@ bad() { echo "FAIL: $*" >&2; fail=1; }
 
 kit="$tmp/kit"
 mkdir -p "$kit/mods/my-language/output-styles" "$kit/evals/one/plain" "$kit/evals/one/appended" \
-  "$kit/evals/two/yaml" "$kit/evals/language/x-report" "$kit/evals/results/old"
+  "$kit/evals/one/quoted" "$kit/evals/one/empty" "$kit/evals/two/yaml" "$kit/evals/language/x-report" \
+  "$kit/evals/results/old" "$kit/evals/one/plain/runs/old"
 cat > "$kit/mods/my-language/output-styles/XS.md" <<'EOF'
 ---
 name: XS
@@ -46,6 +47,23 @@ allowed_tools: []
 
 Do the other thing.
 EOF
+cat > "$kit/evals/one/quoted/prompt.md" <<'EOF'
+---
+append_system_prompt: "Say \"hi\"\tthen \\ \x41\u00e8\U0001F600 end."
+max_turns: 2
+---
+
+Quoted.
+EOF
+cat > "$kit/evals/one/empty/prompt.md" <<'EOF'
+---
+append_system_prompt: |
+
+max_turns: 2
+---
+
+Empty.
+EOF
 cat > "$kit/evals/two/yaml/case.yaml" <<'EOF'
 schema_version: "1"
 name: yaml
@@ -61,6 +79,7 @@ mkdir -p "$kit/evals/one/plain/graders"
 echo "grader" > "$kit/evals/one/plain/graders/g.md"
 echo "carries its own style" > "$kit/evals/language/x-report/prompt.md"
 echo "old run" > "$kit/evals/results/old/report.html"
+echo "old run" > "$kit/evals/one/plain/runs/old/trace.json"
 before="$(cd "$kit" && find evals -type f -exec cksum {} + | sort)"
 
 out="$(bash "$root/scripts/evals-with-pack.sh" XS "$kit" 2>&1)" || bad "the script failed: $out"
@@ -100,6 +119,22 @@ allowed_tools: []
 
 Do the other thing.
 EOF
+# printf: the expected value holds a tab and non-ASCII characters (A, e grave, an emoji).
+printf -- '---\nappend_system_prompt: |\n  Say "hi"\tthen \\ A\303\250\360\237\230\200 end.\n\n  # XS: a test style\n\n  - Rule one: "quoted" and `code`.\n\n  Last line.\nmax_turns: 2\n---\n\nQuoted.\n' \
+  | expect one/quoted/prompt.md
+expect one/empty/prompt.md <<'EOF'
+---
+append_system_prompt: |
+  # XS: a test style
+
+  - Rule one: "quoted" and `code`.
+
+  Last line.
+max_turns: 2
+---
+
+Empty.
+EOF
 expect two/yaml/case.yaml <<'EOF'
 schema_version: "1"
 name: yaml
@@ -120,6 +155,7 @@ EOF
 [[ "$(cat "$copy/one/plain/graders/g.md" 2>/dev/null)" == "grader" ]] || bad "graders are not copied as they are"
 [[ -e "$copy/language" ]] && bad "evals/language/ is copied"
 [[ -e "$copy/results" ]] && bad "results/ is copied"
+[[ -e "$copy/one/plain/runs" ]] && bad "runs/ is copied"
 [[ "$(cd "$kit" && find evals -type f -exec cksum {} + | sort)" == "$before" ]] || bad "the originals changed"
 
 # An unknown style writes nothing.

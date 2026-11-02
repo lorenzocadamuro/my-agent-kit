@@ -43,4 +43,4 @@ append_system_prompt: |
 
 Ieri il team ha cambiato il processo di rilascio del servizio degli ordini. Prima una persona avviava il rilascio a mano ogni venerdì, e spesso dimenticava un passaggio. Ora il rilascio parte da solo quando una pull request viene unita al ramo principale. I test vengono eseguiti prima del rilascio; se un test fallisce, il rilascio viene fermato e il team riceve un avviso in chat. Le note di rilascio vengono scritte in automatico a partire dai titoli delle pull request. Io lavoro su un ramo aperto da due settimane.
 
-Spiegami in un breve resoconto cosa è stato cambiato nel processo di rilascio, come viene gestito ora e cosa devo fare io, passo per passo. Non leggere file: hai già tutto quello che serve.
+Spiegami in un breve resoconto cosa è stato cambiato nel processo di rilascio, come viene gestito ora e cosa devo fare io, e perché, passo per passo. Non leggere file: hai già tutto quello che serve.

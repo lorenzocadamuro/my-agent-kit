@@ -62,17 +62,24 @@ fi
 # The body of a style: the text after its front matter, leading and trailing blank lines removed.
 body() { awk 'NR == 1 && $0 == "---" { fm = 1; next } fm && $0 == "---" { fm = 0; next } fm { next }
   !seen && $0 ~ /^[[:space:]]*$/ { next } { seen = 1; print }' "$1"; }
-# append_system_prompt of a prompt.md front matter, a `|` block scalar, dedented.
-appended() { awk 'NR == 1 { if ($0 != "---") exit; next } $0 == "---" { exit }
-  inblk && $0 ~ /^[^ ]/ { inblk = 0 }
-  inblk { if (ind == "" && $0 ~ /[^ ]/) { match($0, /^ */); ind = RLENGTH }; print (ind == "" ? "" : substr($0, ind + 1)); next }
-  /^append_system_prompt:[ ]*\|[-+]?[ ]*$/ { inblk = 1 }' "$1"; }
+# append_system_prompt as a `|` block scalar, dedented: in a prompt.md front matter, or under a case.yaml's
+# execution key. Any other form prints nothing, so the comparison fails.
+appended() { awk -v yaml="$([[ "$1" == *.yaml ]] && echo 1)" '
+  !yaml && NR == 1 { if ($0 != "---") exit; next }
+  !yaml && $0 == "---" { exit }
+  { match($0, /^ */); lead = RLENGTH }
+  inblk && $0 ~ /[^ ]/ && lead <= keyind { inblk = 0 }
+  inblk { if (ind == "" && $0 ~ /[^ ]/) ind = lead; print (ind == "" ? "" : substr($0, ind + 1)); next }
+  yaml && $0 ~ /^[^ #]/ { top = $0 }
+  /^ *append_system_prompt:[ ]*\|[-+]?[ ]*$/ && (yaml ? (lead > 0 && top ~ /^execution:[ ]*$/) : lead == 0) {
+    inblk = 1; keyind = lead }' "$1"; }
 kit_evals="$mod/../../evals"
 if [[ -d "$kit_evals" ]]; then
-  cases=("$kit_evals"/language/*/prompt.md)
-  [[ -e "${cases[0]}" ]] || bad "no eval case in evals/language/ (I8)"
+  shopt -s nullglob
+  cases=("$kit_evals"/language/*/prompt.md "$kit_evals"/language/*/case.yaml)
+  shopt -u nullglob
+  [[ ${#cases[@]} -gt 0 ]] || bad "no eval case in evals/language/ (I8)"
   for c in "${cases[@]}"; do
-    [[ -e "$c" ]] || continue
     name="$(basename "$(dirname "$c")")"
     style="$(tr '[:lower:]' '[:upper:]' <<<"${name%%-*}")"
     if [[ ! -f "$mod/output-styles/$style.md" ]]; then

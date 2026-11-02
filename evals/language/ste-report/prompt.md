@@ -53,4 +53,4 @@ append_system_prompt: |
 
 Yesterday the team changed the release process of the orders service. Before, a person started the release by hand every Friday, and often forgot a step. Now the release starts on its own when a pull request is merged into the main branch. The tests run before the release; if a test fails, the release stops and the team gets an alert in chat. The release notes are written automatically from the pull request titles. I have been working on a branch for two weeks.
 
-Explain to me in a short report what has changed in the release process, how it has been handled since then, and what I should do now, step by step. Do not read any files: you already have everything you need.
+Explain to me in a short report what has changed in the release process, how it has been handled since then, and what I should do now, and why, step by step. Do not read any files: you already have everything you need.

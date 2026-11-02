@@ -2,7 +2,7 @@
 # Builds evals-<style>/ at the kit's root: a git-ignored copy of the eval suite with the style's body added to
 # every case as append_system_prompt (prompt.md front matter, case.yaml execution), after any text the case
 # already has there. It approximates a session with that output style (plan D14). evals/language/ carries its
-# own style and results/ hold old runs: neither is copied.
+# own style, and results/ and runs/ hold old runs: none of them is copied.
 # Usage: scripts/evals-with-pack.sh <style> [kit folder]; then run the suite with --eval-dir evals-<style>.
 set -euo pipefail
 
@@ -14,13 +14,32 @@ out="$root/evals-$style"
 rm -rf "$out"
 cp -R "$root/evals" "$out"
 rm -rf "$out/language"
-find "$out" -type d -name results -prune -exec rm -rf {} +
+find "$out" -type d \( -name results -o -name runs \) -prune -exec rm -rf {} +
 
 python3 - "$file" "$out" <<'PY'
-import json, pathlib, sys
+import pathlib, re, sys
 
 def indent_of(line):
     return len(line) - len(line.lstrip(" "))
+
+ESCAPES = {"0": "\0", "a": "\a", "b": "\b", "t": "\t", "\t": "\t", "n": "\n", "v": "\v", "f": "\f", "r": "\r",
+           "e": "\x1b", " ": " ", '"': '"', "/": "/", "\\": "\\", "N": "\x85", "_": "\xa0", "L": " ",
+           "P": " "}
+HEX = {"x": 2, "u": 4, "U": 8}
+
+def double_quoted(value):
+    """A one-line YAML double-quoted scalar, with YAML's escapes (PyYAML is not in the standard library)."""
+    m = re.fullmatch(r'"((?:[^"\\]|\\.)*)"', value)
+    if not m:
+        raise SystemExit(f"evals-with-pack: append_system_prompt: unsupported value {value!r}")
+    def escape(e):
+        code = e.group(1)
+        if code[0] in HEX:
+            return chr(int(code[1:], 16))
+        if code in ESCAPES:
+            return ESCAPES[code]
+        raise SystemExit(f"evals-with-pack: append_system_prompt: unknown escape \\{code} in {value!r}")
+    return re.sub(r"\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8}|.)", escape, m.group(1))
 
 def add(lines, start, stop, at, indent, text):
     """Sets append_system_prompt among the keys at `indent` in lines[start:stop], after any value it has."""
@@ -31,15 +50,15 @@ def add(lines, start, stop, at, indent, text):
             if value in ("|", "|-", "|+"):
                 while j < stop and (not lines[j].strip() or indent_of(lines[j]) > indent):
                     j += 1
-                deep = min(indent_of(l) for l in lines[i + 1:j] if l.strip())
+                deep = min((indent_of(l) for l in lines[i + 1:j] if l.strip()), default=0)
                 old = "\n".join(l[deep:] for l in lines[i + 1:j])
             elif value[:1] in ('"', "'"):
-                old = json.loads(value) if value[0] == '"' else value[1:-1].replace("''", "'")
+                old = double_quoted(value) if value[0] == '"' else value[1:-1].replace("''", "'")
             elif value and value[0] not in ">&*!":
                 old = value
             else:
                 raise SystemExit(f"evals-with-pack: append_system_prompt: unsupported value {value!r}")
-            text, at = old.strip("\n") + "\n\n" + text, i
+            text, at = (old.strip("\n") + "\n\n" + text if old.strip() else text), i
             del lines[i:j]
             break
     pad = " " * (indent + 2)
