@@ -15,21 +15,35 @@ DI_WINDOW = 8
 
 ABBREVIATIONS = {"es.", "ecc.", "cfr.", "pag.", "art."}
 GERUND = re.compile(
-    r"^\w+(ando|endo)(lo|la|li|le|ne|ci|si|mi|ti|vi|gli|glielo|gliela|glieli|gliele|gliene)?$", re.IGNORECASE
+    r"^\w+(ando|endo)((se|me|te|ce|ve)(ne|lo|la|li|le)"
+    r"|lo|la|li|le|ne|ci|si|mi|ti|vi|gli|glielo|gliela|glieli|gliele|gliene)?$",
+    re.IGNORECASE,
 )
 GERUND_STOP = {
     "quando", "comando", "mando", "rimando", "prendo", "rendo", "attendo", "intendo", "dipendo",
-    "vendo", "scendo", "stupendo", "tremendo", "orrendo", "dividendo", "reverendo", "nefando",
+    "vendo", "scendo", "stupendo", "tremendo", "orrendo", "dividendo", "reverendo", "nefando", "tendone",
 }
 PASSIVE_AUX = {"viene", "vengono", "veniva", "venivano", "verrà", "verranno", "venne", "vennero"}
 PASSIVE_ADVERBS = {"subito", "già", "sempre", "poi", "anche"}
-PARTICIPLE = re.compile(r"(at|it|ut)[oaie]$")
+# Regular endings, and irregular participles as word endings, so prefixed forms count (riscritto, tradotto).
+PARTICIPLE = re.compile(
+    r"(at|it|ut|scritt|lett|apert|chius|mess|fatt|pres|dett|scelt|risolt|inclus|esclus|corrett|rimoss"
+    r"|moss|spent|acces|vist|rott|tolt|aggiunt|richiest|decis|post|dott)[oaie]$"
+)
 DI_WORDS = {"di", "del", "della", "dei", "degli", "delle", "dello"}
 # Nouns that may follow "si" without making it a passive "si".
 SI_NOUN_STOP = {
     "pagina", "riga", "volta", "nota", "regola", "chiave", "classe", "fase", "funzione",
     "versione", "sezione", "tabella", "cartella",
 }
+# "esegu..." and "proced..." are support verbs only before one of these links and an action noun.
+SUPPORT_LINKS = {"una", "un", "il", "la", "lo", "i", "gli", "le", "a", "al", "alla", "alle", "ai", "agli"}
+ACTION_NOUNS = {
+    "verifica", "controllo", "analisi", "modifica", "aggiornamento", "correzione", "revisione", "prova",
+    "valutazione", "installazione", "configurazione", "cancellazione", "rimozione", "creazione", "pulizia",
+}
+# An elided link glued to its noun: "un'analisi", "l’installazione".
+ELIDED = re.compile(r"^(un|l|all)['’](\w+)$")
 HARD = {"sentence-length", "gerund", "passive", "support-verb", "di-chain"}
 
 CLOSERS = "\"'”’»)]*_"
@@ -122,9 +136,12 @@ def check_sentence(sent, find):
                 find(n, "passive", " ".join(t for _, t, _ in words[i:i + (3 if adverb else 2)]))
         if w.startswith("effettu"):
             find(n, "support-verb", tok)
-        elif (w.startswith("esegu") and nxt in {"una", "un", "il", "la"}) \
-                or (w.startswith("proced") and nxt in {"a", "al", "alla", "alle", "ai", "agli"}) \
-                or (w.startswith("provved") and nxt in {"a", "al", "alla"}):
+        elif w.startswith(("esegu", "proced")):
+            after = words[i + 2][2] if i + 2 < len(words) else ""
+            elided = ELIDED.match(nxt)
+            if (nxt in SUPPORT_LINKS and after in ACTION_NOUNS) or (elided and elided.group(2) in ACTION_NOUNS):
+                find(n, "support-verb", " ".join(t for _, t, _ in words[i:i + (2 if elided else 3)]))
+        elif w.startswith("provved") and nxt in {"a", "al", "alla"}:
             find(n, "support-verb", f"{tok} {words[i + 1][1]}")
         if w == "si" and nxt and re.search(r"(a|e|ano|ono)$", nxt) and nxt not in SI_NOUN_STOP:
             find(n, "passive-si", f"{tok} {words[i + 1][1]}")

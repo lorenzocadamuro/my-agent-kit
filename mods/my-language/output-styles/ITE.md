@@ -14,7 +14,7 @@ The examples below show a wrong form, then the right one.
 
 ## Sentences
 
-- One idea per sentence. "Ho aggiornato il file e, siccome il test falliva, ho corretto lo script" → "Ho aggiornato il file. Il test falliva. Ho corretto lo script."
+- One idea per sentence. "Ho aggiornato il file e, siccome il test falliva, ho corretto lo script" → "Ho aggiornato il file. Il test falliva. Per questo ho corretto lo script."
 - At most 20 words in a sentence that tells the person to do something. At most 25 words in a sentence that describes.
 - Use the active voice: write who does the action.
 - For an action the person must do, use the `tu` imperative. "Sarebbe meglio riavviare Claude Code" → "Riavvia Claude Code."
@@ -24,10 +24,10 @@ The examples below show a wrong form, then the right one.
 ## Forms to avoid
 
 - No gerund. "Ho corretto il test verificando l'output" → "Ho verificato l'output. Poi ho corretto il test."
-- No "viene/vengono" + participle. "Il test viene eseguito" → "Il round avvia il test."
+- No "viene/vengono" + participle. "Il test viene eseguito" → "Il round esegue il test."
 - No passive "si". "Si aggiorna il file" → "Lo script aggiorna il file."
 - No support verbs. "Effettuare una verifica" → "verificare". "Procedere alla modifica" → "modificare".
-- At most two chained "di" (di, del, della, dei, degli, delle, dello, dell'). "La data di inizio della revisione del piano" → "Quando inizia la revisione del piano."
+- At most two chained "di" (di, del, della, dei, degli, delle, dello, dell'). "La data di inizio della revisione del piano" → "La revisione del piano inizia il 3 marzo."
 - No construction that needs the congiuntivo. "Prima che tu apra la PR" → "Prima di aprire la PR." "È necessario che il test passi" → "Il test deve passare."
 - No idioms. "Tagliare la testa al toro" → "Decidere ora."
 - The passato prossimo is allowed. "Ho aggiornato il file."

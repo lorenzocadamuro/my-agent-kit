@@ -56,15 +56,28 @@ found gerund "\"verificandolo\" found" "Apro il file verificandolo."
 clean gerund "\"prendo\" not a gerund" "Prendo il file."
 clean gerund "\"quando\" not a gerund" "Apro il file quando serve."
 clean gerund "\"comando\" not a gerund" "Il comando apre il file."
+clean gerund "\"tendone\" not a gerund" "Apri il tendone."
+found gerund "\"rendendosene\" (double clitic) found" "Ha corretto il file rendendosene conto."
 
 # passive: viene/vengono/verrà... + participle, at most one adverb between.
 found passive "\"viene subito eseguito\" found" "Il test viene subito eseguito."
 clean passive "\"viene subito\" not passive" "Il test viene subito."
+clean passive "\"Il round viene subito.\" not passive" "Il round viene subito."
 found passive "\"verrà verificato\" found" "Il file verrà verificato."
+found passive "irregular \"viene scritto\" found" "Il file viene scritto."
+found passive "irregular \"viene letto subito\" found" "Il file viene letto subito."
+found passive "\"viene tradotta\" (prefixed -dotto) found" "La risposta viene tradotta."
 
-# support-verb.
+# support-verb: "effettu..." always; "esegu..." and "proced..." only before an article or preposition and an action noun.
 found support-verb "\"effettua\" found" "Lo script effettua il controllo."
-found support-verb "\"procede alla\" found" "Il round procede alla modifica."
+found support-verb "\"procede alla modifica\" found" "Il round procede alla modifica."
+found support-verb "\"esegue una verifica\" found" "Il round esegue una verifica."
+found support-verb "\"esegue un'analisi\" (straight apostrophe) found" "Il round esegue un'analisi."
+found support-verb "\"esegue un’analisi\" (typographic apostrophe) found" "Il round esegue un’analisi."
+clean support-verb "\"Esegui il comando\" is a full verb" "Esegui il comando."
+clean support-verb "\"Ho eseguito il test\" is a full verb" "Ho eseguito il test."
+clean support-verb "\"Esegui il test di regressione\" is a full verb" "Esegui il test di regressione."
+clean support-verb "\"procede al passo successivo\" is a full verb" "Il round procede al passo successivo."
 
 # passive-si (soft).
 found passive-si "\"si\" + verb found" "Si aggiorna il file."
@@ -74,6 +87,17 @@ clean passive-si "\"sì\" not taken for \"si\"" "Sì, aggiorna il file."
 none "a fenced block holding a long sentence" '```'$'\n'"$(w 30)."$'\n''```'
 none "inline code holding a long sentence" "Esegui \`$(w 30)\` ora."
 none "a table row and a heading holding a long sentence" "| $(w 30) |"$'\n\n'"# $(w 30)"
+
+# The right-hand examples of ITE.md (the first quoted string after each "→") give no hard finding.
+ite="$(dirname "$0")/../output-styles/ITE.md"
+grep -o '→ "[^"]*"' "$ite" | sed 's/^→ "//; s/"$//' > "$tmp/examples.md"
+count="$(wc -l < "$tmp/examples.md" | tr -d ' ')"
+out="$(python3 "$checker" "$tmp/examples.md" 2>&1)"
+if [[ "$count" -gt 0 ]] && grep -qE '^findings: 0 hard, ' <<<"$out"; then
+  echo "ok: the $count right-hand examples of ITE.md give no hard finding"
+else
+  echo "FAIL: the right-hand examples of ITE.md ($count)"$'\n'"$out" >&2; fail=1
+fi
 
 # Stdin, the exit status, the last line.
 out="$(printf '%s.\n' "$(w 26)" | python3 "$checker" 2>&1)"
