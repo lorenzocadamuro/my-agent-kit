@@ -92,6 +92,7 @@ async function settingsPath($: EngineInterface): Promise<string> {
 }
 
 const names = (styles: Style[]): string[] => [...styles.map(s => s.name), OFF]
+const hintOf = (styles: Style[]): string => `[${names(styles).join(' | ')}]`
 
 // The style a name means: a style's short or full name, `off` or `default`, in any case.
 function resolve(styles: Style[], given: string): { label: string; value: string } | undefined {
@@ -109,10 +110,12 @@ async function list($: EngineInterface, styles: Style[]): Promise<string> {
   let active: string
   if ('error' in loaded) active = `unknown (${loaded.error})`
   else if (value === undefined) active = 'user default'
-  else active = marked ?? String(value)
+  // A value this mod did not write (a bare "STE", another plugin's style): Claude Code may not resolve it.
+  else active = marked ?? `${String(value)} (not a my-language style)`
   const rows = [...styles.map(s => ({ name: s.name, description: s.description })), { name: OFF, description: 'no language rule' }]
   const lines = rows.map(r => `${r.name === marked ? '*' : ' '} ${r.name} — ${r.description}`)
-  return [...lines, '', `active: ${active}`].join('\n')
+  // Claude Code prefixes the output with "my-language: ", so the list starts on the next line.
+  return ['', ...lines, '', `active: ${active}`].join('\n')
 }
 
 async function switchTo($: EngineInterface, styles: Style[], given: string): Promise<{ text: string; exitCode?: number }> {
@@ -129,22 +132,30 @@ async function switchTo($: EngineInterface, styles: Style[], given: string): Pro
   return { text: `Language: ${target.label}, from your next message.` }
 }
 
+// Declares `/language` with the styles as its argument hint; registering the name again replaces it.
+async function registerCommand($: EngineInterface, styles: Style[]): Promise<string> {
+  const argumentHint = hintOf(styles)
+  await $.command.register({ name: 'language', description: "Choose the language and style of Claude's replies", argumentHint })
+  return argumentHint
+}
+
 export const register: Register = on => {
   // Read at session start; loaded again on first use when empty (a hot reload or a missed start).
   let styles: Style[] = []
+  // The argument hint last registered.
+  let hint: string | undefined
 
   on('session.start', async ($, e, next) => {
     styles = await loadStyles($)
-    await $.command.register({
-      name: 'language',
-      description: "Choose the language and style of Claude's replies",
-      argumentHint: `[${names(styles).join(' | ')}]`,
-    })
+    hint = await registerCommand($, styles)
     return next(e)
   })
 
   on('command.run', { command: 'language' }, async ($, e) => {
-    if (styles.length === 0) styles = await loadStyles($)
+    if (styles.length === 0) {
+      styles = await loadStyles($)
+      if (hintOf(styles) !== hint) hint = await registerCommand($, styles)
+    }
     const given = String(e.args ?? '').trim()
     if (!given) return { text: await list($, styles) }
     return switchTo($, styles, given)

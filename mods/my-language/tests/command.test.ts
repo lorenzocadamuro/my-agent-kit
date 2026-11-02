@@ -111,6 +111,20 @@ test('the hint lists the styles found', async ($, on) => {
   expect(language?.argumentHint).toBe('[FRA | ITE | STE | off]')
 })
 
+test('the hint follows the styles loaded again on first use', async ($, on) => {
+  const FRA: Style = { file: 'FRA.md', name: 'FRA', description: 'Simplified technical French' }
+  // The folder is empty at session start, then gains two styles, as after a hot reload.
+  const folder: Style[] = []
+  const seen = world(on, { styles: folder })
+  await start($)
+  expect(seen.registered.map(r => r.argumentHint)).toEqual(['[off]'])
+  folder.push(STE, FRA)
+  await language($)
+  expect(seen.registered.map(r => r.argumentHint)).toEqual(['[off]', '[FRA | STE | off]'])
+  await language($)
+  expect(seen.registered.length).toBe(2)
+})
+
 // Switching (I1, I2)
 
 test('a switch keeps every other key', async ($, on) => {
@@ -207,7 +221,20 @@ test('the list shows another style unmarked, by its name', async ($, on) => {
   world(on, { settings: '{"outputStyle":"Explanatory"}' })
   const { text } = await language($)
   expect(text.split('\n').filter(l => l.startsWith('*')).length).toBe(0)
-  expect(text).toContain('active: Explanatory')
+  expect(text).toContain('active: Explanatory (not a my-language style)')
+})
+
+test('a bare style name in the file is not a my-language style', async ($, on) => {
+  world(on, { settings: '{"outputStyle":"STE"}' })
+  const { text } = await language($)
+  expect(text.split('\n').filter(l => l.startsWith('*')).length).toBe(0)
+  expect(text).toContain('active: STE (not a my-language style)')
+})
+
+test('the list starts on its own line, after the prefix Claude Code prints', async ($, on) => {
+  world(on, { settings: '{"outputStyle":"my-language:STE"}' })
+  const { text } = await language($)
+  expect(text.startsWith('\n  ITE — Simplified technical Italian\n')).toBe(true)
 })
 
 test('the list says user default when the folder sets no style', async ($, on) => {
