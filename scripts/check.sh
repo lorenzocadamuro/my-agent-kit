@@ -24,12 +24,14 @@ else
   exit 1
 fi
 
-# The scripts' own tests (check.test.sh tests this file, so it runs apart). Inside a git hook, git
-# exports GIT_DIR and GIT_INDEX_FILE: a test's own repositories would then write to this one.
-for t in "$root"/scripts/*.test.sh; do
-  [[ "$(basename "$t")" == check.test.sh ]] && continue
+# The scripts' own tests and the mods' script tests (check.test.sh tests this file, so it runs apart).
+# Inside a git hook, git exports GIT_DIR and GIT_INDEX_FILE: a test's own repositories would then
+# write to this one.
+shopt -s nullglob
+for t in "$root"/scripts/*.test.sh "$root"/mods/*/scripts/*.test.sh; do
+  [[ "$t" == "$root/scripts/check.test.sh" ]] && continue
   env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE -u GIT_PREFIX -u GIT_COMMON_DIR -u GIT_OBJECT_DIRECTORY \
-    -u GIT_ALTERNATE_OBJECT_DIRECTORIES bash "$t" > /dev/null || { echo "check.sh: $(basename "$t") failed" >&2; exit 1; }
+    -u GIT_ALTERNATE_OBJECT_DIRECTORIES bash "$t" > /dev/null || { echo "check.sh: ${t#"$root"/} failed" >&2; exit 1; }
 done
 
 echo "check.sh: OK"
