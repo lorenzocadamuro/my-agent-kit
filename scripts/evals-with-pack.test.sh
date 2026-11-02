@@ -2,7 +2,8 @@
 # Tests evals-with-pack.sh: on a scratch kit, every case of the copy carries the style's body as
 # append_system_prompt (prompt.md front matter, case.yaml execution), appended to one that exists (a block, a
 # double-quoted value with YAML escapes, an empty block), with every other key kept; evals/language/, results/
-# and runs/ are not copied; the originals stay as they were; an unknown style writes nothing.
+# and runs/ are not copied; the originals stay as they were; an unknown style writes nothing; a short hex escape
+# fails with the script's own message.
 # Usage: bash scripts/evals-with-pack.test.sh
 set -uo pipefail
 
@@ -161,6 +162,21 @@ EOF
 # An unknown style writes nothing.
 bash "$root/scripts/evals-with-pack.sh" NOPE "$kit" > /dev/null 2>&1 && bad "an unknown style exits 0"
 [[ -e "$kit/evals-NOPE" ]] && bad "an unknown style writes evals-NOPE/"
+
+# A short hex escape (\x, \u, \U with too few digits) is an unknown escape: the script's own message, no traceback.
+for esc in '\x4' '\u12' '\U0001F6'; do
+  short="$tmp/short"
+  rm -rf "$short"
+  mkdir -p "$short/mods/my-language/output-styles" "$short/evals/one/case"
+  cp "$kit/mods/my-language/output-styles/XS.md" "$short/mods/my-language/output-styles/"
+  printf -- '---\nappend_system_prompt: "a %s b"\n---\n\nShort.\n' "$esc" > "$short/evals/one/case/prompt.md"
+  if err="$(bash "$root/scripts/evals-with-pack.sh" XS "$short" 2>&1)"; then
+    bad "a short escape $esc exits 0"
+  else
+    [[ "$err" == *"evals-with-pack: append_system_prompt: unknown escape"* ]] || bad "a short escape $esc: no unknown-escape message: $err"
+    [[ "$err" == *Traceback* ]] && bad "a short escape $esc: Python traceback: $err"
+  fi
+done
 
 [[ $fail -eq 0 ]] && echo "evals-with-pack.test.sh: OK"
 exit $fail

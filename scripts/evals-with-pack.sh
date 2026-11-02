@@ -34,7 +34,7 @@ def double_quoted(value):
         raise SystemExit(f"evals-with-pack: append_system_prompt: unsupported value {value!r}")
     def escape(e):
         code = e.group(1)
-        if code[0] in HEX:
+        if code[0] in HEX and len(code) == 1 + HEX[code[0]]:  # a short \x, \u or \U is an unknown escape below
             return chr(int(code[1:], 16))
         if code in ESCAPES:
             return ESCAPES[code]
