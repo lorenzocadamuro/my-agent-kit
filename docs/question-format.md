@@ -12,7 +12,7 @@ Every decision put to the user follows this format. A question the user cannot a
 
 ## Shape
 
-- **Use the multiple-choice question tool,** with the recommended option first and marked "(Recommended)". A free answer stays possible.
+- **Use the multiple-choice question tool,** with the recommended option first and marked "(Recommended)". A free answer stays possible. Every decision carries its own recommended option, also one that depends on another decision in the same message: the recommendation then states the condition ("if you choose A in Q1, I recommend …"), and a gate written in a report rather than asked with the tool marks it the same way.
 - **One decision per question.** A question that bundles two decisions (when to merge, and what a lagging environment runs) is split in two.
 - **Introduce the questions in chat, right before them in the same message,** so the user arrives prepared: the situation (what is happening, what the user would see, why it matters now), what the kit prescribes here and why it asks, and what the choice changes. For a deploy or rollout, first say what the deployed thing does and what users see when it is missing or early.
 - **Then keep each question short.** The question window covers the chat above it, so the question still opens with the situation in one line, its essential context only.
