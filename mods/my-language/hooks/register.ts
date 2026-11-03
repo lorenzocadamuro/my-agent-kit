@@ -140,14 +140,19 @@ async function list($: EngineInterface, styles: Style[]): Promise<string> {
   const loaded = await loadSettings($, await settingsPath($))
   let value: unknown
   let from: Source | undefined
+  // The sources that could not be read and rank above the one that set the style: any of them may win.
   let errors: string[] = []
   if ('settings' in loaded) {
     const above = await firstStyle($, ABOVE)
+    errors = above.errors
     if (above.from) ({ value, from } = above)
     else {
       value = loaded.settings.outputStyle
-      if (value === undefined) ({ value, from, errors } = await firstStyle($, BELOW))
-      errors = [...above.errors, ...errors]
+      if (value === undefined) {
+        const below = await firstStyle($, BELOW)
+        ;({ value, from } = below)
+        errors = [...errors, ...below.errors]
+      }
     }
   }
   const marked = value === DEFAULT ? OFF : styles.find(s => s.fullName === value)?.name
@@ -158,6 +163,7 @@ async function list($: EngineInterface, styles: Style[]): Promise<string> {
     // A value this mod did not write (a bare "STE", another plugin's style): Claude Code may not resolve it.
     active = marked ?? `${String(value)} (not a my-language style)`
     if (from) active += ` (${SOURCE_LABEL[from]})`
+    if (errors.length) active += ` (unverified: ${errors.join('; ')})`
   }
   const rows = [...styles.map(s => ({ name: s.name, description: s.description })), { name: OFF, description: 'no language rule' }]
   const lines = rows.map(r => `${r.name === marked ? '*' : ' '} ${r.name} — ${r.description}`)

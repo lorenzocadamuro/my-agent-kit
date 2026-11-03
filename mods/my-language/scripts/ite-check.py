@@ -70,11 +70,17 @@ def ends_sentence(token):
 
 # Text in double quotes (straight, typographic, guillemets) is cited, not used.
 QUOTED = re.compile(r'"[^"\n]*"|“[^”\n]*”|«[^»\n]*»')
+QUOTED_TYPOGRAPHIC = re.compile(r'“[^”\n]*”|«[^»\n]*»')
 
 
 def blank_quote(match):
-    """A quoted span as neutral words: its length still counts, no form rule fires on it."""
-    return " ".join("x" for t in match.group(0).split() if is_word(t))
+    """A quoted span as neutral words: its length still counts, no form rule fires on it, and a
+    sentence end inside it still ends the sentence."""
+    span = match.group(0)
+    words = ["x" for t in span.split() if is_word(t)]
+    if words and re.search(r"[.?!]\W*$", span):
+        words[-1] += "."
+    return " " + " ".join(words) + " "
 
 
 def strip_line(line):
@@ -82,7 +88,9 @@ def strip_line(line):
     line = re.sub(r"`[^`]*`", " ", line)
     line = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", line)
     line = re.sub(r"(https?://|www\.)\S+", " ", line)
-    return QUOTED.sub(blank_quote, line)
+    # An odd number of straight quotes (an inch mark, a quote left open) pairs nothing reliably.
+    quoted = QUOTED if line.count('"') % 2 == 0 else QUOTED_TYPOGRAPHIC
+    return quoted.sub(blank_quote, line)
 
 
 def units(lines):

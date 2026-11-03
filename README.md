@@ -126,7 +126,7 @@ Leave Claude Code's own `language` setting (the "Language" row of `/config`) at 
 
 **Add a style:** a Markdown file in `mods/my-language/output-styles/`, with front matter `name` (the file name without `.md`), `description` and `keep-coding-instructions: true`, the scope sentence the other styles carry, and form rules only. `/language` lists it from the next session, with no code change, and `mods/my-language/scripts/packs.test.sh` checks it. Bump the mod's version so the installed copy gets it.
 
-**Measure a reply** against ITE's rules: `python3 mods/my-language/scripts/ite-check.py reply.md` (or the reply on stdin) prints one finding per line and the findings per 100 words. It measures and never blocks. Text in double quotes counts as cited, so the forms it shows as examples raise no finding. Measure the reply's Markdown when you can; text copied from the app loses list markers and headings, so the checker reads each line as its own paragraph and a line with tabs as a table row.
+**Measure a reply** against ITE's rules: `python3 mods/my-language/scripts/ite-check.py reply.md` (or the reply on stdin) prints one finding per line and the findings per 100 words. It measures and never blocks. Text in double quotes counts as cited, so the forms it shows as examples raise no finding. Measure the reply's Markdown when you can; text copied from the app loses list markers and headings, so the checker reads each line as its own paragraph and a line with tabs as a table row. A file wrapped at a fixed width is under-counted, since each line counts as a paragraph.
 
 **Stop or roll back.** `/language off` stops the style in this folder only. To stop it everywhere, remove `outputStyle` from `~/.claude/settings.json` and from each folder's `.claude/settings.local.json`, where `/language` writes it, then run `claude plugin uninstall my-language@my-agent-kit`. To return to 5.8.0, where the kit set its own language rules, do all of that first. With the install from a clone (the symlink in [Install](#install)), check out `v5.8.0` in the clone and restart. The install from GitHub follows the repository and has no version option: `claude plugin install` and `claude plugin marketplace add` take none.
 
@@ -134,16 +134,16 @@ ASD-STE100 is a registered trademark of ASD. The STE style follows its spirit; i
 
 ## Principles
 
-[CONSTITUTION.md](CONSTITUTION.md) comes first: what the kit is for, and what it must not become. It changes only by hand or at your explicit request, and it wins over every other rule. `/my:improve run` checks each proposal against it, refuses what it forbids, and for the cause behind such a note proposes only what it allows.
+[CONSTITUTION.md](CONSTITUTION.md) comes first: what the kit is for, and what it must not become. It changes only by hand or at your explicit request, and it wins over every other rule. `/my:improve run` checks each proposal against it, refuses what it forbids, and for the cause behind such a note proposes only what it allows. When you want an amendment, the kit asks it as its own question, with today's text and the new text.
 
 All skills share one set of rules, kept in [docs/principles.md](docs/principles.md), which serve the constitution:
 
 - proportional rather than strict;
 - the plan as contract;
 - humans decide at gates;
-- questions come after an introduction in chat (the situation, what the kit prescribes, what the choice changes), and stay short; every option carries its own labelled Pros and Cons, and a question in your answer gets an answer before any new question;
+- questions come after an introduction in chat (the situation, what the kit prescribes, what the choice changes), and stay short; a change to the constitution is always its own question; every option carries its own labelled Pros and Cons, and a question in your answer gets an answer before any new question;
 - decisions are learned as kinds, and a kind is decided alone only after you hand it over;
-- verify before deciding, including the agent's own claims and the premise of each recommendation, and check what you say you see against the session record instead of contradicting you from memory; the writer is never the reviewer; a check or a stop condition is never relaxed without your yes;
+- verify before deciding, including the agent's own claims, your own proposals and the premise of each recommendation (a recommendation never rests on an invented number, nor only on keeping today's behaviour), and check what you say you see against the session record instead of contradicting you from memory; the writer is never the reviewer; a check or a stop condition is never relaxed without your yes;
 - what the kit relies on, or hands you, runs once for real first, and checks enter the bar only after their baseline is measured and they were seen failing on the change's likeliest wrong input; a condition that happens only after the merge becomes a separate verification ticket;
 - repository rules are loaded explicitly;
 - work happens in a worktree, unless the project profile says how you work there instead; the session enters it with EnterWorktree and the app's change-directory tool, never a `cd`, and counts as moved only when the app says so;

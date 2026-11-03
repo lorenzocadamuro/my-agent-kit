@@ -59,7 +59,7 @@ Items outside the plan's scope, and findings labelled "ticket", go to "Not this 
 
 ### 4. Independent triage check
 
-Only the S lane skips this check, and writes `Triage check: skipped (size S)` in the round file; a round of an M or L plan that looks small still gets it. An item added to a round in progress (the user's request, a finding, a message to the executor) goes into the round file first and passes this check before it runs. Outside the S lane, run a fresh agent with [triage-check.md](triage-check.md) and fix what it finds. Anything that needs the user becomes a gate question. In both lanes, `--triage-only` stops here and shows the triage.
+Only the S lane skips this check, and writes `Triage check: skipped (size S)` in the round file; a round of an M or L plan that looks small still gets it. An item added to a round in progress (the user's request, a finding, a message to the executor) goes into the round file first and, outside the S lane, passes this check before it runs. Outside the S lane, run a fresh agent with [triage-check.md](triage-check.md) and fix what it finds. Anything that needs the user becomes a gate question. In both lanes, `--triage-only` stops here and shows the triage.
 
 ### 5. Execute
 

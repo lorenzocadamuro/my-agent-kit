@@ -102,6 +102,8 @@ clean passive "a passive in typographic quotes" 'La regola vieta “viene fatto�
 clean support-verb "a support verb in guillemets" 'La regola vieta «effettuare» nelle risposte.'
 clean passive-si "a passive \"si\" in quotes" 'Lo stile vieta "si aggiorna" nelle risposte.'
 found gerund "a gerund outside the quotes still found" 'Ho scritto "test" verificando il file.'
+clean sentence-length "a quoted question ends its sentence" "Il round chiede \"$(w 12) continuare?\" $(w 12)."
+found gerund "an odd straight quote hides nothing" 'Il valore è 5" e poi esce verificando il file "nuovo".'
 found sentence-length "quoted words still count for the length" "Il file dice \"$(w 20)\" $(w 6)."
 
 # Text copied from the app: each line is its own paragraph, and a line with tabs is a table row.

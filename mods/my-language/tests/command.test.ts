@@ -281,6 +281,31 @@ test("managed settings win over the folder's file", async ($, on) => {
   expect(text).toContain('active: ITE (managed settings)')
 })
 
+test('the command-line settings win over the user default', async ($, on) => {
+  world(on, { sources: { flag: { outputStyle: 'my-language:STE' }, user: { outputStyle: 'my-language:ITE' } } })
+  const { text } = await language($)
+  expect(text.split('\n')).toContain('* STE — Simplified technical English')
+  expect(text.endsWith('active: STE (command-line settings)')).toBe(true)
+})
+
+test("a managed settings read failure leaves the folder's style unverified", async ($, on) => {
+  world(on, { settings: '{"outputStyle":"my-language:STE"}', sources: { policy: { denied: true } } })
+  const { text } = await language($)
+  expect(text).toContain('active: STE (unverified: cannot read policy settings')
+})
+
+test('a project settings read failure leaves the user default unverified', async ($, on) => {
+  world(on, { sources: { project: { denied: true }, user: { outputStyle: 'my-language:ITE' } } })
+  const { text } = await language($)
+  expect(text).toContain('active: ITE (user default) (unverified: cannot read project settings')
+})
+
+test('a user settings read failure after the project style changes nothing', async ($, on) => {
+  world(on, { sources: { project: { outputStyle: 'my-language:STE' }, user: { denied: true } } })
+  const { text } = await language($)
+  expect(text.endsWith('active: STE (project settings)')).toBe(true)
+})
+
 test('the list says unknown when a source below the folder cannot be read', async ($, on) => {
   world(on, { sources: { user: { denied: true } } })
   const { text } = await language($)
