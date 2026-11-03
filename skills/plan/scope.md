@@ -86,7 +86,7 @@ For S, start no agent: confirm that the goal, the boundary, the bar and the gate
 
 - the boundary and the bar are checkable;
 - every invariant names where it holds and a test that can fail;
-- each existing-behaviour claim cites evidence;
+- every claim the plan rests on cites evidence or is marked unverified, negative claims included (no test can observe it, nothing else reads it, it fails on main, no built-in feature does it): for each, the reviewer tries to build the case that disproves it;
 - out of scope and intentional changes are lists, not prose;
 - the size budget is realistic against the research.
 

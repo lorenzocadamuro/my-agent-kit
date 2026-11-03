@@ -1,6 +1,6 @@
 {
   "name": "my-language",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Optional language packs for the my kit: output styles for the language and form of Claude's replies, switched with /language.",
   "author": {
     "name": "Lorenzo Cadamuro"

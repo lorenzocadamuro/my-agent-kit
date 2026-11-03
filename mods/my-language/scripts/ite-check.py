@@ -68,15 +68,30 @@ def ends_sentence(token):
     return bare.lstrip("(\"'“‘«").lower() not in ABBREVIATIONS
 
 
+# Text in double quotes (straight, typographic, guillemets) is cited, not used.
+QUOTED = re.compile(r'"[^"\n]*"|“[^”\n]*”|«[^»\n]*»')
+
+
+def blank_quote(match):
+    """A quoted span as neutral words: its length still counts, no form rule fires on it."""
+    return " ".join("x" for t in match.group(0).split() if is_word(t))
+
+
 def strip_line(line):
-    """The prose part of a line: no inline code, no URL; a link keeps its text."""
+    """The prose part of a line: no inline code, no URL, no quoted text; a link keeps its text."""
     line = re.sub(r"`[^`]*`", " ", line)
     line = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", line)
-    return re.sub(r"(https?://|www\.)\S+", " ", line)
+    line = re.sub(r"(https?://|www\.)\S+", " ", line)
+    return QUOTED.sub(blank_quote, line)
 
 
 def units(lines):
-    """Paragraphs and list items: (kind, [(line number, token)]). Code, tables and headings are skipped."""
+    """Paragraphs and list items: (kind, [(line number, token)]). Code, tables and headings are skipped.
+
+    Each line starts a new paragraph, as in a reply, which never wraps a paragraph: so text copied from
+    the app, where list markers and headings are lost, keeps its lines apart. An indented line continues
+    a list item. A line with a tab is a table row copied from the app.
+    """
     out, current, fence = [], None, None
     for n, raw in enumerate(lines, 1):
         stripped = raw.strip()
@@ -88,7 +103,7 @@ def units(lines):
         if marker:
             fence, current = marker.group(1), None
             continue
-        if not stripped or stripped.startswith("|") or re.match(r"^#{1,6}(\s|$)", stripped):
+        if not stripped or stripped.startswith("|") or "\t" in stripped or re.match(r"^#{1,6}(\s|$)", stripped):
             current = None
             continue
         text = re.sub(r"^\s*(>\s*)+", "", raw)
@@ -97,7 +112,7 @@ def units(lines):
             current = ("item", [])
             out.append(current)
             text = text[item.end():]
-        elif current is None or (current[0] == "item" and not raw[:1].isspace()):
+        elif current is None or not raw[:1].isspace():
             current = ("paragraph", [])
             out.append(current)
         current[1].extend((n, t) for t in strip_line(text).split())

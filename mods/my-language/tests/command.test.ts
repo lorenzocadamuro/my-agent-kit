@@ -18,6 +18,8 @@ type World = {
   styles?: Style[]
   /** The settings file: its text; or missing, or a stat or read failure. */
   settings?: string | { missing: true } | { statDenied: true } | { readDenied: true }
+  /** The other settings sources, as Claude Code reads them; a source left out sets nothing. */
+  sources?: Partial<Record<'policy' | 'flag' | 'project' | 'user', Record<string, unknown> | { denied: true }>>
 }
 
 type Seen = {
@@ -60,6 +62,13 @@ function world(on: On, w: World = {}): Seen {
     if (e.path !== SETTINGS || typeof settings === 'object' && 'missing' in settings) return { deny: 'ENOENT: no such file or directory' }
     if (typeof settings === 'object' && 'statDenied' in settings) return { deny: 'EACCES: permission denied' }
     return { value: { kind: 'file' as const, size: 10, mtimeMs: 0, isLink: false } }
+  })
+  on('settings.read', ($, e) => {
+    const source = e?.source
+    if (source === undefined || source === 'local') return { deny: `unexpected settings read: ${String(source)}` }
+    const found = w.sources?.[source]
+    if (found && 'denied' in found) return { deny: 'EACCES: permission denied' }
+    return { value: found ?? {} }
   })
   on('fs.write', ($, e) => {
     seen.writes.push({ path: e.path, text: e.text })
@@ -237,11 +246,46 @@ test('the list starts on its own line, after the prefix Claude Code prints', asy
   expect(text.startsWith('\n  ITE — Simplified technical Italian\n')).toBe(true)
 })
 
-test('the list says user default when the folder sets no style', async ($, on) => {
+test('the list says Default when no settings source sets a style', async ($, on) => {
   world(on, { settings: '{"x":1}' })
   const { text } = await language($)
   expect(text.split('\n').filter(l => l.startsWith('*')).length).toBe(0)
-  expect(text).toContain('active: user default')
+  expect(text).toContain('active: Default (no style)')
+})
+
+test('the list marks the user default when the folder sets no style', async ($, on) => {
+  world(on, { sources: { user: { outputStyle: 'my-language:ITE' } } })
+  const { text } = await language($)
+  expect(text.split('\n')).toContain('* ITE — Simplified technical Italian')
+  expect(text).toContain('active: ITE (user default)')
+})
+
+test('the project settings win over the user default', async ($, on) => {
+  world(on, { sources: { project: { outputStyle: 'my-language:STE' }, user: { outputStyle: 'my-language:ITE' } } })
+  const { text } = await language($)
+  expect(text.split('\n')).toContain('* STE — Simplified technical English')
+  expect(text).toContain('active: STE (project settings)')
+})
+
+test("the folder's file wins over the user default", async ($, on) => {
+  world(on, { settings: '{"outputStyle":"my-language:STE"}', sources: { user: { outputStyle: 'my-language:ITE' } } })
+  const { text } = await language($)
+  expect(text.split('\n')).toContain('* STE — Simplified technical English')
+  expect(text.endsWith('active: STE')).toBe(true)
+})
+
+test("managed settings win over the folder's file", async ($, on) => {
+  world(on, { settings: '{"outputStyle":"my-language:STE"}', sources: { policy: { outputStyle: 'my-language:ITE' } } })
+  const { text } = await language($)
+  expect(text.split('\n')).toContain('* ITE — Simplified technical Italian')
+  expect(text).toContain('active: ITE (managed settings)')
+})
+
+test('the list says unknown when a source below the folder cannot be read', async ($, on) => {
+  world(on, { sources: { user: { denied: true } } })
+  const { text } = await language($)
+  expect(text.split('\n').filter(l => l.startsWith('*')).length).toBe(0)
+  expect(text).toContain('active: unknown (cannot read user settings')
 })
 
 test('the list says unknown when the settings file is not valid JSON', async ($, on) => {

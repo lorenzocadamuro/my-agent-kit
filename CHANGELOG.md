@@ -2,6 +2,45 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [6.1.0] - 2026-11-03
+
+Plans, rounds and questions check what they used to take on trust: the plan review tests every claim the plan rests on, negative ones included; a round's tests pin both sides of each clause; an item added to a round in progress passes the triage check; a recommendation rests on data or on what the code beside the choice already does; and a change to the constitution is asked as its own explicit question. `my-language` 0.1.1: the ITE checker no longer counts quoted examples or text copied from the app as errors, and `/language` names the style the user settings set. Kit 6.1.0, minor: new behaviour, nothing you rely on changes.
+
+### Principles
+
+- § Verify, don't assume: the user's own proposals are claims to check, like other agents' and your own.
+- `docs/question-format.md` § When to ask: what the code beside the choice already does (a sibling path's behaviour, the naming of its neighbours) is the default stated in one line, or one of the options when the choice is still real.
+- § Shape: "it keeps today's behaviour" or "it saves work" never makes an option the recommended one on its own; a number nobody can measure before the change (a cap, a cadence) is not invented, not even as a provisional or starting value: the recommendation is to try the change without it (measuring only) for a set time, then set it from the measurement, and to say so and ask when going without it is too risky. An option's Effect quotes any rule it cites as its source writes it; its Today says, for an action beyond the minimum (publishing outside the pull request, an extra step), what is lost without it. A change to `CONSTITUTION.md` is its own question, never an option inside another decision: it names the clause, shows today's text and the new text, and asks whether to amend the constitution that way.
+
+### Planning (`plan:scope`, `plan:round`)
+
+- `plan:scope` step 6: the plan review checks every claim the plan rests on, not only claims about existing behaviour; negative claims included (no test can observe it, nothing else reads it, it fails on main, no built-in feature does it), and for each it tries to build the case that disproves it, or the plan marks it unverified.
+- `plan:round` step 3 "Pin each clause" and `triage-check.md` point 4: besides the test that fails when a clause alone is broken, the tests of its other side: an input the clause must let through (for a check such as a linter, a regex or a grader, the correct cases it must not flag), and each failure path (an error, a timeout) of a dependency the new work shares with existing code.
+- `plan:round` step 4: only the S lane skips the independent triage check, also when a round of an M or L plan looks small; an item added to a round in progress goes into the round file first and passes the check before it runs.
+
+### Improvement loop (`improve`)
+
+- `run` step 3: when the user wants an amendment that a note needs, it is asked as its own question (question-format § Shape).
+
+### Output languages: `my-language` 0.1.1
+
+- `ite-check.py`: text in double quotes (straight, typographic, guillemets) is cited, not used: its words still count for the sentence length, and no form rule fires on them. Each line is its own paragraph, as in a reply, so text copied from the app (list markers and headings lost) keeps its lines apart; a line with a tab is a table row. On a copied reply that gave 8 findings, 5 of them false, it now gives 4: the 2 long sentences, the soft "si ripete", and a list item of 7 sentences.
+- `/language` without an argument reads the style from every settings source through Claude Code: managed and command-line settings win over the folder's file, project settings and the user default fill in when the folder sets none. The active line names the source (`active: ITE (user default)`) and the list marks that style; with no style anywhere it says `active: Default (no style)`.
+- README "Measure a reply" says how quoted and copied text are read.
+
+### Evals
+
+- New `plan/clause-pinned-both-sides`: a round adds a checker that also reads a shared fetch; the triage names a correct input that must not be flagged, and a failed shared fetch. Before 1/2 (the run that failed named no input to let through; the failed fetch was pinned in every run, 4 of 4 over two designs), after 3/3.
+- New `plan/added-item-checked`: the user adds a one-line item to a round in progress and asks to do it at once; the item goes into the round file and a fresh triage check runs. Before 1/2 (the failing run edited the code first and wrote the item afterwards, with no check), after 3/3.
+- New `plan/recommendation-rests-on-data`: a cap on a new feature with no usage data, and a time window a sibling quota already settles. Before 0/2 (both runs recommended an invented cap of 24 a day; the window followed the sibling in both), after: with the first wording ("try the change, then measure") one run of five still recommended "starting at 24 provisionally", so the rule now says "not even as a provisional or starting value"; with it, 3/3 runs recommend no number and measure first (two of them failed a grader that missed "measure only" and "matches"; both graders were widened and checked against the real plans, the plans before the change still fail them).
+- New `improve/constitution-question-explicit`: a note whose only fix contradicts the constitution, and the user is open to amending it. Before 0/2 (the clause and the new text were shown, but no question asked whether to amend; "Defer" was recommended), after 3/3.
+- No case pins the plan review's negative claims: in 6 runs over three fixture designs, today's research already disproved negative claims planted in a ticket or a repository guide. The notes' failures came from claims the plan itself wrote, which a scope eval cannot plant.
+- Spend: SPEND_TOTAL in all.
+
+### Project profile (outside the repository)
+
+- The kit's profile counts 65 cases at about $35 a full run, and says that a plan adding a part to the kit names how `/my:improve` reaches it (note target, eval cases, version).
+
 ## [6.0.0] - 2026-11-02
 
 You choose the language and the writing style of everything Claude explains to you, in any session, with or without a `/my` command: the new `my-language` mod ships two output styles, ITE (simplified technical Italian) and STE (simplified technical English), and `/language` switches between them in the terminal and in the desktop app, from your next message. The kit itself no longer sets any language or sentence form: it keeps only its content rules (the why before the what, the question format, terms kept as they are), so two rule sets never overlap, and Claude Code puts the style in the system prompt, so each reply is written once, with no translation or rewrite afterwards. Kit 6.0.0, major: without the mod, or with `/language off`, the kit stops guaranteeing Italian replies, a behaviour you relied on. `my-language` 0.1.0, its first release.

@@ -2,7 +2,8 @@ import type { EngineInterface, Register } from 'claude-code'
 
 // The my-language mod: `/language` switches the output style of this folder by writing `outputStyle`
 // into <project root>/.claude/settings.local.json, the file `/output-style` writes; Claude Code picks
-// the change up through its settings watcher, from the next message. It hooks no prompt event.
+// the change up through its settings watcher, from the next message. Without an argument it lists the
+// styles and the active one, read from every settings source. It hooks no prompt event.
 
 const PLUGIN = 'my-language'
 const OFF = 'off'
@@ -91,6 +92,38 @@ async function settingsPath($: EngineInterface): Promise<string> {
   return `${await $.session.root()}/.claude/settings.local.json`
 }
 
+// The other settings sources, read through Claude Code: policy and flag win over the folder's file,
+// project and user only fill in when it sets no style.
+type Source = 'policy' | 'flag' | 'project' | 'user'
+const ABOVE: Source[] = ['policy', 'flag']
+const BELOW: Source[] = ['project', 'user']
+const SOURCE_LABEL: Record<Source, string> = {
+  policy: 'managed settings',
+  flag: 'command-line settings',
+  project: 'project settings',
+  user: 'user default',
+}
+
+// The outputStyle one source sets (undefined when none), or why it could not be read.
+async function styleIn($: EngineInterface, source: Source): Promise<{ value: unknown } | { error: string }> {
+  try {
+    return { value: (await $.settings.read({ source })).outputStyle }
+  } catch (err) {
+    return { error: `cannot read ${source} settings: ${reasonOf(err)}` }
+  }
+}
+
+// The first source in order that sets a style, and the reasons of the sources that could not be read.
+async function firstStyle($: EngineInterface, sources: Source[]): Promise<{ value?: unknown; from?: Source; errors: string[] }> {
+  const errors: string[] = []
+  for (const source of sources) {
+    const found = await styleIn($, source)
+    if ('error' in found) errors.push(found.error)
+    else if (found.value !== undefined) return { value: found.value, from: source, errors }
+  }
+  return { errors }
+}
+
 const names = (styles: Style[]): string[] => [...styles.map(s => s.name), OFF]
 const hintOf = (styles: Style[]): string => `[${names(styles).join(' | ')}]`
 
@@ -102,16 +135,30 @@ function resolve(styles: Style[], given: string): { label: string; value: string
   return style && { label: style.name, value: style.fullName }
 }
 
-// The styles and `off`, the active one marked, then which style the folder's file selects.
+// The styles and `off`, the active one marked, then the active style and the source that sets it.
 async function list($: EngineInterface, styles: Style[]): Promise<string> {
   const loaded = await loadSettings($, await settingsPath($))
-  const value = 'settings' in loaded ? loaded.settings.outputStyle : undefined
+  let value: unknown
+  let from: Source | undefined
+  let errors: string[] = []
+  if ('settings' in loaded) {
+    const above = await firstStyle($, ABOVE)
+    if (above.from) ({ value, from } = above)
+    else {
+      value = loaded.settings.outputStyle
+      if (value === undefined) ({ value, from, errors } = await firstStyle($, BELOW))
+      errors = [...above.errors, ...errors]
+    }
+  }
   const marked = value === DEFAULT ? OFF : styles.find(s => s.fullName === value)?.name
   let active: string
   if ('error' in loaded) active = `unknown (${loaded.error})`
-  else if (value === undefined) active = 'user default'
-  // A value this mod did not write (a bare "STE", another plugin's style): Claude Code may not resolve it.
-  else active = marked ?? `${String(value)} (not a my-language style)`
+  else if (value === undefined) active = errors.length ? `unknown (${errors.join('; ')})` : 'Default (no style)'
+  else {
+    // A value this mod did not write (a bare "STE", another plugin's style): Claude Code may not resolve it.
+    active = marked ?? `${String(value)} (not a my-language style)`
+    if (from) active += ` (${SOURCE_LABEL[from]})`
+  }
   const rows = [...styles.map(s => ({ name: s.name, description: s.description })), { name: OFF, description: 'no language rule' }]
   const lines = rows.map(r => `${r.name === marked ? '*' : ' '} ${r.name} — ${r.description}`)
   // Claude Code prefixes the output with "my-language: ", so the list starts on the next line.

@@ -109,7 +109,7 @@ A style covers every text written for you to read: the chat, reports, questions,
 **Switch.**
 
 ```text
-/language          lists the styles and off, marking the active one
+/language          lists the styles and off, marking the active one and naming the settings that set it
 /language STE      replies follow STE from your next message
 /language off      Claude Code's Default style: no rule from this mod
 ```
@@ -126,7 +126,7 @@ Leave Claude Code's own `language` setting (the "Language" row of `/config`) at 
 
 **Add a style:** a Markdown file in `mods/my-language/output-styles/`, with front matter `name` (the file name without `.md`), `description` and `keep-coding-instructions: true`, the scope sentence the other styles carry, and form rules only. `/language` lists it from the next session, with no code change, and `mods/my-language/scripts/packs.test.sh` checks it. Bump the mod's version so the installed copy gets it.
 
-**Measure a reply** against ITE's rules: `python3 mods/my-language/scripts/ite-check.py reply.md` (or the reply on stdin) prints one finding per line and the findings per 100 words. It measures and never blocks.
+**Measure a reply** against ITE's rules: `python3 mods/my-language/scripts/ite-check.py reply.md` (or the reply on stdin) prints one finding per line and the findings per 100 words. It measures and never blocks. Text in double quotes counts as cited, so the forms it shows as examples raise no finding. Measure the reply's Markdown when you can; text copied from the app loses list markers and headings, so the checker reads each line as its own paragraph and a line with tabs as a table row.
 
 **Stop or roll back.** `/language off` stops the style in this folder only. To stop it everywhere, remove `outputStyle` from `~/.claude/settings.json` and from each folder's `.claude/settings.local.json`, where `/language` writes it, then run `claude plugin uninstall my-language@my-agent-kit`. To return to 5.8.0, where the kit set its own language rules, do all of that first. With the install from a clone (the symlink in [Install](#install)), check out `v5.8.0` in the clone and restart. The install from GitHub follows the repository and has no version option: `claude plugin install` and `claude plugin marketplace add` take none.
 

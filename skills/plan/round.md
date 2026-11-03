@@ -51,7 +51,7 @@ Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, whe
 - **Plan order:** a round that takes a later part before the next unfinished one says why in its trigger; "next round" is not a reason.
 - **List the callers covered, by path,** with the untruncated count, and for each field, state, key or rule the item adds or changes, its writers, readers (saved data included), transitions and opened routes (`plan:scope` step 3).
 - **Name the owning code point,** and a test that fails without the fix and drives the production caller. A check-only item names instead the commands it runs and the result that counts as passing.
-- **Pin each clause.** For each invariant or boundary clause the item touches, name the test that fails when that clause alone is broken (removed one at a time); a boundary like "flag off equals main" covers what runs (hooks, subscriptions, effects, requests), not only what renders. An item that copies an approved artefact diffs the copy against its frozen source and lists every difference the plan does not name. An item that rewrites a rule in prose lists every other sentence stating it, and what the new wording covers against the old.
+- **Pin each clause.** For each invariant or boundary clause the item touches, name the test that fails when that clause alone is broken (removed one at a time), and the tests of its other side: an input the clause must let through (for a check, such as a linter, a regex or a grader, the correct cases it must not flag), and each failure path (an error, a timeout) of a dependency the new work shares with existing code; a boundary like "flag off equals main" covers what runs (hooks, subscriptions, effects, requests), not only what renders. An item that copies an approved artefact diffs the copy against its frozen source and lists every difference the plan does not name. An item that rewrites a rule in prose lists every other sentence stating it, and what the new wording covers against the old.
 - **Estimate the production lines** each item adds (tests apart). When the drift so far plus the estimate passes the plan's split trigger, step 2's drift gate comes now, before executing, unless step 2 already asked it this round.
 - **Write the stop conditions.** They use the plan's "every round" checks; the "once, at the end" proof belongs to the ready-for-review gate. A check copied from the plan or the profile keeps its baseline (principles: measure the baseline).
 
@@ -59,7 +59,7 @@ Items outside the plan's scope, and findings labelled "ticket", go to "Not this 
 
 ### 4. Independent triage check
 
-In the S lane, skip this check and write `Triage check: skipped (size S)` in the round file. Otherwise, run a fresh agent with [triage-check.md](triage-check.md) and fix what it finds. Anything that needs the user becomes a gate question. In both lanes, `--triage-only` stops here and shows the triage.
+Only the S lane skips this check, and writes `Triage check: skipped (size S)` in the round file; a round of an M or L plan that looks small still gets it. An item added to a round in progress (the user's request, a finding, a message to the executor) goes into the round file first and passes this check before it runs. Outside the S lane, run a fresh agent with [triage-check.md](triage-check.md) and fix what it finds. Anything that needs the user becomes a gate question. In both lanes, `--triage-only` stops here and shows the triage.
 
 ### 5. Execute
 

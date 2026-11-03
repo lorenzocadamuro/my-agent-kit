@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Tests ite-check.py: each rule stays silent just under its limit and fires just over it; code, tables
-# and headings are not prose; stdin works; the exit status is 0 with findings; the last line counts.
+# Tests ite-check.py: each rule stays silent just under its limit and fires just over it; code, tables,
+# headings and quoted text are not prose; text copied from the app keeps its lines apart; stdin works;
+# the exit status is 0 with findings; the last line counts.
 # The samples are Italian on purpose (.claude/CLAUDE.md).
 # Usage: bash mods/my-language/scripts/ite-check.test.sh [checker]  (default: ite-check.py beside this script)
 set -uo pipefail
@@ -94,6 +95,20 @@ clean passive-si "\"sì\" not taken for \"si\"" "Sì, aggiorna il file."
 none "a fenced block holding a long sentence" '```'$'\n'"$(w 30)."$'\n''```'
 none "inline code holding a long sentence" "Esegui \`$(w 30)\` ora."
 none "a table row and a heading holding a long sentence" "| $(w 30) |"$'\n\n'"# $(w 30)"
+
+# Quoted text is cited, not used: no form rule fires inside double quotes, and its words still count.
+clean gerund "a gerund in straight double quotes" 'Lo script segnala "verificando" come errore.'
+clean passive "a passive in typographic quotes" 'La regola vieta “viene fatto” nelle risposte.'
+clean support-verb "a support verb in guillemets" 'La regola vieta «effettuare» nelle risposte.'
+clean passive-si "a passive \"si\" in quotes" 'Lo stile vieta "si aggiorna" nelle risposte.'
+found gerund "a gerund outside the quotes still found" 'Ho scritto "test" verificando il file.'
+found sentence-length "quoted words still count for the length" "Il file dice \"$(w 20)\" $(w 6)."
+
+# Text copied from the app: each line is its own paragraph, and a line with tabs is a table row.
+clean paragraph-length "lines without list markers are separate paragraphs" "$(printf 'Il test passa. Il file resta.\n%.0s' 1 2 3 4)"
+clean sentence-length "a line without a full stop ends its sentence" "$(w 15)"$'\n'"$(w 15)."
+none "a tab-separated line is a table row" "$(w 15)"$'\t'"$(w 15)"
+found paragraph-length "7 sentences on one line still found" "$(printf 'Il test passa. %.0s' 1 2 3 4 5 6 7)"
 
 # The right-hand examples of ITE.md (the first quoted string after each "→") give no hard finding.
 ite="$(dirname "$0")/../output-styles/ITE.md"
