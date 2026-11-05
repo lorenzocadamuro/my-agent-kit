@@ -4,7 +4,7 @@ An agent the kit starts runs on the session's model unless this table names anot
 
 | Role | Started at | Model | Why | Tested |
 | ---- | ---------- | ----- | --- | ------ |
-| Research search agent | `plan:scope` step 3, phase 1 | `sonnet` | it only searches and decides nothing; each answer cites `file:line` or says `unknown`, and the coordinator checks what it uses | claude-sonnet-5-5, 2026-11-05: `plan/research-search-on-sonnet`, and no new failure against the baseline in the scope research cases (§ Tested); no A/B (it decides nothing) |
+| Research search agent | `plan:scope` step 3, phase 1 | `sonnet` | it only searches and decides nothing; each answer cites `file:line` or says `unknown`, and the coordinator checks what it uses | claude-sonnet-5-5, 2026-11-05: `plan/research-search-on-sonnet` and the scope research cases, counts in § Tested; no A/B (it decides nothing) |
 | Research analysis agents | `plan:scope` step 3, phase 2 | session model | they judge how the code works and what the change does to it | — |
 | Plan review | `plan:scope` step 6 | session model | a guard: what it misses reaches every round | — |
 | Triage check | `plan:round` step 4 | session model, A/B pending on captured rounds | a guard: what it misses reaches the executor silently | — |
@@ -29,6 +29,7 @@ An agent the kit starts runs on the session's model unless this table names anot
 
 - The Tested column names the model the `sonnet` alias gave when the row was tested. When the alias moves to another model, the tests or the A/B named in a row run again before the row is trusted.
 - The scope research cases: `plan/research-failure-paths`, `plan/research-checks-premises`, `plan/baseline-and-callers`, `plan/false-premise`, `plan/design-options-offered`, `plan/hot-path-cost-check`, `plan/option-cost-priced`, `plan/tool-tried-first`, `plan/recommendation-rests-on-data`, `plan/ci-checks-in-bar`.
+- The search agent's counts on claude-sonnet-5-5, 2026-11-05: `plan/research-search-on-sonnet` 2 of 2. The scope research cases as at the baseline (`plan/design-options-offered` fails before and after), except `plan/option-cost-priced`: 3 of 5 runs after the change, 1 of 1 before. The three later runs were classified S; their failure wrote the researched cost in wording the grader's regex misses ("ri-rasterizza"); the cause of the first failure is not known. A copy with the size fixed at M: grader 2 of 3, the failure from the same kind of wording ("rasterizzato di nuovo"); the analysis phase started in 2 of 3 runs; all 3 runs went over the case's 300 s limit.
 
 ## Pending
 
