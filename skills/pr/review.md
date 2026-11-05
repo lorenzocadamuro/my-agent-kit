@@ -1,6 +1,6 @@
 # /my:pr:review — the judgement first, the drafts after
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/model-choice.md`.
 
 ## Arguments and output mode
 
@@ -33,7 +33,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
    - the reading from `/my:pr:learn`, if one exists (`<data root>/reads/<repo>-pr<n>.md`, written at the current head). Use its promise and its before → after map as the yardstick, and its "questions to keep in mind" as your starting hypotheses. Do not repeat its explanations in the review. If the reading is for an older head, use it only for what the newer commits did not change.
 3. **Review, starting from the promise:** follow the PR's main scenario end to end through every piece it touches, then use the other lenses that fit (lenses doc).
    - **Up to about 800 changed lines, on a colleague's PR:** review it yourself.
-   - **Larger, or the user's own PR at any size:** split by area across up to 3 fresh read-only agents (one for a small PR). Give each the lenses, the rules, the promise, its paths and, when the PR was reviewed before, the earlier analysis and the open threads. Each returns findings with `file:line` evidence. On the user's own PR they also verify and grade them (steps 4–5); you write the analysis from their findings and drop none.
+   - **Larger, or the user's own PR at any size:** split by area across up to 3 fresh read-only agents (one for a small PR; model: `docs/model-choice.md`). Give each the lenses, the rules, the promise, its paths and, when the PR was reviewed before, the earlier analysis and the open threads. Each returns findings with `file:line` evidence. On the user's own PR they also verify and grade them (steps 4–5); you write the analysis from their findings and drop none.
 
    Never truncate a caller audit.
 

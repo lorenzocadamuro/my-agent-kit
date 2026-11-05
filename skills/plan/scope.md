@@ -1,6 +1,6 @@
 # /my:plan:scope — the plan is the contract
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md` and `${CLAUDE_PLUGIN_ROOT}/templates/plan.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/model-choice.md` and `${CLAUDE_PLUGIN_ROOT}/templates/plan.md`.
 
 ## Arguments
 
@@ -44,7 +44,12 @@ State the classification and its reason in one line; the user can override it in
 
 ### 3. Research before asking
 
-For M and L, run up to three Explore agents in parallel. For S, do it yourself, and skip overlap and people and merge requirements. Collect:
+For S, do it yourself, and skip overlap and people and merge requirements. For M and L, research in two phases, with Explore agents on the model `${CLAUDE_PLUGIN_ROOT}/docs/model-choice.md` gives each:
+
+1. **Search:** one agent, whose prompt opens with `Search only, decide nothing`, answers a fixed list, each item with `file:line` evidence or `unknown: <what could not be read>`: the callers by path of the shared code the plan relies on, with untruncated counts; open PRs on the paths (overlap); CODEOWNERS and branch rules; the rules to load; the test or code that pins each behaviour the ticket describes. A missing item or a claim without evidence gets the table's fallback; an `unknown` does not.
+2. **Analysis:** up to two agents, given the search's answers (not its opening words): how the things really work, the consequences, which rule decides each case, failure paths, and the baseline.
+
+Together they collect:
 
 - **How the things the plan relies on really work:** for shared code it extends, its callers by path (untruncated count), what each reads and the rule each applies (tolerances, exceptions, what it skips), each rule checked against the change; for code or data it replaces, every field its readers use and every rule it applies (precedence, ordering, what it skips, what it shows or announces to users); for a tool that measures or verifies, the order it runs its steps and when it takes the measurement. Cite `file:line`, and check each against one scenario that runs today. For the cases the change means to move (the instances a measurement counted, the requests that fail), classify which rule decides each one today, and check that the change reaches that rule. A plan built from a name or a description breaks where the mechanism differs.
 - **The consequences of what the plan adds or changes:** for each new or changed field, state, key or rule, who writes it and when, who reads it (data saved before the change included), its transitions (backwards too), and any other route it opens; whether it mirrors another source and can be derived from it at each write instead of kept by transitions. For each new kind of work: what happens when it fails or times out, what bounds it (retries, a cost against a measured run), which writers can run at once, and whether every client already deployed (an old version still running) accepts what the change sends, in the rollout order. Cite `file:line`; what the plan must decide goes in the interview, and a production volume or frequency an option's recommendation depends on is measured first (principles: verify, don't assume). The same for each option the interview will offer: what it adds on a hot path (per frame, per item, per request) and which new event makes it redo work (a remount, a write, a recompute), read from the code; an option the code rules out is not offered.
@@ -82,7 +87,7 @@ About 4 questions for S, 8 for M, 12 for L. Never ask what research already answ
 
 ### 6. Independent review
 
-For S, start no agent: confirm that the goal, the boundary, the bar and the gates are present; the user's approval at step 7 is the plan's review. For M and L, hand the plan, the research notes and the principles to a fresh general-purpose agent. It checks that:
+For S, start no agent: confirm that the goal, the boundary, the bar and the gates are present; the user's approval at step 7 is the plan's review. For M and L, hand the plan, the research notes and the principles to a fresh general-purpose agent (model: `docs/model-choice.md`). It checks that:
 
 - the boundary and the bar are checkable;
 - every invariant names where it holds and a test that can fail;

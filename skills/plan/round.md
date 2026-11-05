@@ -6,7 +6,7 @@ You are the coordinator. You stay in the user's session and hand the work to bac
 - **`run`** runs rounds one after another, as § Run says, until something needs the user.
 - **Every gate follows the principles' method:** you decide a handed-over kind alone and list it in the report, record the other answers in the plan (question format § After the answer) and in `<data root>/method.md`, and propose due hand-overs; the executor only reports.
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`, `${CLAUDE_PLUGIN_ROOT}/docs/model-choice.md`.
 
 ## Arguments
 
@@ -59,14 +59,14 @@ Items outside the plan's scope, and findings labelled "ticket", go to "Not this 
 
 ### 4. Independent triage check
 
-Only the S lane skips this check, and writes `Triage check: skipped (size S)` in the round file; a round of an M or L plan that looks small still gets it. An item added to a round in progress (the user's request, a finding, a message to the executor) goes into the round file first and, outside the S lane, passes this check before it runs. Outside the S lane, run a fresh agent with [triage-check.md](triage-check.md) and fix what it finds. Anything that needs the user becomes a gate question. In both lanes, `--triage-only` stops here and shows the triage.
+Only the S lane skips this check, and writes `Triage check: skipped (size S)` in the round file; a round of an M or L plan that looks small still gets it. An item added to a round in progress (the user's request, a finding, a message to the executor) goes into the round file first and, outside the S lane, passes this check before it runs. Outside the S lane, first save the triage as it is before its check, for the check's later A/B (`docs/model-choice.md` § Pending): copy `.plans/round-<N>.md` with `cp` to `<data root>/trials/triage-before-check/<owner>-<repo>-<branch>-round-<N>.md` (names as in `local-data.md` § State file); when that file exists (a later check of the same round), use the first free name, `-2`, `-3`, … before `.md`. Then run a fresh agent with [triage-check.md](triage-check.md) (model: `docs/model-choice.md`) and fix what it finds. Anything that needs the user becomes a gate question. In both lanes, `--triage-only` stops here and shows the triage.
 
 ### 5. Execute
 
 - Mark a session chapter `Round N · <goal>` with the app's chapter tool; skip it when the tool is missing.
 - Tell the user in one line that round N started with k items and that they will hear from you at a gate or at the end. In `run`, say it for the first round only.
 - **S lane:** make the changes yourself, following [executor.md](executor.md) § How, except its Progress line, and § Stop and report, except that you ask the user (a gate) where it says to stop. After each item, update `items` in the state file (no progress sidecar); at the end, write `.plans/round-<N>-summary.md` in the shape of `${CLAUDE_PLUGIN_ROOT}/templates/round-summary.md`. Steps 6–8 follow as in the full lane: a change you make yourself, however small or directly asked, gets step 7's fresh review before the push.
-- **Full lane:** launch a **background** general-purpose agent with [executor.md](executor.md), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
+- **Full lane:** launch a **background** general-purpose agent with [executor.md](executor.md) (model: `docs/model-choice.md`), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
   - **When the agent stops with questions,** ask the user (gate, with a notification), then continue the same agent with `SendMessage`.
   - **When it finishes,** write its returned summary to `.plans/round-<N>-summary.md`.
 
@@ -84,8 +84,8 @@ When the round's verification needs a manual check in the browser, follow the pr
 
 ### 7. Review
 
-- **Every round,** a fresh agent runs [reviewer.md](reviewer.md) on `<round start>..HEAD`, against the plan.
-- **At milestones,** also run the profile's deep review tool through a background agent, with the plan's bar as the stop criterion. The milestones are `--deep`, the ready-for-review gate, and drift over budget.
+- **Every round,** a fresh agent runs [reviewer.md](reviewer.md) on `<round start>..HEAD`, against the plan (model: `docs/model-choice.md`).
+- **At milestones,** also run the profile's deep review tool through a background agent (model: `docs/model-choice.md`), with the plan's bar as the stop criterion. The milestones are `--deep`, the ready-for-review gate, and drift over budget.
 - **Write `.plans/round-<N>-review.md`:** the verdict against the bar, then the findings under **Block**, **Ticket** and **Note**. The next round reads its block findings from there.
 - **Sort the findings:**
   - **block** → next round's items;
