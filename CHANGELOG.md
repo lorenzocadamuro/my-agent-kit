@@ -2,6 +2,29 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [6.2.0] - 2026-11-05
+
+The kit now names, in one table, the model each agent it starts runs on. Agents that only search and decide nothing run on Sonnet, which costs less; every other agent keeps the session's model, so the model you choose for the session still sets the cost. Each round outside the S lane also saves its triage before the triage check, so a later trial can test the check on rounds whose answers are known. Kit 6.2.0, minor: new behaviour, nothing you rely on changes.
+
+### Principles
+
+- New § Which model an agent runs on: `docs/model-choice.md` names it, one row per agent the skills start; an agent it does not name keeps the session's model, and no skill names a model itself.
+- New `docs/model-choice.md`: the table (role, where it starts, model, why, the model version tested). The research search agent runs on `sonnet` (tested on claude-sonnet-5-5); the research analysis agents, the plan review, the triage check ("A/B pending on captured rounds"), the executor, the round review, the deep review's outer agent, the `pr:review` agents, the `improve run` review and any other agent keep the session's model. A Sonnet row passes `model: "sonnet"`, except in a session whose model is cheaper (Haiku), where it passes none. § Fallback: a Sonnet agent whose result omits an item of its list, or gives a claim without `file:line` evidence, runs once more on the session's model; an item answered `unknown` (no `gh`, no git, no access) is no reason to rerun. § Tested: when the `sonnet` alias moves to another model, the A/B behind a row runs again. § Pending: the triage check's A/B waits for at least 3 saved rounds.
+- `docs/local-data.md`: the data root gains `trials/`, private material for the kit's own trials.
+
+### Planning (`plan:scope`, `plan:round`)
+
+- `plan:scope` step 3: research for M and L runs in two phases. First one search agent, whose prompt opens with "Search only, decide nothing", answers a fixed list, each item with `file:line` or `unknown: <what could not be read>`: the callers of the shared code by path with untruncated counts, open PRs on the paths, CODEOWNERS and branch rules, the rules to load, and the test or code that pins each behaviour the ticket describes. Then up to two analysis agents, given its answers: how things really work, the consequences, which rule decides each case, failure paths and the baseline. At most three agents, as before; what research collects does not change.
+- `plan:round` step 4: outside the S lane, before the triage check starts, the round file is copied to `<data root>/trials/triage-before-check/<owner>-<repo>-<branch>-round-<N>.md` (`-2`, `-3`, … for a later check of the same round).
+- `plan:scope`, `plan:round`, `pr:review` and `improve` read `docs/model-choice.md` first, and every sentence that starts an agent points to it. The prompt files of the executor, the round review and the triage check do not change.
+
+### Evals
+
+- New `plan/research-search-on-sonnet`: a `--dry-run` scope of size M in an Opus session, with no git and no `gh`; one agent with `model: "sonnet"` and the search prompt, no agent on another model, and no rerun for the access gap. Before 0/1 (the run started no agent), after 2/2.
+- New `plan/triage-saved-before-check`: a `--triage-only` round of an M plan; the copy exists, and the `cp` runs before the triage check's agent starts. Before 0/1 (no copy), after 2/3 (in the failing run the copy was saved, but no agent with the triage check's prompt was seen).
+- `plan/added-item-checked`, `plan/round-reviewed-by-fresh-agent` and `pr/own-pr-fresh-review` gain a `no-model` grader: the triage check, the round review and the `pr:review` agents start with no `model`. All three pass before and after.
+- The ten `--dry-run` scope cases run again after the change: 8 pass; `plan/design-options-offered` fails as it did before the change; `plan/option-cost-priced` passed 1 of 2 runs (1 of 1 before).
+
 ## [6.1.0] - 2026-11-03
 
 Plans, rounds and questions check what they used to take on trust: the plan review tests every claim the plan rests on, negative ones included; a round's tests pin both sides of each clause; an item added to a round in progress passes the triage check; a recommendation rests on data or on what the code beside the choice already does; and a change to the constitution is asked as its own explicit question. `my-language` 0.1.1: the ITE checker no longer counts quoted examples or text copied from the app as errors, and `/language` names the settings source that sets the active style. Kit 6.1.0, minor: new behaviour, nothing you rely on changes.
