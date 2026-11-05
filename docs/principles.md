@@ -61,6 +61,10 @@ Follow [question-format.md](question-format.md) for when to ask, and for the sha
 - **At milestones: the project's deep review tool,** named in the project profile. The milestones are before "ready for human review", and when drift exceeds the budget. The bar is passed in as the stop criterion.
 - **Every finding is labelled** block, ticket or note, by [review-lenses.md](review-lenses.md) § Grading a finding. Only block findings enter the next round.
 
+## Which model an agent runs on
+
+- **[model-choice.md](model-choice.md) names it, one row per agent the skills start;** an agent it does not name keeps the session's model. No skill names a model itself: the sentence that starts an agent points to the table.
+
 ## Repository rules are inputs, not assumptions
 
 - **Each repository has a local profile** in `<data root>/projects/<owner>-<repo>.md`. It names the commands (tests, codegen, migrations, deep review, PR description), the guides to load, and the post-merge checks. The format is in [local-data.md](local-data.md).
