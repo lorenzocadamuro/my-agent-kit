@@ -2,7 +2,7 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
-## [6.2.0] - 2026-11-05
+## [6.2.0] - 2026-11-06
 
 The kit now names, in one table, the model each agent it starts runs on. Agents that only search and decide nothing run on Sonnet (unless the session runs on a cheaper model), which costs less; every other agent keeps the session's model, so the model you choose for the session still sets the cost. Each round outside the S lane also saves its triage before the triage check, and every round saves the round review's inputs before the review, each with the answer that followed, so a later trial can test the check and the review on rounds whose answers are known. Kit 6.2.0, minor: new behaviour, nothing you rely on changes.
 
