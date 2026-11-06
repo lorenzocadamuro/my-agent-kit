@@ -3,4 +3,4 @@ description: "Understand a PR before reviewing it: what and why, before and afte
 argument-hint: "<PR> [area in plain words | comment id or URL | reviewer… [all] | comments [all] | pasted comments]"
 ---
 
-Invoke the `my:pr` skill with the Skill tool, passing the arguments `learn $ARGUMENTS`, and follow it.
+Invoke the `my:pr` skill with the Skill tool, passing the arguments `learn $ARGUMENTS`. Then, before any other step, read `learning.md` and `learn.md` in the skill's base directory (the one the Skill tool names) and follow them.

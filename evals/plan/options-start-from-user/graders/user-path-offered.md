@@ -1,0 +1,7 @@
+---
+type: regex
+target: {source: file, path: questions.md}
+pattern: '^[ \t>*#|-]*\**[ \t]*(?:Option|Opzione)?[ \t]*\(?[A-Da-d](?:[.):]|[ \t]*\||[ \t]*[—–-][ \t]|[ \t]+\()(?:[^\n]|\n(?![ \t>*#|-]*\**[ \t]*(?:Option|Opzione)?[ \t]*\(?[A-Da-d](?:[.):]|[ \t]*\||[ \t]*[—–-][ \t]|[ \t]+\()|[ \t]*#|[ \t]*\**[ \t]*(?:Q|D|Domanda|Question)[ \t]*\d|[ \t]*[-*]?[ \t]*\**[ \t]*(?:Recommend|Raccomand|Consiglio|Why|Perch)))*?(?:\bflag(?:[^\n]|\n(?![ \t>*#|-]*\**[ \t]*(?:Option|Opzione)?[ \t]*\(?[A-Da-d](?:[.):]|[ \t]*\||[ \t]*[—–-][ \t]|[ \t]+\()|[ \t]*#|[ \t]*\**[ \t]*(?:Q|D|Domanda|Question)[ \t]*\d|[ \t]*[-*]?[ \t]*\**[ \t]*(?:Recommend|Raccomand|Consiglio|Why|Perch)))*?(?:(?:delet|remov|drop|cancell|elimin|tolt|togli|rimuov|rimoss|strip|ripul)\w*[^\n]{0,60}?(?:before|prima d\w*|ahead of)[^\n]{0,20}?merg|(?:never|mai|not|non)\b[^\n]{0,30}?(?:merged|reach\w* main|arriv\w*[^\n]{0,10}main|su main|in main|mergiat))|(?:(?:delet|remov|drop|cancell|elimin|tolt|togli|rimuov|rimoss|strip|ripul)\w*[^\n]{0,60}?(?:before|prima d\w*|ahead of)[^\n]{0,20}?merg|(?:never|mai|not|non)\b[^\n]{0,30}?(?:merged|reach\w* main|arriv\w*[^\n]{0,10}main|su main|in main|mergiat))(?:[^\n]|\n(?![ \t>*#|-]*\**[ \t]*(?:Option|Opzione)?[ \t]*\(?[A-Da-d](?:[.):]|[ \t]*\||[ \t]*[—–-][ \t]|[ \t]+\()|[ \t]*#|[ \t]*\**[ \t]*(?:Q|D|Domanda|Question)[ \t]*\d|[ \t]*[-*]?[ \t]*\**[ \t]*(?:Recommend|Raccomand|Consiglio|Why|Perch)))*?\bflag)'
+flags: im
+weight: 3
+---

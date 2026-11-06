@@ -1,0 +1,9 @@
+schema_version: "1"
+name: sync-finds-clean-worktree
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 30
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:pr:sync PR acme/shop#42, branch discounts. --no-push. Questa sessione è nel checkout principale ./repo, su main, e la PR non l'ha aperta questa sessione. In questo ambiente git non è eseguibile: gli output dei comandi git sono già pronti in ./git-out/ (rev-parse e status di ./repo, `git worktree list --porcelain`, lo status del worktree che ha il branch discounts, fetch e drift, merge-tree). Usali al posto di git. Non eseguire i comandi che cambierebbero un repository o un worktree: scrivi in ./sync-plan.md, in ordine, i passi e i comandi che faresti, e fermati prima del commit di merge. Quando il merge è pronto, attiva Auto-fix sulla PR così la CI viene seguita. Nessun accesso a GitHub. Data root ./kit-data.

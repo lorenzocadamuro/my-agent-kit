@@ -3,4 +3,4 @@ description: "Make sense of PR comments from bots or colleagues: two lines each,
 argument-hint: "[PR number or URL] [comment URL | new | all]"
 ---
 
-Invoke the `my:pr` skill with the Skill tool, passing the arguments `comments $ARGUMENTS`, and follow it.
+Invoke the `my:pr` skill with the Skill tool, passing the arguments `comments $ARGUMENTS`. Then, before any other step, read `comments.md` in the skill's base directory (the one the Skill tool names) and follow it.

@@ -73,3 +73,4 @@ focus:
 - LLM judges fail on long artifacts, even with a trivial rubric. Check facts with `regex` graders (`target: {source: file, path}`, `flags: is`), and keep `llm` graders for short files or the last message.
 - `input_match` matches the whole tool input, content included. Anchor it on the field you mean, for example `"file_path":\s*"[^"]*/skills/`.
 - A case must be able to fail. Write it against the problem first, then fix the skill.
+- Each grader works on both sides before it counts: it passes a correct answer in other words (a saved run, a heading in between, another language, a pretty-printed file) and fails a close wrong one (one that restates the bug, or leaves out the one thing checked). Try a regex with the flags the harness uses (JavaScript RegExp: no inline `(?s)` or `(?i)`; use `flags`). An `llm` judge gives no reasons: prefer regexes on the facts.

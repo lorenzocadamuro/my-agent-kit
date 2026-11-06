@@ -18,6 +18,6 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`.
 | `sync`                     | Bring the branch up to date with main                  | [sync.md](sync.md)                             |
 | none, or pasted comments   | `comments` if the text is comments to answer, `learn` with a comment focus if the user wants to learn from them; otherwise ask which mode in one line |  |
 
-The sub-commands `/my:pr:learn`, `/my:pr:review`, `/my:pr:comments` and `/my:pr:sync` call this skill with the mode already set. Follow the mode's file; with the principles, it holds every rule the mode needs, except the shared rule below. The rules of `learning.md` apply to `learn` only.
+The sub-commands `/my:pr:learn`, `/my:pr:review`, `/my:pr:comments` and `/my:pr:sync` call this skill with the mode already set. Read the mode's file before any other step, and follow it; with the principles, it holds every rule the mode needs, except the shared rule below. The rules of `learning.md` apply to `learn` only.
 
 **Activity (every mode):** write the activity sidecar at the path and in the shape of `${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file: `running` as the first step and again when the user answers, `needs_you` while waiting for the user (an analysis to agree, a posting gate, a design conflict), `done` at every exit, stops included.

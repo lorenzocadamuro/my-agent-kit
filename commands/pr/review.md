@@ -3,4 +3,4 @@ description: "Review a PR the way a senior colleague would, yours before human r
 argument-hint: "<PR number or URL> [instructions in plain words]"
 ---
 
-Invoke the `my:pr` skill with the Skill tool, passing the arguments `review $ARGUMENTS`, and follow it.
+Invoke the `my:pr` skill with the Skill tool, passing the arguments `review $ARGUMENTS`. Then, before any other step, read `review.md` in the skill's base directory (the one the Skill tool names) and follow it.

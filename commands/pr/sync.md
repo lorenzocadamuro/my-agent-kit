@@ -3,4 +3,4 @@ description: "Bring the branch up to date with main safely: conflict preview, co
 argument-hint: "[context in plain words] [--no-push]"
 ---
 
-Invoke the `my:pr` skill with the Skill tool, passing the arguments `sync $ARGUMENTS`, and follow it.
+Invoke the `my:pr` skill with the Skill tool, passing the arguments `sync $ARGUMENTS`. Then, before any other step, read `sync.md` in the skill's base directory (the one the Skill tool names) and follow it.

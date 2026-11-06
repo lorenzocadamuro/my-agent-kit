@@ -6,12 +6,13 @@ Load the project profile `<data root>/projects/<owner>-<repo>.md`. Without a pro
 
 ## Steps
 
-1. **Preflight.**
-   - You are in a linked worktree: `git rev-parse --git-dir` differs from `--git-common-dir`.
-   - You are not on the default branch.
-   - The tree is clean.
+1. **Preflight: the worktree.**
+   - The branch is the current one, or the PR's head branch; it is not the default branch.
+   - Find its worktree (`git worktree list --porcelain`). Work there when it is a linked worktree (`git rev-parse --git-dir` differs from `--git-common-dir`) with a clean tree and no other session working in it.
+   - Otherwise, the session sits elsewhere or that worktree is busy or dirty: leave it as it is, `git fetch origin <branch>`, and add a worktree at `origin/<branch>` (detached, since the branch is checked out elsewhere; push with `git push origin HEAD:<branch>` in step 9). Enter it as the principles say (entering a worktree: `.worktreeinclude`, then the profile's setup command), so the commit hooks find what they need. Say in one line which worktree and why.
+   - When the user asks for CI to be watched (Auto-fix), check now whether this session can turn it on: the app allows it only on a PR this session opened. Otherwise say at the start that the user turns it on, and how a step that waits for green CI resumes (the user's next message).
 
-   Stop if any check fails.
+   Stop if the branch is the default one, or no clean worktree can be made.
 
 2. **Measure:** `git fetch origin <default>`, then `${CLAUDE_PLUGIN_ROOT}/scripts/drift.sh`. If the branch is 0 commits behind, report that and stop.
 3. **Preview without touching the tree:** `git merge-tree --write-tree --name-only HEAD origin/<default>`. Also list what main brings that needs post-merge work: new migrations, changed generated sources, lockfile changes.
@@ -40,7 +41,7 @@ Load the project profile `<data root>/projects/<owner>-<repo>.md`. Without a pro
    Then run the targeted tests for the conflicted files and for this branch's main areas.
 
 8. **Commit:** `Merge origin/<default> into <branch>`, with a body of one line per conflicted file (class and resolution).
-9. **Push,** unless `--no-push`: `git push`, fast-forward only. Read CI through the app's PR status tool when one is available. Do not poll.
+9. **Push,** unless `--no-push`: `git push` (`git push origin HEAD:<branch>` from a detached worktree), fast-forward only. Read CI through the app's PR status tool when one is available. Do not poll.
 10. **Report** in at most 10 lines: commits pulled in, the conflict table, checks run, the push SHA, and anything that needs a restart. Closing step from the principles.
 
 ## Rules

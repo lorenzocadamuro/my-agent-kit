@@ -2,6 +2,55 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [6.3.0] - 2026-11-06
+
+Questions start from what you know and said; research follows every writer of what a plan hooks into; claims and proposals name the run that showed them; sync finds or prepares a clean worktree; a review explains the PR before its verdict; scope can stop after research when you want to understand first; every sub-command reads its own mode file; and eval graders are tried on both sides before they count. Kit 6.3.0, minor: new behaviour, nothing you rely on changes.
+
+### Principles
+
+- `docs/question-format.md` § When to ask: "Explore first, then decide" becomes "Show it, then ask": anything a question or its options name that the user has not seen in this conversation is shown first, new or existing (a feature with the steps to see it, a function or mechanism with what triggers it, an agent's role, today's values, a design still taking shape); a gate first says what the work found. "Show the case" merges into it.
+- § Shape: new "The options start from the user": what the user already said about a choice is one of its options, in their terms; an option the code, the boundary or an earlier decision rules out is not offered (moved here from `plan:scope` step 3, so every mode has it). A guarantee of the kit alone never makes an option the recommended one, and an option that takes away a control the user has today (the session's model, the cost, when to stop) says so in its Cons. Before an option carries a number, look in the code for a mechanism that needs none (a promise that always settles, an event).
+- § Verify, don't assume: the list of texts checked claim by claim becomes every text that reports a result or proposes a change, in chat or a file, yours or dictated to an agent; each claim names the run or read that showed it and says only what that run exercised; a proposed change says whether it ran against its area's tests, or "not run"; partial proof means a smaller claim.
+- § The kit carries the plan it made: every change to the plan's work becomes a round, whoever starts it: a request, or the work left after a gate (a rollout step, a restart).
+
+### Planning (`plan:scope`, `plan:round`)
+
+- `plan:scope` step 2: when the user asks to understand the problem first, or the ticket asks for no code, scope researches read-only, explains, and stops with `needs_you` ("Go ahead?"); the worktree, the ticket move and the interview wait for the user's go.
+- `plan:scope` step 3: research follows every field, state, key or rule the plan adds, changes or reads to start its own work, with every writer across the code base, not only the flow traced (also in the search agent's fixed list, the round's triage and the triage check); any code the plan runs, a throwaway variant included, is checked for what it writes and needs outside the process, tried once read-only before it touches shared data; the baseline also runs the CI jobs of the files the plan adds, and counts once on main that each scenario the bar measures holds what the change touches.
+- `plan:scope` step 6: the plan review checks each rule the plan states (boundary, invariants, out of scope) against every step of every part and the CI jobs of the files it adds.
+- Step labels and part short titles say what the work does in words, never a function, file or identifier name (`local-data.md` § State file, `plan:scope` step 8).
+- `plan:round` § The state file: the `--running` steps of the open round are passed at every write until the one that ends it, the writes after the executor and during the review and the push included.
+
+### Pull requests (`pr:review`, `pr:sync`)
+
+- `pr:review` step 6: when no `/my:pr:learn` reading exists at the current head, the analysis opens with about five lines on what the PR changes and why, before → after, then the verdict; with a reading, a link to it.
+- `pr:sync` step 1: it finds the branch's worktree; a busy or dirty one, or a session sitting elsewhere, gets a new detached worktree at `origin/<branch>`, entered as the principles say (`.worktreeinclude`, the profile's setup), and pushed with `git push origin HEAD:<branch>`. When the user asks for Auto-fix on a PR this session did not open, it says at the start that the user turns it on.
+
+### Commands
+
+- Each sub-command in `commands/` names the mode file to read before any other step (`comments.md`, `scope.md`, `round.md` § Run, …) or, for `improve`, its section; the `plan` and `pr` routers say to read the mode's file before any other step.
+
+### Improvement loop (`improve`)
+
+- `run` step 5.1 and `evals/README.md` § Lessons: a grader counts only after it was tried on both sides: it passes a correct answer in other words and fails a close wrong one.
+
+### Evals
+
+- New `plan/options-start-from-user`: a `--dry-run` scope whose ticket states, in the user's words, a temporary debug page kept in the same PR behind a flag and deleted before merge, an existing panel named only by its code name, and a proposal that overrides the session's model and cost limit. Graders on `questions.md`: one option holds the user's path, the panel is shown by the steps to open it, and the cons of the overriding option name the lost control. Before 0/1 (the user's path was never one option; the other two graders already passed), after 1/1 in the full suite.
+- New `pr/review-explains-first`: `/my:pr:review` on a colleague's small PR with no reading; a before/after and the reason come ahead of the verdict. Before 0/1 (the analysis opened with the verdict), after 3/3.
+- New `pr/sync-finds-clean-worktree`: the PR branch is checked out in another tool's dirty worktree, the session sits in the main checkout, and the user asks for Auto-fix on a PR this session did not open. Graders: a new worktree from `origin/<branch>`, the profile's setup before the merge, the busy worktree untouched, no gate on the new worktree, no merge commit, and Auto-fix named as the user's. Before 1/2 with the Auto-fix request (the failing run made no new worktree and did not name Auto-fix; without the request the old kit asked a gate and failed 2/2), after 3/3 (2/2 and the full suite's run).
+- `pr/human-review-explained` gains `mode-file-read`: an assistant tool call reads `skills/pr/comments.md` (by Read, `cat` or Grep). On the old kit the file was read in 3 of 3 runs, so the 3-of-8 failure did not reproduce; the grader guards it. After 3/3, and 1/1 in the full suite.
+- New `plan/step-labels-plain`: a round fills `short` and `steps` from a plan whose steps are code identifiers; no label is a code name. It passes on the old kit too (2/2: the coordinator already wrote words); code names come only from `state-steps.sh`'s fallback when nobody writes a label. Kept as a regression check.
+- Graders fixed and tried on both sides with saved runs and hand-written samples: `plan/option-cost-priced`'s `options-priced` takes the Italian forms of the same idea ("ri-rasterizza", "rasterizzato di nuovo", "da capo") and no longer matches "pan" inside a longer word; `improve/run-report-plain`'s `case-before-change` allows a Markdown heading between the case and the missing question, and `says-time-cost` takes "ogni round … minuti" and "minuti in più per round"; `plan/state-says-what-is-left` replaces its Haiku judge with three regex graders on the state file, independent of whitespace and line layout. After: 1/1 each, then `run-report-plain` 2/2 (the old kit 0/2 on this case).
+- No case pins these changes, each for its reason:
+  - research that lists every writer and the CI jobs of new paths: on a small fixture the old kit already found the hidden writer and the job (2/2); the note's miss came from a large code base;
+  - understand first: the eval sandbox has no working git, so the old kit never reaches the worktree step (2/2 passed);
+  - the review after a gate: the old kit already reviewed the work left after a gate when `/my:plan:run` resumed (1/1); the note's miss came from a long live session;
+  - claims that name their runs: the old kit already flagged an unsupported round summary (1/1); the note's miss came from texts the round does not check;
+  - the `--running` steps at every write until the round ends, and the grader rule itself.
+- Full suite (76 cases, one run, Claude Code 2.1.290): 66 passed. The 10 failures, rerun on this version and on 6.2.0: `failed-step-cleared`, `failed-step-reset`, `broken-promise`, `own-pr-fresh-review`, `approval-states-drift` and `run-report-plain` pass 2/2 here (the last two fail on 6.2.0: 0.70 and 0.58); `recommendation-rests-on-data` (1/2 here, 0/2 on 6.2.0) and `small-task` (1/2 here, 2/2 on 6.2.0) fail on a different grader from run to run; `design-options-offered` passes 3 of 6 runs here and 3 of 5 on 6.2.0 (an LLM judge on a long file); `run-carries-blocks` passes 4 of 5 here and 4 of 5 on 6.2.0 (one run timed out at 300 s).
+- Spend: $112.29 in all ($15.15 for writing the cases and their before-runs, $6.72 for the after-runs of the pr cases and the sync case's rerun, $53.36 for the full suite, $37.06 for the reruns of its failures on both versions).
+
 ## [6.2.0] - 2026-11-06
 
 The kit now names, in one table, the model each agent it starts runs on. Agents that only search and decide nothing run on Sonnet (unless the session runs on a cheaper model), which costs less; every other agent keeps the session's model, so the model you choose for the session still sets the cost. Each round outside the S lane also saves its triage before the triage check, and every round saves the round review's inputs before the review, each with the answer that followed, so a later trial can test the check and the review on rounds whose answers are known. Kit 6.2.0, minor: new behaviour, nothing you rely on changes.

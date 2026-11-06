@@ -3,4 +3,4 @@ description: "Run the plan round after round, on its own, until something needs 
 argument-hint: "[source] [--verify N] [--deep] [--no-push]"
 ---
 
-Invoke the `my:plan` skill with the Skill tool, passing the arguments `run $ARGUMENTS`, and follow it.
+Invoke the `my:plan` skill with the Skill tool, passing the arguments `run $ARGUMENTS`. Then, before any other step, read `round.md` in the skill's base directory (the one the Skill tool names) and follow its § Run.
