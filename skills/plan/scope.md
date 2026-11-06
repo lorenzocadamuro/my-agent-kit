@@ -32,7 +32,7 @@ Read the ticket, its links and related issues. Then classify:
 
 State the classification and its reason in one line; the user can override it in the first question batch.
 
-**Understand first, when asked.** When the user asks to understand the problem before deciding to work on it, or the ticket asks for no code (read data, decide, close), say so in one line, skip the worktree and the ticket below, do step 3's research read-only from where the session is (baseline only where it needs no worktree), explain what it found, and stop: set the planning state file to `needs_you` with reason "Go ahead?". The worktree, the ticket move and the interview wait for the user's go.
+**Understand first, when asked.** When the user asks to understand the problem before deciding to work on it, or the ticket asks for no code change at all (read data, decide, close), say so in one line, skip the worktree and the ticket below, do step 3's research read-only from where the session is (baseline only where it needs no worktree), explain what it found, and stop: set the planning state file to `needs_you` with reason "Go ahead?". The worktree, the ticket move and the interview wait for the user's go; then continue at "Then open the worktree", keep the research, and run only its baseline in the worktree.
 
 **Then open the worktree,** so the plan is made where it will run (principles: always in a worktree). Skip it for `--dry-run`, which creates nothing, and when the profile says the user works without a worktree.
 

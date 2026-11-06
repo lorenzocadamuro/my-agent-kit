@@ -7,10 +7,10 @@ Load the project profile `<data root>/projects/<owner>-<repo>.md`. Without a pro
 ## Steps
 
 1. **Preflight: the worktree.**
-   - The branch is the current one, or the PR's head branch; it is not the default branch.
-   - Find its worktree (`git worktree list --porcelain`). Work there when it is a linked worktree (`git rev-parse --git-dir` differs from `--git-common-dir`) with a clean tree and no other session working in it.
-   - Otherwise, the session sits elsewhere or that worktree is busy or dirty: leave it as it is, `git fetch origin <branch>`, and add a worktree at `origin/<branch>` (detached, since the branch is checked out elsewhere; push with `git push origin HEAD:<branch>` in step 9). Enter it as the principles say (entering a worktree: `.worktreeinclude`, then the profile's setup command), so the commit hooks find what they need. Say in one line which worktree and why.
-   - When the user asks for CI to be watched (Auto-fix), check now whether this session can turn it on: the app allows it only on a PR this session opened. Otherwise say at the start that the user turns it on, and how a step that waits for green CI resumes (the user's next message).
+   - **The branch:** the current branch, unless the user named a PR or branch (then its head branch, `gh pr view <n> --json headRefName`). It is not the default branch.
+   - **Its worktree** (`git worktree list --porcelain`): when the branch is checked out in a linked worktree (`git rev-parse --git-dir` differs from `--git-common-dir`) with a clean tree, work there, by `git -C <path>` or by moving the session into it as the principles say (entering a worktree).
+   - **Otherwise** (no worktree has the branch, or the one that has it holds uncommitted changes): leave that worktree as it is. When it holds commits not on `origin/<branch>` (`git -C <path> log origin/<branch>..<branch>`), stop and ask: they would be left out. Else `git fetch origin <branch>`, add a detached worktree at `origin/<branch>` under the profile's worktree root (`<branch>-sync`), and enter it as the principles say, `.worktreeinclude` and the profile's setup command included, so the commit hooks find what they need. Say in one line which worktree and why. Step 7 restarts no service from it, step 9 pushes with `git push origin HEAD:<branch>`, and the report says that the busy worktree is now behind `origin/<branch>` (a `git pull` there before its next push) and removes the new worktree once pushed.
+   - **Auto-fix:** when the user asks for CI to be watched, check now whether this session can turn it on: the app allows it only on a PR this session opened, and then sync turns it on after the push. On any other PR, say now that the user turns it on.
 
    Stop if the branch is the default one, or no clean worktree can be made.
 
