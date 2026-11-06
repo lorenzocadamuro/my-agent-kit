@@ -9,7 +9,7 @@ An agent the kit starts runs on the session's model unless this table names anot
 | Plan review | `plan:scope` step 6 | session model | a guard: what it misses reaches every round | — |
 | Triage check | `plan:round` step 4 | session model, A/B pending on captured rounds | a guard: what it misses reaches the executor silently | — |
 | Executor, and its `SendMessage` continuation | `plan:round` step 5 | session model | it writes the code | — |
-| Round review | `plan:round` step 7 | session model | a guard: it moves only after an A/B on real rounds | — |
+| Round review | `plan:round` step 7 | session model, A/B pending on captured rounds | a guard: what it misses is pushed silently | — |
 | Deep review (the outer agent) | `plan:round` step 7 | session model | the repository's own tool picks the models of the agents it starts; the kit does not set them | — |
 | `pr:review` agents | `pr:review` step 3 | session model | they judge the PR | — |
 | `improve run` review | `improve` § Run, step 6 | session model | it judges a change to the kit | — |
@@ -32,3 +32,4 @@ An agent the kit starts runs on the session's model unless this table names anot
 ## Pending
 
 - The triage check's A/B waits for at least 3 rounds saved under `<data root>/trials/triage-before-check/` (`plan:round` step 4).
+- The round review's A/B waits for at least 3 rounds with block findings saved under `<data root>/trials/review-before-check/` (`plan:round` step 7).

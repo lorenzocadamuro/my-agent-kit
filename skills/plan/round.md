@@ -59,7 +59,7 @@ Items outside the plan's scope, and findings labelled "ticket", go to "Not this 
 
 ### 4. Independent triage check
 
-Only the S lane skips this check, and writes `Triage check: skipped (size S)` in the round file; a round of an M or L plan that looks small still gets it. An item added to a round in progress (the user's request, a finding, a message to the executor) goes into the round file first and, outside the S lane, passes this check before it runs. Outside the S lane, first save the triage as it is before its check, for the check's later A/B (`docs/model-choice.md` § Pending): copy `.plans/round-<N>.md` with `cp` to `<data root>/trials/triage-before-check/<owner>-<repo>-<branch>-round-<N>.md` (names as in `local-data.md` § State file); when that file exists (a later check of the same round), use the first free name, `-2`, `-3`, … before `.md`. Then run a fresh agent with [triage-check.md](triage-check.md) (model: `docs/model-choice.md`) and fix what it finds. Anything that needs the user becomes a gate question. In both lanes, `--triage-only` stops here and shows the triage.
+Only the S lane skips this check, and writes `Triage check: skipped (size S)` in the round file; a round of an M or L plan that looks small still gets it. An item added to a round in progress (the user's request, a finding, a message to the executor) goes into the round file first and, outside the S lane, passes this check before it runs. Outside the S lane, first save the triage as it is before its check, for the check's later A/B (`docs/model-choice.md` § Pending): copy `.plans/round-<N>.md` with `cp` to `<data root>/trials/triage-before-check/<owner>-<repo>-<branch>-round-<N>.md` (names as in `local-data.md` § State file); when that file exists (a later check of the same round), use the first free name, `-2`, `-3`, … before `.md`. Then run a fresh agent with [triage-check.md](triage-check.md) (model: `docs/model-choice.md`), save its report next to the copy, under the copy's name with `-check.md` in place of `.md`, and fix what it finds. Anything that needs the user becomes a gate question. In both lanes, `--triage-only` stops here and shows the triage.
 
 ### 5. Execute
 
@@ -84,9 +84,10 @@ When the round's verification needs a manual check in the browser, follow the pr
 
 ### 7. Review
 
-- **Every round,** a fresh agent runs [reviewer.md](reviewer.md) on `<round start>..HEAD`, against the plan (model: `docs/model-choice.md`).
+- **First save the review's inputs** as they are now, for the review's later A/B (`docs/model-choice.md` § Pending): copy `.plans/plan.md`, `.plans/round-<N>.md` and `.plans/round-<N>-summary.md` with `cp` into `<data root>/trials/review-before-check/<owner>-<repo>-<branch>-round-<N>/` (names as in `local-data.md` § State file), and write there `round-<N>.diff`, the diff the review is given (`git diff <round start>..HEAD`); when that folder exists (a later review of the same round), use the first free name, `-2`, `-3`, … after it.
+- **Every round,** a fresh agent then runs [reviewer.md](reviewer.md) on `<round start>..HEAD`, against the plan (model: `docs/model-choice.md`).
 - **At milestones,** also run the profile's deep review tool through a background agent (model: `docs/model-choice.md`), with the plan's bar as the stop criterion. The milestones are `--deep`, the ready-for-review gate, and drift over budget.
-- **Write `.plans/round-<N>-review.md`:** the verdict against the bar, then the findings under **Block**, **Ticket** and **Note**. The next round reads its block findings from there.
+- **Write `.plans/round-<N>-review.md`:** the verdict against the bar, then the findings under **Block**, **Ticket** and **Note**. The next round reads its block findings from there. Then copy it into the review's `review-before-check/` folder.
 - **Sort the findings:**
   - **block** → next round's items;
   - **ticket** → append to `.plans/tickets.md`;

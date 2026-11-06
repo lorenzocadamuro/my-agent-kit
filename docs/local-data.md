@@ -15,7 +15,7 @@ Personal and employer-specific material lives outside this repository, in the da
   reviews/                analyses and drafts written by /my:pr:review, read again by its next review of the PR
   plans/                  plans written by /my:plan:scope --dry-run
   retros/                 one-page retrospective per finished change
-  trials/                 private material for the kit's own trials, such as triages saved before their check (trials/triage-before-check/)
+  trials/                 private material for the kit's own trials, such as triages saved before their check (trials/triage-before-check/) and round reviews' inputs saved before the review (trials/review-before-check/), each with the answer that followed
   state/<owner>-<repo>-<branch>.json  where a change stands (state/session-<session id>.json while planning outside a worktree), written by /my:plan:scope, /my:plan:round and /my:plan:run, read by the status mod
   state/<same base>.progress.json, .activity.json  sidecars: a round's item progress; what a pr:* mode or improve run is doing
 ```
