@@ -2,6 +2,27 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [6.4.0] - 2026-11-06
+
+Questions are read as you will read them before they are sent, and eval graders are tried on samples their author did not choose alone. Kit 6.4.0, minor: new behaviour, nothing you rely on changes.
+
+### Principles
+
+- `docs/question-format.md` § Shape: new "Before you send a batch, read it as the user, from the chat alone". Each question can be answered in under a minute without opening a file, and its case and context are in the same message. The whole interview's decisions are counted first: decisions with the same recommendation (already covered, the same place, the same fix) become one question that lists them, and a long exact text is pasted once in chat before the batch, never repeated in each question.
+
+### Improvement loop (`improve`)
+
+- `run` step 4: the explanation of each group goes in chat, right before the questions; a report file is extra detail, never the explanation.
+- `run` step 5.1 and `evals/README.md` § Lessons: a grader counts only after it fails the note's own wrong answer (its "What happened" and Evidence lines) and passes correct answers in other words from kept runs (`--keep-temp`) of both versions; a hand-written sample only adds to these.
+- `run` step 6: the fresh review also runs each new or changed grader on one near miss and one correct answer it writes itself.
+
+### Evals
+
+- New `plan/questions-grouped`: a `--dry-run` scope whose ticket asks to decide twelve items, each with its problem, example, change and cost of a no. Six items are already done in the code, three are typos in one file, three are real decisions. Graders on `questions.md`: at most eight questions, the done items never spread over two questions (judged on each question's heading and its first two lines), and at least one question written. It cannot reproduce the note: on this fixture the old kit already listed the done items once and grouped the typos (1/1 after the fixture fix). The first fixture left two items half done, so the old kit asked about them, correctly, and failed 0/2 on the fixture, not on the problem. The note's miss came from a live interview of 24 kit rules with long exact texts, which a sandbox file cannot show. Kept as a regression check. After 1 of 2 runs passed: the failing run grouped the done items in one question and named one of them again to explain another question; the grader then narrowed to the heading and first two lines, and passes the three kept runs (one before, two after) and a hand-written answer, and fails one question per item and a split of the done items.
+- No case pins the grader rule of `run` steps 5.1 and 6: it would need an improve run, with its own eval harness, inside the sandbox.
+- Full suite (77 cases, one run): 70 passed. The 7 failures, rerun twice on this version and twice on 6.3.0: `free-answer-gets-an-answer` passes 2/2 on both; `small-task` 2/2 here and 1/2 on 6.3.0; `gated-actions-listed` 1/2 here and 0/2 on 6.3.0; `recommendation-rests-on-data` 1/2 here and 0/2 on 6.3.0; `nothing-worth-adding` and `design-options-offered` 1/2 on both (LLM judges). `deferred-row-verified` passes 2 of 6 runs here and 2 of 5 on 6.3.0: its `no-wrong-premise` regex fails correct answers on both versions, for example "`docs/realtime.md` unchanged", because the line names the file without a negation word. This change does not touch that grader; it stays for a later note.
+- Spend: $85.89 in all ($5.12 for the new case before and after the change, $52.63 for the full suite, $19.77 for the reruns of its failures on both versions, $8.37 for three more runs of `deferred-row-verified` on each version).
+
 ## [6.3.0] - 2026-11-06
 
 Questions start from what you know and said; research follows every writer of what a plan hooks into; claims and proposals name the run that showed them; sync finds or prepares a clean worktree; a review explains the PR before its verdict; scope can stop after research when you want to understand first; every sub-command reads its own mode file; and eval graders are tried on both sides before they count. Kit 6.3.0, minor: new behaviour, nothing you rely on changes.
