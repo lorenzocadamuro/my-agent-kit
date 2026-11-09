@@ -96,7 +96,7 @@ Follow [question-format.md](question-format.md) for when to ask, and for the sha
 ## Language
 
 - **Working texts are in English:** skills, prompts for other agents, plans and `.plans/` files, hand-off files, commit messages, comment and reply drafts, and the band's states, reasons, short titles and step labels (the kit's vocabulary).
-- **The kit sets no language and no sentence form for text written for the user:** the conversation, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes. The active output style does (`/language`, from the `my-language` mod); with none, the session has no such rule. Whatever the style, the why comes before the what. An agent's report reaches the user summarised, never forwarded as it is.
+- **The kit sets no language and no sentence form for text written for the user:** the conversation, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes. The user's output style and own instructions do; the kit ships no style. Whatever the style, the why comes before the what. An agent's report reaches the user summarised, never forwarded as it is.
 - **Vocabulary is never translated.** Repository terms (code names, domain nouns, flags, commands) and the kit's own terms (`bar for done`, `boundary`, `round`, states, ids, table headers) stay as they are in every language, so the user finds them in the code and in conversations with colleagues. The first time a term appears in a conversation, give its meaning in one line.
 
 ## Name the session after the work

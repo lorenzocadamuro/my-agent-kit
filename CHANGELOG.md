@@ -2,9 +2,9 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
-## [6.4.0] - 2026-11-06
+## [7.1.0] - 2026-11-09
 
-Questions are read as you will read them before they are sent, and eval graders are tried on samples their author did not choose alone. Kit 6.4.0, minor: new behaviour, nothing you rely on changes.
+Questions are read as you will read them before they are sent, and eval graders are tried on samples their author did not choose alone. Kit 7.1.0, minor: new behaviour, nothing you rely on changes.
 
 ### Principles
 
@@ -22,7 +22,43 @@ Questions are read as you will read them before they are sent, and eval graders 
 - No case pins the grader rule of `run` steps 5.1 and 6: it would need an improve run, with its own eval harness, inside the sandbox.
 - Full suite (77 cases, one run): 70 passed. The 7 failures, rerun twice on this version and twice on 6.3.0: `free-answer-gets-an-answer` passes 2/2 on both; `small-task` 2/2 here and 1/2 on 6.3.0; `gated-actions-listed` 1/2 here and 0/2 on 6.3.0; `recommendation-rests-on-data` 1/2 here and 0/2 on 6.3.0; `nothing-worth-adding` and `design-options-offered` 1/2 on both (LLM judges). `deferred-row-verified` passes 2 of 6 runs here and 2 of 5 on 6.3.0: its `no-wrong-premise` regex fails correct answers on both versions, for example "`docs/realtime.md` unchanged", because the line names the file without a negation word. This change does not touch that grader; it stays for a later note.
 - After the review fixes: `questions-grouped` 2/2; `free-answer-gets-an-answer` and `gate-explained-cold` 1/1; `options-start-from-user` 2 of 3 runs here and 0 of 2 on 6.3.0 (its `user-path-offered` grader: the user's path split across two questions, as the 6.3.0 entry describes).
+- Where these numbers come from: every run above used this change built on 6.3.0, before the merge with 7.0.0. 7.0.0 changed only wording in the files these cases read (`docs/principles.md` § Language, the Pros and Cons line of `docs/question-format.md`, the style references and the List and Log form in `skills/improve/SKILL.md`) and nothing in `skills/plan/scope.md`, so the cases did not run again. The merged suite has 76 cases.
 - Spend: $98.43 in all ($5.12 for the new case before and after the change, $52.63 for the full suite, $19.77 for the reruns of its failures on both versions, $8.37 for three more runs of `deferred-row-verified` on each version, $12.54 for the cases after the review fixes).
+
+## [7.0.0] - 2026-11-09
+
+The kit no longer ships output styles or sets the form of chat replies. The `my-language` mod, with its ITE and STE styles, the `/language` command and the ITE checker, is removed, and three modes stop prescribing tables and badges in chat: the language and form of replies come from the output style and the instructions you install outside the kit. Kit 7.0.0, major: `/my:improve note` no longer takes a `style:<name>` target, and the `my-language` plugin leaves the marketplace.
+
+### Removed
+
+- `mods/my-language/` (output styles ITE and STE, `/language`, `ite-check.py` and the mod's tests), and its entry in `.claude-plugin/marketplace.json`.
+- `evals/language/` (`ite-report`, `ste-report`), `evals/improve/note-targets-style`, `scripts/evals-with-pack.sh` and its test, and the `/evals-*/` line of `.gitignore`.
+- The README "Output languages" section, the mod's install, update and check commands, and its layout lines; the "Output style cases" section of `evals/README.md`; the ITE exception in `.claude/CLAUDE.md`.
+
+### Principles
+
+- § Language: the user's output style and own instructions set the language and form of text written for the user; the kit ships no style. `scripts/no-form-rules.test.sh` still guards that no kit text sets them.
+
+### Improvement loop (`improve`)
+
+- List and Log: each entry shows its id, skill, state and problem; the visual widget, the Markdown table and the emoji badges are gone, and the reply form comes from the user's output style. States stay the kit's English words. Closed entries follow the open ones under `Closed (<n>)`.
+- `note`: a reply that only broke the user's output style is not logged. The reply says so in one line and names the style's plugin as the place to fix it. When a kit text asked for that form, the note goes against that text. `run` no longer reads style files or the ITE checker.
+
+### Pull requests (`pr:comments`, `pr:sync`)
+
+- `pr:comments` step 6: the chat gives each group's comments, explanation, class, weight and action, with no prescribed table; the `.plans/comments-<date>.md` file keeps its table.
+- `pr:sync` step 10: the report gives each conflicted file with its class and resolution, with no prescribed table.
+
+### Evals
+
+- New `improve/log-follows-reply-style`: `/my:improve log` with a reply style that forbids tables, lists and emoji; the reply shows every entry with its id, state and problem, with no table and no badge. It also passes on 6.3.0 (1/1): a reply style in the system prompt already won over the skill's table, so the case guards that no kit text brings the conflict back. After 1/1.
+- `improve/log-shows-problems`: the emoji badge and table-cell graders become one judged grader, `english-states`: each entry's state stays the English word in an Italian reply.
+- New `improve/note-style-not-logged`: a note about a reply that used a list and bold text against the user's output style writes no suite log, and the reply says why. Before 0/1 (6.3.0 logged the note), after 1/1.
+- Regression on 7.0.0: `improve/log-shows-problems` 1/1, `pr/uncertain-claim-reproduced` 1/1. The `pr:sync` cases did not run: only the wording of the report changed. Spend for this release: $1.85.
+
+### Upgrade
+
+- Run `claude plugin uninstall my-language@my-agent-kit`, and remove `my-language@my-agent-kit` from `enabledPlugins` in `~/.claude/settings.json` if it stays there. If a folder's `.claude/settings.local.json` or your `~/.claude/settings.json` still holds `"outputStyle": "my-language:ITE"` or `"my-language:STE"`, replace or remove it.
 
 ## [6.3.0] - 2026-11-06
 

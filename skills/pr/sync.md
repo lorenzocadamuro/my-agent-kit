@@ -42,7 +42,7 @@ Load the project profile `<data root>/projects/<owner>-<repo>.md`. Without a pro
 
 8. **Commit:** `Merge origin/<default> into <branch>`, with a body of one line per conflicted file (class and resolution).
 9. **Push,** unless `--no-push`: `git push` (`git push origin HEAD:<branch>` from a detached worktree), fast-forward only. Read CI through the app's PR status tool when one is available. Do not poll.
-10. **Report** in at most 10 lines: commits pulled in, the conflict table, checks run, the push SHA, and anything that needs a restart. Closing step from the principles.
+10. **Report** in at most 10 lines: commits pulled in, each conflicted file with its class and resolution, checks run, the push SHA, and anything that needs a restart. Closing step from the principles.
 
 ## Rules
 

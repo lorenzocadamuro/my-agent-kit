@@ -14,11 +14,6 @@
       "name": "my-status",
       "source": "./mods/my-status",
       "description": "Optional status band for the my kit: where a plan stands, its parts and steps, how long it has run and has left, what runs in the background, what needs you, and the next action."
-    },
-    {
-      "name": "my-language",
-      "source": "./mods/my-language",
-      "description": "Optional language packs for the my kit: output styles for the language and form of Claude's replies, switched with /language."
     }
   ]
 }
