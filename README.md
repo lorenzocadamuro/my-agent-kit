@@ -73,7 +73,7 @@ Between gates, agents work in the background: `plan:run` starts the next round o
 | `/my:pr:review`    | Review      | Reviews a pull request, yours or a colleague's, through the lenses senior reviewers use, starting from the promise: its main scenario followed end to end through every piece, then coherence between pieces, state ownership, durability, every caller, rollback, the roadmap of others. First a private analysis in chat: a few lines on what the PR does and why when no `/my:pr:learn` reading exists, then ready to merge or not and why, findings weighed by who can trigger them and what they cost, and "nothing worth adding" when that is the answer. On a PR already reviewed, right after the verdict it says what the head fixed since the last review, and points to threads others already opened instead of repeating them; each thread's resolved state comes from a GitHub GraphQL query tried on a real PR. Only once you agree come the questions to ask and the comment drafts, then the publishing gate. Your own PR is reviewed by fresh agents that did not write it. |
 | `/my:pr:comments`  | Review      | For each bot or colleague comment: two lines of explanation, whether it is real (a claimed bug only once reproduced through the code that calls it in production, otherwise "not verified" with the command that would decide it), its weight, a proportional action and a reply draft: short for a bot; for a colleague's review, one reply for the whole review, fixed points included, that explains where the behaviour comes from and what the alternative would cost, without taking a stance. |
 | `/my:pr:learn`     | Learning    | Understand a PR before reviewing it: what and why, before → after, reading order, its promise, questions to keep in mind, and last a few lines on the review comments it has (who said what, what is still open). With a focus on review comments (a comment id or URL, a reviewer, or `comments`), it studies the comments you received instead: a three-layer study page, only comments not studied yet, with a glossary and reviewer profiles. Private. |
-| `/my:improve`      | Always      | `note` logs a problem with the kit from any session, through a script that numbers it under a lock, so two sessions writing at the same moment never share an id; `digest` turns the signals every skill collects while you work into a few clear notes; `run` explains each group of open notes by a concrete case of what went wrong and what will change for you, finds the upstream lesson behind them and turns it into approved changes, eval cases, a version bump and an updated README, in its own worktree, and ships only after showing you the diff and getting your yes, then updates the plugins you installed; `log` shows the history, each note with its problem in one line and a state badge (an open note from an older kit version marked `from <version>`), closed ones folded away; `method` lists the decision kinds and which ones are handed over. A note's target is a skill and mode, or `principles`, `templates`, `scripts`, `mod`, `profile:<repo>`, or `style:<name>` for a reply that broke an output style's rules (`style:ITE`). |
+| `/my:improve`      | Always      | `note` logs a problem with the kit from any session, through a script that numbers it under a lock, so two sessions writing at the same moment never share an id; `digest` turns the signals every skill collects while you work into a few clear notes; `run` explains each group of open notes by a concrete case of what went wrong and what will change for you, finds the upstream lesson behind them and turns it into approved changes, eval cases, a version bump and an updated README, in its own worktree, and ships only after showing you the diff and getting your yes, then updates the plugins you installed; `log` shows the history, each note with its state and its problem in one line (an open note from an older kit version marked `from <version>`), closed ones after the open ones; `method` lists the decision kinds and which ones are handed over. A note's target is a skill and mode, or `principles`, `templates`, `scripts`, `mod` or `profile:<repo>`; a reply that only broke your output style is not logged, since the kit sets no reply form. |
 
 Behind them are three skills with modes: `plan` (scope, round, run), `pr` (learn, review, comments, sync) and `improve` (note, digest, run, log, method). You rarely need the names: ask in plain words ("explain PR 456", "run the plan") and Claude picks the command from its description.
 
@@ -97,41 +97,6 @@ The band's own text never names the work, the plan's title or the PR: only state
 
 **What it reads.** The state file `plan:scope`, `plan:round` and `plan:run` write: `plan:scope` records when the work started and each part's short title (two or three words, at most 16 characters, so it fits under its part) and steps, two or three words each; `plan:round` records each round's start and end; and every write derives each step's status from the plan's boxes and the open round with `scripts/state-steps.sh`, never by hand (done, running, to do, or failed when verification blames its item). A state file written by kit 5.6.0, without steps or short titles, still draws: numbered segments, labelled from the steps it lists as left, the short title from the heading after "Part X:", and the time left "estimating…". The mod also reads the progress sidecar, only for its `updatedAt`, which keeps a running file fresh (its item counts are no longer shown); the activity sidecar of `pr:*` modes and `improve run`; whether the plan file exists, and its text for the pane; the open kit notes; the session's agents; and `git` and `gh`. It never changes your files. A chat shows only its own planning and activity, even when several chats work in the same folder (without a session id, the folder's file); planning inside the change's worktree is the worktree's file, shown to every chat there. A planning, running or activity state untouched for 6 hours is ignored; one without an `updatedAt` never is. New comments count only other people's, and a failed network call shows nothing rather than zero.
 
-## Output languages (optional)
-
-The kit sets no language and no sentence form for what Claude writes for you. `my-language` is a mod that ships two output styles, and its `/language` command switches between them in the terminal and in the desktop app:
-
-- **ITE**, simplified technical Italian. Its rules: one idea per sentence, at most 20 words in an instruction and 25 in a description, the active voice, no gerund, no "viene" passive, no support verbs.
-- **STE**, simplified technical English in the spirit of ASD-STE100. Its rules: imperative steps, short sentences, no contractions, no "should" or "may", no semicolons or em-dashes.
-
-A style covers every text written for you to read: the chat, reports, questions, notifications, chapter titles, study pages, signals and the reasoning in log notes. Code, commits, plans and `.plans/` files, prompts for agents and drafts for other people keep the repository's rules. Claude Code puts the active style in the system prompt, so each reply is written once, already in that form: nothing translates or rewrites it afterwards. The kit's content rules (the why before the what, the question format, terms kept as they are) stay in the kit and apply under any style. Without the mod, or with `/language off`, replies follow Claude Code's defaults.
-
-**Switch.**
-
-```text
-/language          lists the styles and off, marking the active one and naming the settings that set it
-/language STE      replies follow STE from your next message
-/language off      Claude Code's Default style: no rule from this mod
-```
-
-`/language` writes `outputStyle` into the folder's `.claude/settings.local.json`, the same key `/output-style` writes, and keeps every other key. The choice stays for that folder until you switch again, also after `/clear` and `/compact`; two sessions in the same folder share it.
-
-**Set ITE as your default** in `~/.claude/settings.json`; a folder's own `/language` choice wins over it:
-
-```json
-{ "outputStyle": "my-language:ITE" }
-```
-
-Leave Claude Code's own `language` setting (the "Language" row of `/config`) at its default: once set, it adds a second language rule beside the style.
-
-**Add a style:** a Markdown file in `mods/my-language/output-styles/`, with front matter `name` (the file name without `.md`), `description` and `keep-coding-instructions: true`, the scope sentence the other styles carry, and form rules only. `/language` lists it from the next session, with no code change, and `mods/my-language/scripts/packs.test.sh` checks it. Bump the mod's version so the installed copy gets it.
-
-**Measure a reply** against ITE's rules: `python3 mods/my-language/scripts/ite-check.py reply.md` (or the reply on stdin) prints one finding per line and the findings per 100 words. It measures and never blocks. Text in double quotes counts as cited, so the forms it shows as examples raise no finding. Measure the reply's Markdown when you can; text copied from the app loses list markers and headings, so the checker reads each line as its own paragraph and a line with tabs as a table row. A file wrapped at a fixed width is under-counted, since each line counts as a paragraph.
-
-**Stop or roll back.** `/language off` stops the style in this folder only. To stop it everywhere, remove `outputStyle` from `~/.claude/settings.json` and from each folder's `.claude/settings.local.json`, where `/language` writes it, then run `claude plugin uninstall my-language@my-agent-kit`. To return to 5.8.0, where the kit set its own language rules, do all of that first. With the install from a clone (the symlink in [Install](#install)), check out `v5.8.0` in the clone and restart. The install from GitHub follows the repository and has no version option: `claude plugin install` and `claude plugin marketplace add` take none.
-
-ASD-STE100 is a registered trademark of ASD. The STE style follows its spirit; it is not the official standard, and ASD did not certify it. STE is adapted from AminBlg/SimpleEnglish (MIT): see `mods/my-language/THIRD-PARTY.md`.
-
 ## Principles
 
 [CONSTITUTION.md](CONSTITUTION.md) comes first: what the kit is for, and what it must not become. It changes only by hand or at your explicit request, and it wins over every other rule. `/my:improve run` checks each proposal against it, refuses what it forbids, and for the cause behind such a note proposes only what it allows. When you want an amendment, the kit asks it as its own question, with today's text and the new text.
@@ -150,7 +115,7 @@ All skills share one set of rules, kept in [docs/principles.md](docs/principles.
 - a fresh session is named after the work, not the command;
 - a file you must read opens in the app's pane, and a text you must approve is pasted in chat; nothing published cites your study pages, reviewer profiles or other personal material;
 - in the kit's own repository, work branches may be pushed, but `main` and tags move only at the release gate, after the full diff and your yes;
-- the kit sets no language or sentence form for what it writes for you: the output style you choose does (`/language`); an agent's report reaches you summarised, never forwarded as it is, and repository vocabulary is never translated;
+- the kit sets no language or sentence form for what it writes for you: your output style and your own instructions do; an agent's report reaches you summarised, never forwarded as it is, and repository vocabulary is never translated;
 - the kit learns while it is used: every skill collects signals and digests them into notes;
 - an approved plan runs only through `plan:run` or `plan:round`, so the status line is always true; leaving the kit is your call.
 
@@ -171,15 +136,14 @@ claude plugin install my@my-agent-kit
 
 The repository is private, so nobody else can install it.
 
-**The mods** (the status line and the output languages) are installed on their own, from your clone used as a local marketplace. The marketplace also lists `my`: do not install that one where `~/.claude/skills/my` already loads the kit, or it loads twice.
+**The status line mod** is installed on its own, from your clone used as a local marketplace. The marketplace also lists `my`: do not install that one where `~/.claude/skills/my` already loads the kit, or it loads twice.
 
 ```bash
 claude plugin marketplace add "<path to your clone>"
 claude plugin install my-status@my-agent-kit
-claude plugin install my-language@my-agent-kit
 ```
 
-The installed copies are kept by version, so a change to `mods/my-status` or `mods/my-language` reaches them only with a version bump: once that version is in your clone, run `claude plugin marketplace update my-agent-kit`, then `claude plugin update my-status@my-agent-kit` or `claude plugin update my-language@my-agent-kit`, then restart.
+The installed copies are kept by version, so a change to `mods/my-status` reaches it only with a version bump: once that version is in your clone, run `claude plugin marketplace update my-agent-kit`, then `claude plugin update my-status@my-agent-kit`, then restart.
 
 ## Improving the kit
 
@@ -209,9 +173,7 @@ The kit follows [semantic versioning](https://semver.org):
 skills/<name>/       plan, pr and improve: a SKILL.md that routes to one file per mode
 commands/<skill>/    thin sub-commands that call a skill in one mode (/my:<skill>:<mode>)
 evals/<skill>/       eval cases, one per problem the kit has learned from
-evals/language/      eval cases for the output styles, each carrying its style's text
 mods/my-status/      the optional status line mod (hooks module, its state contract, tests)
-mods/my-language/    the optional output languages mod: output-styles/ (ITE, STE), /language, the ITE checker and their tests
 CONSTITUTION.md      what the kit is for; wins over every other rule; changed only by the user
 docs/principles.md   rules every skill follows
 docs/                question format, review lenses, local data layout, which model each agent runs on
@@ -227,8 +189,6 @@ scripts/append-entry.sh  appends a log note or a method kind, numbered under a l
 scripts/append-entry.test.sh  tests that ten writers at once get ten ids
 scripts/no-form-rules.test.sh  tests that no kit text sets the language or sentence form for the user
 scripts/no-form-rules.allow  the lines that test lets pass (what the user types)
-scripts/evals-with-pack.sh  copies the eval suite with a style's text added to every case
-scripts/evals-with-pack.test.sh  tests that copy
 .githooks/pre-commit runs scripts/check.sh
 .githooks/commit-msg blocks a commit touching CONSTITUTION.md without "Amend constitution"
 .claude/CLAUDE.md    instructions for agents editing this repository
@@ -255,7 +215,6 @@ bash scripts/drift.test.sh            # test that the size budget counts product
 bash scripts/state-steps.test.sh      # test that step statuses come from the plan's boxes
 bash scripts/append-entry.test.sh     # test that notes and kinds written at once never share an id
 bash scripts/no-form-rules.test.sh    # test that no kit text sets the language or sentence form for the user
-bash scripts/evals-with-pack.test.sh  # test the suite copy with a style's text
 ```
 
 `git config core.hooksPath .githooks` enables both hooks: `pre-commit` runs `scripts/check.sh`, and `commit-msg` blocks a commit that touches `CONSTITUTION.md` unless its message contains "Amend constitution" (merges pass).
@@ -267,23 +226,11 @@ claude plugin eval . --no-publish --runs 1 --trust-plugin \
   --ablation none --allow-tools Bash Write Edit --scaffold -j 4
 ```
 
-To run the suite with a style's text added to every case (close to a session with that style, not the mod itself), build the git-ignored copy `evals-<style>/` and point the run at it:
-
-```bash
-scripts/evals-with-pack.sh ITE
-claude plugin eval . --no-publish --runs 1 --trust-plugin \
-  --ablation none --allow-tools Bash Write Edit --scaffold -j 4 --eval-dir evals-ITE
-```
-
-The mods have their own checks:
+The status line mod has its own checks:
 
 ```bash
 claude plugin validate mods/my-status
 claude plugin test mods/my-status
-claude plugin validate mods/my-language
-claude plugin test mods/my-language
-bash mods/my-language/scripts/packs.test.sh      # the styles' front matter, scope and notice, and the eval cases' copies
-bash mods/my-language/scripts/ite-check.test.sh  # each ITE checker rule fires on its wrong sample only
 ```
 
 `scripts/check.sh` runs the scripts' tests under `scripts/` and `mods/*/scripts/` too.

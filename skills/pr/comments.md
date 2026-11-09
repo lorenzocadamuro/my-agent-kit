@@ -33,8 +33,8 @@ Pasted comments work too, when `gh` is unavailable.
      - Not a bug: the evidence, with `file:line`.
      - Ticket: "Out of scope for this PR; tracked in <ticket>."
 6. **Output.**
-   - **Chat:** a table with one row per group: comment(s), explanation (2 lines), class, weight, action.
-   - **File:** `<worktree>/.plans/comments-<date>.md` (or the scratchpad), holding the table, the evidence and the reply drafts. Items marked "fix" are written as `### <k>. <claim>` entries, so `/my:plan:round` and `/my:plan:run` can take the file as their input.
+   - **Chat:** for each group, its comment(s), explanation (2 lines), class, weight and action.
+   - **File:** `<worktree>/.plans/comments-<date>.md` (or the scratchpad), holding a table with one row per group and those columns, the evidence and the reply drafts. Items marked "fix" are written as `### <k>. <claim>` entries, so `/my:plan:round` and `/my:plan:run` can take the file as their input.
    - **State file:** update it.
 7. **Gate.** Paste the reply drafts in chat, and ask which to post (all, a selection, or none) and whether to resolve the answered threads, never those of a person's review answered with an explanation: they resolve them. Post with `gh api repos/<o>/<r>/pulls/<n>/comments -X POST -f body=… -F in_reply_to=<id>` (a person's review: `gh api repos/<o>/<r>/issues/<n>/comments -X POST -f body=…`), and resolve with the GraphQL `resolveReviewThread` mutation, only for what the user approved. Never resolve a thread whose fix is not yet pushed.
 8. **Suggest the next step:**
