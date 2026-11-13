@@ -1,0 +1,9 @@
+schema_version: "1"
+name: understand-first-worth-it
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 40
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:plan:scope Prima voglio capire, poi decido se lavorarci: il ticket è in ./tracker/T-140.md. Il tracker non è raggiungibile: tutti i suoi ticket sono esportati in ./tracker/, un file per ticket. Il codice è in ./tiles. Data root ./kit-data. Non c'è un repository git: lavora dai file presenti. Scrivi il report anche in ./report.md.

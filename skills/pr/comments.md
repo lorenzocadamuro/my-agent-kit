@@ -27,7 +27,7 @@ Pasted comments work too, when `gh` is unavailable.
    - A real group that the plan, the research or a round's review should have caught is a signal (principles: closing step). Read the plan (`.plans/plan.md`, or the one the user names) to judge it.
 4. **Weigh and act.** Weight each group by the lenses doc § Grading a finding. Pick a proportional action: fix, document, ticket, or reply only. A low-value style point on a local tool does not get an elaborate fix.
 5. **Draft the replies,** in English.
-   - **A person's review** (a colleague, not a bot): one reply for the whole review, as a PR comment that names the points it answers, never one per point; a point already fixed takes its "Addressed in `<sha>`" line inside it. For each other point, where the behaviour comes from and what the alternative would cost, so they can judge; no stance or verdict ("I'd keep this as is", "on purpose", "deliberate"); end open to their view. As long as the points need.
+   - **A person's review** (a colleague, not a bot): one reply for the whole review, as a PR comment that names the points it answers, never one per point; a point already fixed takes its "Addressed in `<sha>`" line inside it. For each other point, where the behaviour comes from and what the alternative would cost, so they can judge (principles: text addressed to a colleague). As long as the points need.
    - **A bot:** at most 3 sentences, factual.
      - Fixed: "Addressed in `<sha>`: <how>."
      - Not a bug: the evidence, with `file:line`.

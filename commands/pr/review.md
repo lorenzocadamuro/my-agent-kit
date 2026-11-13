@@ -1,5 +1,5 @@
 ---
-description: "Review a PR the way a senior colleague would, yours before human review or a colleague's: first a private analysis (ready to merge or not, the main scenario end to end, verified findings weighed by reach and impact; nothing worth adding is a valid answer), then, once you agree, questions and comment drafts in English; a pending GitHub review by default. Use for \"/my:pr:review\", \"review this PR\", \"fammi la review\", \"what would a senior ask here\"."
+description: "Review a PR the way a senior colleague would, yours before human review or a colleague's: first a private analysis (ready to merge or not, the main scenario end to end, verified findings weighed by reach and impact; nothing worth adding is a valid answer), then, once you agree, questions and comment drafts in English; by default a GitHub review submitted with the event you choose at the gate. Use for \"/my:pr:review\", \"review this PR\", \"fammi la review\", \"what would a senior ask here\"."
 argument-hint: "<PR number or URL> [instructions in plain words]"
 ---
 

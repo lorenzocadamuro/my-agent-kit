@@ -2,6 +2,44 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [7.2.0] - 2026-11-13
+
+Research reads the code it relies on in both directions and as it really behaves, the interview settles the frame before its questions, rounds catch what the review would block before the code, and `pr:review` submits the review with the event you choose. Kit 7.2.0, minor: new behaviour; `pending` stays available as a mode, and nothing is posted without your yes.
+
+### Principles
+
+- § The method: a recommendation follows its kind only when the decision clearly fits the kind's own case; a neighbouring case cites no kind, or names it as a weak fit.
+- § Verify, don't assume: a test drives the production caller in the shape the guide or the plan tells users to write it, and a check is seen failing on the likeliest wrong inputs, alone and, when it guards several rules, together.
+- § Repository rules are inputs: the rules that apply are found by the files touched and by what the change does (a rollout, text agents or users read, a schema), the repository's agent instructions included.
+- § Always in a worktree: once the session works in a worktree, data-root files are written with the Write tool or one plain command per call, never a compound shell command.
+- § Language: a text addressed to a colleague states the problem, its evidence and the options, and leaves the decision to them. The rule moved here from `pr:comments`, so `pr:review` drafts follow it too.
+- `docs/question-format.md` § When to ask: a question that can cut the work (which parts of a bundled request go in this change) is asked alone and first, like one that can stop or postpone it, before research goes deep on that part; a request to explore or prototype gets the alternatives in chat, and the interview waits for the reply. § Shape: a choice of several items (reviewers, files) is one multi-select question; an option that fixes something names each case that happens today which it changes.
+- `docs/review-lenses.md`: new Rules lens.
+
+### Plan (`plan`)
+
+- `scope` step 2: related tickets include the closed and cancelled ones of the same label or project, with why they closed; a bundled request gets the scope question first; the "understand first" report opens with the mechanism and one concrete case, then whether the work is worth doing against those outcomes, then the data.
+- `scope` step 3: the search covers both directions of the code the plan relies on, replaces or renames, the values each writer writes, the settings turned off on purpose, and what the unchanged path shares with the changed code; the analysis checks the plan's assumed values against them, and each deliberate setting the plan changes becomes an interview question.
+- `scope` step 4: the frame is settled first (question format). Step 6: the plan review attacks premises about shared state values, and makes sure that every bar command ran on main and was tried on a wrong input, and that every new interface compiled once against a real caller.
+- `round` step 3: the test of each item follows the shape users are told to write; items step 4's check changes are estimated again before executing. Step 5: the S lane makes its changes only once the round file is written.
+- `triage-check.md`: new item 7, the review lenses hold for the change each item plans.
+
+### Pull requests (`pr`)
+
+- `review`: new default mode `submit`; `pending` stays as a mode. At the gate the kit recommends the event: `COMMENT` by default, `APPROVE` when only notes or blocks too small for another round trip are left, `REQUEST_CHANGES` only for a serious problem. The head is read again before the drafts and right before posting. The verdict names the findings no one raised first. Rules load by what the change does. New step 9: on your yes at the gate, a background poll watches a colleague's PR, and a follow-up review runs from the saved analysis when the author tags you or requests your review again; it submits `APPROVE` on its own only if you allowed it at the gate.
+- `comments`: the colleague-reply rule now points to the principles.
+
+### Improvement loop (`improve`)
+
+- `run` step 7: at the ship question, when `origin/main` moved past the worktree's base, the run lists what changed in the files the cases read, merges, and reruns only the cases those changes touch.
+
+### Evals
+
+- Nine new cases, run once on 7.1.0 and once on this version. Two reproduce their notes: `plan/test-in-documented-shape` (a `--triage-only` round for a helper whose guide puts each entry in its own feature module; 7.1.0 tested only inline entries, this version names a test built as the guide says) and `pr/review-gate-for-colleague` (a colleague's PR with a default-off gate rule in `CLAUDE.md` and an open bot thread; 7.1.0 proposed a pending review with no event and did not count the new findings apart from the bot's, this version recommends `COMMENT` and says the two blocks are new). Seven already behaved on 7.1.0 and stay as regression checks: `plan/research-reads-both-ways`, `plan/scope-cut-asked-first`, `plan/prototype-stays-in-chat`, `plan/understand-first-worth-it`, `plan/kind-must-fit`, `plan/triage-check-reuses-helper` and `plan/s-lane-file-first`. On this fixture, 7.1.0 already asked the scope cut first, but its research had counted the 37 toolbar entries the cut drops, which no grader measures.
+- Graders fixed after trying them on the kept runs: `kind-must-fit` first failed a correct 7.1.0 answer that named K31 and said it did not apply, so it now fails only a recommended option that cites K31 without a weak-fit word; `scope-cut-asked-first` now reads the first question's heading and body; `review-gate-for-colleague`'s `no-github` now fails only a real Bash call to the reviews endpoint, not the command text written into `review.md`; and `new-apart-from-raised` also accepts "these two blocks are new". Each corrected grader passes the kept correct answers and fails the old wrong one or a hand-written wrong sample.
+- No case covers the data-root writes from a worktree (the sandbox has no worktree guard), the ship step of `improve run` (it needs a real repository and a moving `main`), the watch of `pr:review` (it needs GitHub), the estimate after the triage check, or the multi-select reviewer question (both come only after an executed check or a ready-for-review gate, which a sandbox round does not reach).
+FULLSUITE_PLACEHOLDER
+
 ## [7.1.0] - 2026-11-09
 
 Questions are read as you will read them before they are sent, and eval graders are tried on samples their author did not choose alone. Kit 7.1.0, minor: new behaviour, nothing you rely on changes.
