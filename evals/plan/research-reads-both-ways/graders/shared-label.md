@@ -1,7 +1,7 @@
 ---
 type: regex
 target: {source: file, path: plan.md}
-pattern: "(status_label|labels\\.py)[\\s\\S]{0,400}(classic|flag[- ]off|off path|unchanged|boundary|confine|spent|today)|(classic|flag[- ]off|boundary|confine)[\\s\\S]{0,400}(status_label|labels\\.py)"
+pattern: "(status_label|labels\\.py|label helper|shared label)[^\\n]{0,200}((?<![/\\w])shared(?![/\\w])|condivis|also (read|used)|anche (da|la|nella)|flag[- ]off|classic)|((?<![/\\w])shared(?![/\\w.])|condivis|flag[- ]off|classic)[^\\n]{0,200}(status_label|labels\\.py|label helper)"
 flags: i
 weight: 3
 ---

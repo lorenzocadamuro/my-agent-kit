@@ -1,7 +1,9 @@
 ---
-type: regex
-target: {source: file, path: questions.md}
-pattern: "(^|\\n)(#{1,4}\\s*|\\*\\*)(Q|D|Domanda |Question )?1\\b(?:(?!\\n#{1,4} |\\n\\*\\*(Q|D|Domanda |Question )?2\\b)[\\s\\S])*?(this PR|questa PR|same PR|stessa PR|later PR|PR success|separate PR|PR separat|follow-up PR|first PR|prima PR|which (items|parts)|quali (parti|voci)|in scope|nello scope|\\bscope\\b|perimetro|split the ticket|dividere il ticket|alone and first|da sola e per prima)"
-flags: i
+type: llm
+focus:
+  source: file
+  path: questions.md
 weight: 3
 ---
+
+The ticket bundles three deliverables: a new helper, the move of the toolbar onto it, and the move of the context menu onto it. Pass only if the first question in the file (whatever its numbering or heading) asks which of these deliverables go in this change, for example whether the moves belong in later PRs, before any question about how to build the helper or how to migrate the menus. Fail if the first question is about anything else, or if the scope question comes only later.
