@@ -4,7 +4,7 @@ context:
   scaffold_script: setup.sh
 execution:
   max_turns: 40
-  timeout_seconds: 600
+  timeout_seconds: 900
   allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
   prompt: |
     /my:plan:scope --dry-run Il ticket è in ./ticket.md. Data root ./kit-data; il profilo del progetto è ./kit-data/projects/acme-shop.md ed è già confermato. Salva il piano in ./plan.md. Taglia M: decisa, non riclassificare. Non posso rispondere alle domande ora: scrivi in ./questions.md le domande che mi faresti, ciascuna con le opzioni e la raccomandazione, poi continua con le raccomandate. Non c'è un repository git né gh: pianifica dai file presenti.
