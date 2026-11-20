@@ -72,9 +72,17 @@ Flags, deploy order, data migrations, backfills, monitoring, how to turn it off.
 
 ## Parts [M+]
 
+A step is ready only when every label under it is filled; `none` with its reason counts as filled.
+
 ### Part A: <what this part makes the code do, as a sentence>
 
-- [ ] <step> — test first: <test>
+- [ ] <step>
+  - Files: <paths, and the owning code point (file · function)>
+  - Searches: <each caller or writer search, run at the base, with its count>
+  - Test: <name, in the shape users are told to write it; what it drives; it fails without the fix>
+  - Environment: <providers, mocks, fixtures, and how each state the test needs is produced>
+  - Pins: <each invariant or boundary clause the step touches: the test that fails when that clause alone breaks, and the input it must let through>
+  - Estimate: <production lines, as a number>
 
 ## Verification [always]
 
