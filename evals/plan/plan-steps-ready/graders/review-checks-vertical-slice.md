@@ -1,0 +1,7 @@
+---
+type: tool_used
+tool: Agent
+input_match: '"prompt":\s*"(?:[^"\\]|\\.)*vertical slice'
+min: 1
+weight: 2
+---
