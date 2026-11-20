@@ -45,14 +45,22 @@ At the end of a round or a run, set `state`: `done` when the bar is met and the 
 
 ### 3. Triage
 
-Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, where N is the next unused number, and copy its `Comments read until` time into the state file's `commentsReadUntil` (`none` leaves the field as it was). For every item:
+Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/templates/round.md`, where N is the next unused number, and copy its `Comments read until` time into the state file's `commentsReadUntil` (`none` leaves the field as it was).
 
-- **Verify the claim against the code at HEAD,** and drop or rewrite what does not hold; the same for every claim in "Not this round" and in rows carried from earlier rounds, a claim about an outside source (a comment, a ticket, a doc) quoted from it as read now, or marked unverified.
-- **Plan order:** a round that takes a later part before the next unfinished one says why in its trigger; "next round" is not a reason.
+**Ready steps go in as written.** A plan step is unchanged when its bullet line and its label lines (up to the next `- [` or heading), with `[x]` and `[ ]` alike and whitespace ignored, appear as such under the same part letter in `.plans/plan-approved.md`. When that file is missing, or the plan's Boundary, Invariants, Intentional changes or Out of scope differ from it, no step is unchanged. Only `plan:scope` step 7 writes `plan-approved.md`; a round never refreshes it. A step whose six labels (`templates/plan.md` § Parts) are all filled and that is unchanged goes into the round file under its `### <k>.` heading with its labels as written: rerun each of its `Searches:` at HEAD, and mark it `Ready from plan`. A count that moved, a missing or different copy, a step with a label missing, a review block fix and an added item take the full triage.
+
+**Full triage,** for every other item:
+
+- **Verify the claim against the code at HEAD,** and drop or rewrite what does not hold.
 - **List the callers covered, by path,** with the untruncated count, and for each field, state, key or rule the item adds, changes or reads to start its own work, its writers across the code base, readers (saved data included), transitions and opened routes (`plan:scope` step 3).
 - **Name the owning code point,** and a test that fails without the fix and drives the production caller, in the shape users are told to write it (principles: a test or a check must be able to fail). A check-only item names instead the commands it runs and the result that counts as passing.
 - **Pin each clause.** For each invariant or boundary clause the item touches, name the test that fails when that clause alone is broken (removed one at a time), and the tests of its other side: an input the clause must let through (for a check, such as a linter, a regex or a grader, the correct cases it must not flag), and each failure path (an error, a timeout) of a dependency the new work shares with existing code; a boundary like "flag off equals main" covers what runs (hooks, subscriptions, effects, requests), not only what renders. An item that copies an approved artefact diffs the copy against its frozen source and lists every difference the plan does not name. An item that rewrites a rule in prose lists every other sentence stating it, and what the new wording covers against the old.
-- **Estimate the production lines** each item adds (tests apart), and again for each item that step 4's check changes. When the drift so far plus the estimate passes the plan's split trigger, step 2's drift gate comes now, before executing, unless step 2 already asked it this round and the estimate has not grown since.
+
+**Every round,** ready steps included:
+
+- **Verify every claim in "Not this round" and in rows carried from earlier rounds** against the code at HEAD; a claim about an outside source (a comment, a ticket, a doc) is quoted from it as read now, or marked unverified.
+- **Plan order:** a round that takes a later part before the next unfinished one says why in its trigger; "next round" is not a reason.
+- **Estimate the production lines** each item adds (tests apart; a ready step's `Estimate:`), and again for each item that step 4's check changes. When the drift so far plus the estimate passes the plan's split trigger, step 2's drift gate comes now, before executing, unless step 2 already asked it this round and the estimate has not grown since.
 - **Write the stop conditions.** They use the plan's "every round" checks; the "once, at the end" proof belongs to the ready-for-review gate. A check copied from the plan or the profile keeps its baseline (principles: measure the baseline).
 
 Items outside the plan's scope, and findings labelled "ticket", go to "Not this round", with ticket text and no fix. An item whose only fix crosses the boundary or a repository rule is a gate: ask before executing.

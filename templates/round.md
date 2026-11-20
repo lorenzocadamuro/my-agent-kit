@@ -3,6 +3,7 @@
 Plan: `.plans/plan.md` · Trigger: <plan part | comments file | review findings | user list>
 Start: branch <name>, HEAD <sha> (= origin? yes/no), clean tree required.
 Comments read until: <time of the newest PR comment read at the start of this round, or "none">
+Triage check: <run | skipped (ready steps) | skipped (size S)>
 Bar: see plan § Bar for done. Act only on items below; anything else is reported, not fixed.
 
 ## Rules for every item
@@ -22,6 +23,12 @@ Bar: see plan § Bar for done. Act only on items below; anything else is reporte
 - Owning code point: <file · function>
 - Change: <what to do, or `none, check only`> (~<n> production lines)
 - Test: <name and what it asserts>
+- Stop if: <condition>
+
+### <k>. <a ready step, its bullet line as the plan writes it>
+
+- Ready from plan: yes (Searches rerun at HEAD: <counts>)
+- <its six labels, copied from the plan as written>
 - Stop if: <condition>
 
 ## Not this round
