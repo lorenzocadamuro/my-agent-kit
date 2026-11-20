@@ -93,9 +93,9 @@ When the round's verification needs a manual check in the browser, follow the pr
 ### 7. Review
 
 - **First save the review's inputs** as they are now, for the review's later A/B (`docs/model-choice.md` § Pending): copy `.plans/plan.md`, `.plans/round-<N>.md` and `.plans/round-<N>-summary.md` with `cp` into `<data root>/trials/review-before-check/<owner>-<repo>-<branch>-round-<N>/` (names as in `local-data.md` § State file), and write there `round-<N>.diff`, the diff the review is given (`git diff <round start>..HEAD`); when that folder exists (a later review of the same round), use the first free name, `-2`, `-3`, … after it.
-- **Every round,** a fresh agent then runs [reviewer.md](reviewer.md) on `<round start>..HEAD`, against the plan (model: `docs/model-choice.md`).
+- **Every round,** a fresh agent then runs [reviewer.md](reviewer.md) on `<round start>..HEAD`, against the round's items and the plan (model: `docs/model-choice.md`). When a part that `state-steps.sh` shows done after step 6 was not done at the round's start, the prompt adds: `This round closes Part <X>: also follow its main scenario end to end, with the lenses that fit.` Other rounds' prompts name neither.
 - **At milestones,** also run the profile's deep review tool through a background agent (model: `docs/model-choice.md`), with the plan's bar as the stop criterion. The milestones are `--deep`, the ready-for-review gate, and drift over budget.
-- **Write `.plans/round-<N>-review.md`:** the verdict against the bar, then the findings under **Block**, **Ticket** and **Note**. The next round reads its block findings from there. Then copy it into the review's `review-before-check/` folder.
+- **Write `.plans/round-<N>-review.md`:** the verdict against the bar, the line per round item, then the findings under **Block**, **Ticket** and **Note**. The next round reads its block findings from there. Then copy it into the review's `review-before-check/` folder.
 - **Sort the findings:**
   - **block** → next round's items;
   - **ticket** → append to `.plans/tickets.md`;

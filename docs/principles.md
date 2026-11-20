@@ -57,7 +57,7 @@ Follow [question-format.md](question-format.md) for when to ask, and for the sha
 
 ## Review depth follows the stakes
 
-- **Every round: a light conformance review** of that round's diff against the plan, by a fresh agent. The lenses are in [review-lenses.md](review-lenses.md).
+- **Every round: a conformance review** of that round's diff against its items and the plan, by a fresh agent, in at most about 400 words. The round that completes a part also follows the part's main scenario with the lenses that fit ([review-lenses.md](review-lenses.md)).
 - **At milestones: the project's deep review tool,** named in the project profile. The milestones are before "ready for human review", and when drift exceeds the budget. The bar is passed in as the stop criterion.
 - **Every finding is labelled** block, ticket or note, by [review-lenses.md](review-lenses.md) § Grading a finding. Only block findings enter the next round.
 

@@ -1,6 +1,6 @@
 # Review lenses
 
-Shared by `/my:pr:review`, the plan review of `/my:plan:scope`, the review step of `/my:plan:round` and `/my:plan:run`, and `/my:pr:comments`. Senior reviewers rarely hunt for line-level bugs first. They ask whether the change keeps its promises. Start from the promise: follow the change's main scenario (the case it exists for) end to end through every piece it touches, where most real defects sit. Then use the other lenses that fit the change, and skip the rest silently.
+Shared by `/my:pr:review`, the plan review of `/my:plan:scope`, the review step of `/my:plan:round` and `/my:plan:run` at the round that completes a part (other rounds grade findings by § Grading a finding only), and `/my:pr:comments`. Senior reviewers rarely hunt for line-level bugs first. They ask whether the change keeps its promises. Start from the promise: follow the change's main scenario (the case it exists for) end to end through every piece it touches, where most real defects sit. Then use the other lenses that fit the change, and skip the rest silently.
 
 ## The lenses
 
