@@ -91,9 +91,10 @@ About 4 questions for S, 8 for M, 12 for L. Never ask what research already answ
 
 ### 6. Independent review
 
-For S, start no agent: confirm that the goal, the boundary, the bar and the gates are present; the user's approval at step 7 is the plan's review. For M and L, hand the plan, the research notes, the principles and [triage-check.md](triage-check.md) to a fresh general-purpose agent (model: `docs/model-choice.md`). It checks each step of every part once, as `triage-check.md` items 1–4, 6 and 7 check a round item (read "step" for "item": the claim at the base, the callers untruncated, the owning code point, a test that can fail and its pins, no hidden second reading, the review lenses), and also that:
+For S, start no agent: confirm that the goal, the boundary, the bar and the gates are present; the user's approval at step 7 is the plan's review. For M and L, hand the plan, the research notes, the principles, [triage-check.md](triage-check.md) and `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` to a fresh general-purpose agent (model: `docs/model-choice.md`). It checks each step of every part once, as `triage-check.md` items 1–4, 6 and 7 check a round item (read "step" for "item": the claim at the base, the callers untruncated, the owning code point, a test that can fail and its pins, no hidden second reading, the review lenses), and also that:
 
 - every label of every step is filled, and each `Searches:` count, rerun at the base, still matches;
+- each step's main scenario, traced through the code at the base as the lenses doc's intro says, holds: what the round review would grade block there (by the lenses doc) is a finding now, since a ready step skips the round's triage check;
 - each part is a vertical slice: it ships one behaviour end to end with its own test, not one layer;
 - the boundary and the bar are checkable;
 - each rule the plan states (boundary, invariants, out of scope) holds against every step of every part, and against the CI jobs that run on the files the plan adds;
