@@ -2,6 +2,37 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [7.3.0] - 2026-11-23
+
+A plan run spends its time on the work, not on checking it again. `plan:scope` writes each step ready to execute and checks it once. A round executes those steps without a triage check, and its review checks conformance. The interview asks only at real forks. Kit 7.3.0, minor: no command or argument changes, and plans written by 7.2.0 still run.
+
+### Principles
+
+- § Proportional, not strict: ask only at the real forks of the kind of work. The plan always holds the four fixed things: goal, boundary, bar for done and gates. The approval summary names them. They are asked only at a real fork.
+- § The method: a decision taken `from the request` or `decided from research` is an assumption. It counts for no kind and creates none.
+- § Review depth follows the stakes: every round gets a conformance review of its diff against its items and the plan, in at most about 400 words. The round that completes a part also reviews the whole part with the lenses that fit.
+- `docs/question-format.md`: the real forks are architecture, design, product behaviour, anything published, and trade-offs that rest on the user's priorities. Scope, boundary and the bar are asked only at a real fork.
+- `docs/review-lenses.md`: the plan review of `plan:scope` uses the lenses too. A round review uses them only at the round that completes a part.
+- `docs/model-choice.md`: the A/B rows of the triage check and the round review are gone, and so is § Pending. `docs/local-data.md`: rounds no longer write `trials/`. Data already saved stays.
+
+### Plan (`plan`)
+
+- `scope` step 4: no topic table and no question count. A topic becomes a question only at a real fork: two or more viable options are left, and the choice rests on the user. Every other topic is decided and recorded as `D<n>`, with Chosen `from the request` or `decided from research`. Zero questions is a valid interview.
+- `scope` steps 3, 5 and 6: each step of an M or L plan carries six labels, filled from the research. They are `Files:`, `Searches:`, `Test:`, `Environment:`, `Pins:` and `Estimate:`. The plan review checks each step once, as the triage check checks a round item. It also reruns each search at the base and traces each step's main scenario with the lenses. It checks that each part is a vertical slice.
+- `scope` step 7: the approval summary names goal, boundary, bar, gates, the parts, and all decided topics on one line. On approval, the plan is copied to `.plans/plan-approved.md`.
+- `round` step 3: a ready step goes into the round file as written, marked `Ready from plan`. Its searches run again at HEAD. A ready step has all six labels filled and has not changed since approval. A moved count, a changed or partial step, a review block fix and an added item take the full triage.
+- `round` step 4: the triage check runs only for the items that step 3 triaged in full. A round of ready steps writes `Triage check: skipped (ready steps)`. It starts no agent before the executor.
+- `round` step 7 and `reviewer.md`: the review gives a verdict for each item against the diff, in at most about 400 words. When a round closes a part, the prompt names the part start, and the review follows the part's main scenario with the lenses. The part start is the `Start:` HEAD of the earliest round file whose `Trigger:` names the part. Without one, it is the `Start:` HEAD of the earliest round file.
+- `round` steps 4 and 7: triages, check reports and review inputs are no longer copied to the data root.
+- `templates/plan.md`: the six step labels, and the Chosen values `from the request` and `decided from research`. `templates/round.md`: the `Triage check:` line and the `Ready from plan` item.
+
+### Evals
+
+- Eight new cases. Five fail on the 7.2.0 text and pass on this version: `plan/plan-steps-ready` (0.17 on 7.2.0), `plan/ready-step-skips-check` (0.00), `plan/round-review-conformance` (0.40), `plan/mid-part-review-conformance` (0.25) and `plan/no-question-when-answered` (0.75 three times). The round cases ran on a branch commit whose round, review and triage-check text equals 7.2.0. `plan/part-end-review-lenses` failed before the part start was named (0.50 on the round 2 text). Its 7.2.0 run waits for the full suite. Two are guards and pass on both versions: `plan/review-fix-still-checked` and `plan/changed-step-still-checked`.
+- In `no-question-when-answered`, the grader `no-fixed-topic-question` is a guard. It passed on 7.2.0 three times. The case fails there only on `reply-names-fixed`. That grader now also needs the gates named, because the fixture leaves the gates to the defaults.
+- Two cases are removed with the trial copies: `plan/triage-saved-before-check` and `plan/review-inputs-saved`.
+- `plan/triage-estimates-size`: the gate grader accepts an estimate or sum line over the trigger, with the gate asked anywhere in the report. It still fails a report with no gate. Known gap: a report that only restates "split, accept with a reason, or cut scope" also passes.
+
 ## [7.2.0] - 2026-11-13
 
 Research reads the code it relies on in both directions and as it really behaves, the interview settles the frame before its questions, rounds catch what the review would block before the code, and `pr:review` submits the review with the event you choose. Kit 7.2.0, minor: new behaviour; `pending` stays available as a mode, and nothing is posted without your yes.
