@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# An M change whose ticket states the goal, boundary, bar, size budget, invariants, out of scope and gates in the
-# user's words, and whose code (the Markdown export and the store beside it) answers the rest: the record's fields, the encoding,
+# An M change whose ticket states the goal, boundary, bar, size budget, invariants and out of scope in the
+# user's words (the gates are left to the defaults, so they are a decided topic), and whose code (the Markdown export and the store beside it) answers the rest: the record's fields, the encoding,
 # an existing output file, how errors exit, a bad note name, a missing folder. No topic is left with two viable options, so the interview asks nothing,
 # and the plan still writes the four fixed things and the summary names them.
 mkdir -p notes tests kit-data/projects
@@ -50,7 +50,7 @@ Over 500 production lines, stop and we split.
 
 Out of scope: sync to a cloud folder, encryption, other formats (CSV, SQLite).
 
-Gates: only the plan approval. Nothing is published: no PR, no messages.
+Nothing is published: no PR, no messages.
 P
 cat > notes/store.py <<'P'
 import os
