@@ -28,8 +28,15 @@ A plan run spends its time on the work, not on checking it again. `plan:scope` w
 
 ### Evals
 
-- Eight new cases. Five fail on the 7.2.0 text and pass on this version: `plan/plan-steps-ready` (0.17 on 7.2.0), `plan/ready-step-skips-check` (0.00), `plan/round-review-conformance` (0.40), `plan/mid-part-review-conformance` (0.25) and `plan/no-question-when-answered` (0.75 three times). The round cases ran on a branch commit whose round, review and triage-check text equals 7.2.0. `plan/part-end-review-lenses` failed before the part start was named (0.50 on the round 2 text). Its 7.2.0 run waits for the full suite. Two are guards and pass on both versions: `plan/review-fix-still-checked` and `plan/changed-step-still-checked`.
-- In `no-question-when-answered`, the grader `no-fixed-topic-question` is a guard. It passed on 7.2.0 three times. The case fails there only on `reply-names-fixed`. That grader now also needs the gates named, because the fixture leaves the gates to the defaults.
+- Eight new cases. Six fail on the 7.2.0 text and pass on this version. Their two runs on 7.2.0 scored as follows.
+  - `plan/plan-steps-ready`: 0.08 and 0.08.
+  - `plan/ready-step-skips-check`: 0.00 and 0.00.
+  - `plan/round-review-conformance`: 0.40 and 0.40.
+  - `plan/mid-part-review-conformance`: 0.17 and 0.50.
+  - `plan/part-end-review-lenses`: 0.50 and 0.50.
+  - `plan/no-question-when-answered`: 0.38 and 0.75.
+- Two are guards and pass on both versions: `plan/review-fix-still-checked` and `plan/changed-step-still-checked`.
+- In `no-question-when-answered`, the grader `no-fixed-topic-question` is not a stable guard. On 7.2.0 it failed in one of the two runs. The case fails there on `reply-names-fixed` in both runs. That grader now also needs the gates named, because the fixture leaves the gates to the defaults.
 - Two cases are removed with the trial copies: `plan/triage-saved-before-check` and `plan/review-inputs-saved`.
 - `plan/triage-estimates-size`: the gate grader accepts an estimate or sum line over the trigger, with the gate asked anywhere in the report. It still fails a report with no gate. Known gap: a report that only restates "split, accept with a reason, or cut scope" also passes.
 
