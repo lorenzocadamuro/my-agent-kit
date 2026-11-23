@@ -26,7 +26,7 @@ Review `git diff <round start>..HEAD`, and the code it touches, for conformance:
 
 ## When the prompt says this round closes a part
 
-Also read the whole lenses doc, and review the part as one change: follow the case it exists for end to end through every piece it touches, as the doc's intro says, then each of its other lenses that applies.
+Also read the whole lenses doc, and review the part as one change, `git diff <part start>..HEAD` from the part start the prompt names: follow the case it exists for end to end through every piece it touches, as the doc's intro says, then each of its other lenses that applies.
 
 ## Output, in at most about 400 words
 
