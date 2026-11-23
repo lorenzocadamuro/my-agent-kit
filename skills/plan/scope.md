@@ -68,16 +68,10 @@ Keep research notes in the scratchpad. They feed the plan and, for M and L, the 
 
 ### 4. Interview
 
-First settle the frame (question format: when to ask): a request to explore or prototype is answered in chat with the alternatives shown, and the interview waits for the user's reply. Then ask with the multiple-choice tool, following the question format, in batches of up to 4. Prefill the recommended option from the research.
+First settle the frame (question format: when to ask): a request to explore or prototype is answered in chat with the alternatives shown, and the interview waits for the user's reply. Then go through the topics the plan's sections hold for its size (`templates/plan.md`): goal, boundary and bar for done; for M and L, invariants, existing versus new behaviour, out of scope, intentional changes, size budget and split trigger; for L, people, rollout, extra gates and stop conditions.
 
-| Size       | Topics                                                                                                                                             |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Every size | when research found risks behind a product choice, the design options that remove them, asked before or beside that choice; goal confirmation, boundary, bar for done (what is checked every round, what once at the end, and a condition that happens only after the merge, such as a deploy or a sync, proposed as a separate verification ticket) |
-| M and L    | invariants, existing versus new behaviour (only where research found a question), out of scope, intentional changes, size budget in production lines (tests estimated apart) and split trigger |
-| L          | people and what they are building next, rollout (flags, deploy order, migrations, backfills), extra gates and stop conditions                      |
-
-About 4 questions for S, 8 for M, 12 for L. Never ask what research already answered. Ask now only what the plan and its first part need; a later part's choice becomes a gate or an open question of that part (question format: when to ask).
-
+- **A topic is a question only at a real fork:** the request, the code and the research leave two or more viable options, and the choice is architecture, design, product behaviour, the user's priorities, or anything published. When research found risks behind a product choice, ask the design options that remove them before or beside it. Ask with the multiple-choice tool, following the question format, in batches of up to 4, the recommended option prefilled from the research. Ask now only what the plan and its first part need; a later part's choice becomes a gate or an open question of that part.
+- **Every other topic is decided:** record it as `D<n>` with Chosen `from the request` or `decided from research`, and name it in the approval summary. Zero questions is a valid interview.
 - **The method first:** read `<data root>/method.md`. A question the method lets you decide alone (principles: the method) is not asked: decide it and record it as `D<n>` with Chosen `decided alone (handed over: K<n>)`. After each answer, update its kind.
 - Record each answer as a decision (`D<n>`, with date and reason).
 - **When the question tool is unavailable** (a non-interactive run), take each interview question's recommended option, record it as an assumption `A<n>` in the Decisions table, with Chosen `assumed` (it counts for no kind; principles: the method), and continue.

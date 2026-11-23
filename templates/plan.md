@@ -93,7 +93,7 @@ A step is ready only when every label under it is filled; `none` with its reason
 
 | #   | Date | Kind | Recommended | Chosen | Why |
 | --- | ---- | ---- | ----------- | ------ | --- |
-| D1  |      | K<n> | <the recommended option's text, not its letter> | <the chosen option's text, "decided alone (handed over: K<n>)", or "assumed"> |     |
+| D1  |      | K<n> | <the recommended option's text, not its letter> | <the chosen option's text, "decided alone (handed over: K<n>)", "from the request", "decided from research", or "assumed"> |     |
 
 ## Open questions
 
