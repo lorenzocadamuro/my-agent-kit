@@ -28,14 +28,16 @@ A plan run spends its time on the work, not on checking it again. `plan:scope` w
 
 ### Evals
 
-- Eight new cases. Six fail on the 7.2.0 text and pass on this version. Their two runs on 7.2.0 scored as follows.
+- Ten new cases. Six fail on the 7.2.0 text and pass on this version. Their two runs on 7.2.0 scored as follows.
   - `plan/plan-steps-ready`: 0.08 and 0.08.
   - `plan/ready-step-skips-check`: 0.00 and 0.00.
   - `plan/round-review-conformance`: 0.40 and 0.40.
   - `plan/mid-part-review-conformance`: 0.17 and 0.50.
   - `plan/part-end-review-lenses`: 0.50 and 0.50.
   - `plan/no-question-when-answered`: 0.38 and 0.75.
-- Two are guards and pass on both versions: `plan/review-fix-still-checked` and `plan/changed-step-still-checked`.
+- Four are guards and pass on both versions: `plan/review-fix-still-checked`, `plan/changed-step-still-checked`, `plan/moved-step-still-checked` and `plan/decided-step-still-checked`.
+  - `plan/moved-step-still-checked`: a ready step names a helper that an earlier round renamed, and it still gets the full triage.
+  - `plan/decided-step-still-checked`: a ready step is named by a decision taken after approval, and it still gets the full triage.
 - In `no-question-when-answered`, the grader `no-fixed-topic-question` is not a stable guard. On 7.2.0 it failed in one of the two runs. The case fails there on `reply-names-fixed` in both runs. That grader now also needs the gates named, because the fixture leaves the gates to the defaults.
 - Two cases are removed with the trial copies: `plan/triage-saved-before-check` and `plan/review-inputs-saved`.
 - `plan/triage-estimates-size`: the gate grader accepts an estimate or sum line over the trigger, with the gate asked anywhere in the report. It still fails a report with no gate. Known gap: a report that only restates "split, accept with a reason, or cut scope" also passes.
