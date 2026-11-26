@@ -95,8 +95,9 @@ layout_checks() {
     [[ -e "$(dirname "$root/$rel")/$v" ]] || err "dangling relative link: $rel links to $v"
   done < <(grep -rnoIE '\]\([^) ]+\)' "${texts[@]}")
   # A bare kit path in backticks ends at the first space or backtick: `rules/x.md`, `scripts/y.sh --flag`.
+  # A line number or an anchor after it (`rules/x.md:12`, `rules/x.md#a`) is not part of the path.
   while IFS=: read -r rel _ v; do
-    v="${v#\`}"
+    v="${v#\`}"; v="${v%%#*}"; v="${v%%:[0-9]*}"
     [[ -e "$root/$v" ]] || err "dangling bare path: $rel names $v"
   done < <(grep -rnoIE '`(rules|skills|scripts)/[^ `]*' "${texts[@]}")
 

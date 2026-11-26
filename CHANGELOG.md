@@ -45,7 +45,7 @@ Notes, signals and activity files keep naming a skill by area and mode (`plan:sc
 ### Scripts
 
 - `scripts/index.sh` builds `skills/go/index.md` and the README skill list; `scripts/index.test.sh` tests it.
-- `scripts/check.sh` adds the layout checks, which always run: the frontmatter and "Read first:" line of every skill, a current index, one eval folder per skill and one skill per eval folder, no kit text naming a missing skill or file (relative links and backticked bare paths included), only `go` model-invoked, the status mod's commands, unique names. `check.test.sh` sees each one fail on a broken fixture.
+- `scripts/check.sh` adds the layout checks, which always run: the frontmatter and "Read first:" line of every skill, a current index, one eval folder per skill and one skill per eval folder, no kit text naming a missing skill or file (relative links and backticked bare paths included, a line number or an anchor after a path ignored), only `go` model-invoked, the status mod's commands, unique names. `check.test.sh` sees each one fail on a broken fixture.
 - `no-form-rules.test.sh` scans `skills/`, `rules/` and the README.
 
 ### Status mod (`my-status` 1.1.0)
