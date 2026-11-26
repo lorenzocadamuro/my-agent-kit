@@ -19,3 +19,7 @@ The kit learns while it is used. Every skill collects signals during the work an
 - **Record each one when it happens, without interrupting the work.** Append one line to this session's signals file, `<data root>/signals/<owner-name>-<branch>.md` (`/` in the branch becomes `-`; without a branch, `<owner-name or "none">-<date>-<session id or time>.md`), creating it with a `# Signals: <repo> · <branch>` heading: `- <date time> · <kind> · <skill:mode> · <what happened> · <source> · kit <version>`, the version as in a log entry's `Kit:` line ([templates/log-entry.md](../templates/log-entry.md); older lines without it stay valid). Only the coordinating session writes signals.
 - **At the end, run `/my:improve digest <this session's signals file>`.** It turns pending signals into a few clear notes in the log. When there were none, say nothing about it.
 - **Never edit a skill on your own.**
+
+## The kit's improvement loop
+
+The kit changes only through an approved plan (`/my:plan:*`) or `run`, and only with the user's yes. A note never changes anything; a run changes only what the user approves.

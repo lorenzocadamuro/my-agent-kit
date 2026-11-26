@@ -86,3 +86,30 @@ One file per change and folder, rewritten whole through a temp file and a rename
 - `reason`: two or three words (`Plan approval`). The status band and line never show the work's name or the plan title; part titles and step labels, two or three words each, they may. A `name` left by an older version is ignored.
 - **Progress sidecar** `<same base>.progress.json`: `{ "round": 3, "items": { "done": 4, "total": 6 }, "updatedAt": "…" }`, written only by the round's executor after each item, at the path the coordinator gives it.
 - **Activity sidecar** `state/session-<session id>.activity.json`, or without a session id `<base>.activity.json`, `<base>` computed as above from the session's folder; the name is fixed once, when the mode starts, and kept for every later write of that mode: `{ "mode": "pr:review", "state": "running", "updatedAt": "…" }`, `state` being `running`, `needs_you` or `done`; written by the `pr:*` modes and `improve run`, each by the rule in its skill.
+
+## Paths
+
+- **Log and signals:** the log is `<data root>/suite-log.md`. Create it with a `# Suite log` heading if missing. Signals live in `<data root>/signals/`.
+- **Kit source:** the git repository behind `${CLAUDE_PLUGIN_ROOT}`. Resolve it with `git -C "${CLAUDE_PLUGIN_ROOT}" rev-parse --show-toplevel`. If that fails (the plugin was installed from a marketplace cache), ask for the path of the user's clone. Never edit the cache.
+
+## Old names
+
+Entries and signals written before 3.0.0 name skills that are now modes, and before 5.0.0 a mode now part of another. Read them as their new names everywhere: in List and Log views, in Run selection, and in Digest. Show only the new names, in tables and in prose alike; the old ones never reach the user, not even to explain the rename. A filter on a skill (`log plan`) matches every mode of it.
+
+| Old         | New           |
+| ----------- | ------------- |
+| `scope-plan` | `plan:scope` |
+| `pr-round`  | `plan:round`  |
+| `learn`     | `pr:learn`    |
+| `pr:study`  | `pr:learn`    |
+| `review-lens` | `pr:review` |
+| `explain-comment` | `pr:comments` |
+| `merge-main` | `pr:sync`    |
+
+## Showing entries
+
+List and Log share one view. Each entry shows its id, skill, state, and the problem in one line, from "Why it was a problem" (or "What happened" in older entries). Its detail (what happened, why it was a problem, missing question, expected, suspected cause, where, evidence) is shown when the user asks for it. Closed entries follow the open ones, under `Closed (<n>)`. Labels follow the principles: states, ids and headers stay in English. An open entry from a version older than the current one (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`) carries a short marker next to its state, in English like the states: `from <version>` (`from ~<version>` when approximate): its version is the newest of its `Kit:` line (unless `unknown`) and its `Evidence:` lines' `kit <version>`, so a note seen again after a fix counts from then; with neither, approximately, the latest release dated before its `When` (`git -C <kit source> tag --sort=creatordate --format='%(creatordate:iso) %(refname:short)'`, or without git or a kit source the CHANGELOG's release dates, a release of the same day counting as later; never ask for the clone here); none found, no marker.
+
+## The activity file
+
+**Activity (every mode):** write the activity sidecar at the path and in the shape of `${CLAUDE_PLUGIN_ROOT}/docs/local-data.md` § State file: `running` as the first step and again when the user answers, `needs_you` while waiting for the user (an analysis to agree, a posting gate, a design conflict), `done` at every exit, stops included.

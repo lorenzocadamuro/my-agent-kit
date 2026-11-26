@@ -1,5 +1,7 @@
 # /my:pr:learn — understand a PR, or the review it received
 
+**Activity:** follow `${CLAUDE_PLUGIN_ROOT}/rules/local-data.md` § The activity file.
+
 Input:
 
 - a PR number or URL (by default, the PR of the current branch);

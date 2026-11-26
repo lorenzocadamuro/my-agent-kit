@@ -2,6 +2,8 @@
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, and `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`.
 
+**Activity:** follow `${CLAUDE_PLUGIN_ROOT}/rules/local-data.md` § The activity file.
+
 ## Arguments
 
 | Argument        | What it selects                                                                     |

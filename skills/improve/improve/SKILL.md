@@ -6,28 +6,9 @@ argument-hint: "note <what happened> | digest [file] | run [skill|ids] [--propos
 
 # /my:improve — the kit's improvement loop
 
-The kit changes only through an approved plan (`/my:plan:*`) or `run`, and only with the user's yes. A note never changes anything; a run changes only what the user approves.
+How the kit changes: `${CLAUDE_PLUGIN_ROOT}/rules/learning.md` § The kit's improvement loop.
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md` and `${CLAUDE_PLUGIN_ROOT}/docs/model-choice.md`.
-
-## Paths
-
-- **Log and signals:** the log is `<data root>/suite-log.md`. Create it with a `# Suite log` heading if missing. Signals live in `<data root>/signals/`.
-- **Kit source:** the git repository behind `${CLAUDE_PLUGIN_ROOT}`. Resolve it with `git -C "${CLAUDE_PLUGIN_ROOT}" rev-parse --show-toplevel`. If that fails (the plugin was installed from a marketplace cache), ask for the path of the user's clone. Never edit the cache.
-
-## Old names
-
-Entries and signals written before 3.0.0 name skills that are now modes, and before 5.0.0 a mode now part of another. Read them as their new names everywhere: in List and Log views, in Run selection, and in Digest. Show only the new names, in tables and in prose alike; the old ones never reach the user, not even to explain the rename. A filter on a skill (`log plan`) matches every mode of it.
-
-| Old         | New           |
-| ----------- | ------------- |
-| `scope-plan` | `plan:scope` |
-| `pr-round`  | `plan:round`  |
-| `learn`     | `pr:learn`    |
-| `pr:study`  | `pr:learn`    |
-| `review-lens` | `pr:review` |
-| `explain-comment` | `pr:comments` |
-| `merge-main` | `pr:sync`    |
 
 ## Parse `$ARGUMENTS`
 
@@ -40,42 +21,6 @@ Entries and signals written before 3.0.0 name skills that are now modes, and bef
 | `method`      | Method: list the decision kinds                        |
 | none, `list`  | List open entries                                      |
 | anything else | Treat the whole text as a note, and say so in one line |
-
-## Note
-
-Goal: under a minute, no questions unless the text is empty.
-
-1. **Identify the skill and mode,** written `skill:mode` (`plan:scope`, `plan:run`, `pr:review`, `improve:run`): from the text, or else from the most recent `/my:` command used in this session, or else `general`. Use `principles`, `templates`, `scripts`, `mod` or `profile:<repo>` when the problem is there. A reply that only broke the user's output style is not a kit problem, since the kit sets no reply form (principles: language): say so in one line, name the style's plugin as the place to fix it, and log nothing. When a kit text asked for that form, log it against that text.
-2. **Collect context without asking:**
-   - date and time, and the kit version (the template's `Kit:` line);
-   - current repository (`git rev-parse --show-toplevel`, remote slug), branch, and PR number (`gh pr view --json number -q .number`, if any);
-   - the session id if known.
-3. **Fill the entry** from `${CLAUDE_PLUGIN_ROOT}/templates/log-entry.md`.
-   - The reasoning fields are what happened, why it was a problem, missing question and expected (principles: language). Keep a short quote of the user's words when the exact meaning matters.
-   - The heading reads `## <id> · <skill> · open`, with `<id>` left as it is: the script of step 4 numbers it.
-   - "What happened" and "Expected" are concrete: what was done or said, not an opinion. "Why it was a problem" says what it cost the user. "Missing question" is a question someone should have asked at the start, not a fix; `unknown` when it is not clear.
-   - "Suspected cause" names a step, principle, template or profile line when you can point to it; otherwise `unknown`. Do not investigate deeply here.
-4. **Append** the entry, written to a scratch file, with `${CLAUDE_PLUGIN_ROOT}/scripts/append-entry.sh log <log> <file>`: it gives it the next `YYYYMMDD-NN` after today's highest under a lock, so two sessions writing at once never share an id, and prints it; if it cannot take the lock, try once more, then say so. Change nothing else: no skill, doc, template or profile.
-5. **Confirm in exactly one line,** and nothing else: `Logged <id> · <skill> · <n> open`. Missing context goes in the entry as `unknown`; do not explain it in the reply.
-
-## Digest
-
-Run at the end of every other skill (principles: closing step), or by the user. Goal: a few clear notes, no noise, no questions.
-
-1. **Read the pending signals:** lines without a mark, in the given file. Without a file (the user runs it by hand), every file under `<data root>/signals/`, so leftovers from sessions that ended early are picked up.
-2. **Drop what a later signal contradicts or withdraws.** Mark both the withdrawn and the withdrawing signal `→ dropped: <why>`; never delete a line.
-3. **Group by upstream cause:** the missing question or directive behind the signals, not the surface event. A session usually yields one to three groups.
-4. **For each group,** re-read the log first.
-   - If an open entry has the same cause, append one `- Evidence: <date> · <skill> · <what happened> · <source> · kit <version>` line per signal at its end, the version copied from the signal (none when it has none). Never change its other lines.
-   - Otherwise write a new entry as in Note steps 3–4 (the marks of step 5 below carry the id the script prints), with the signals as Evidence lines. Its "Where" comes from the signals file's heading, its `Kit:` from the newest version its signals carry (else the digest's own).
-5. **Mark each digested signal** `→ <entry id>`.
-6. **Reply in one line:** `Digested <k> signals → <ids>`. With no pending signals, reply nothing.
-
-Never change a skill, doc, template or profile.
-
-## Showing entries
-
-List and Log share one view. Each entry shows its id, skill, state, and the problem in one line, from "Why it was a problem" (or "What happened" in older entries). Its detail (what happened, why it was a problem, missing question, expected, suspected cause, where, evidence) is shown when the user asks for it. Closed entries follow the open ones, under `Closed (<n>)`. Labels follow the principles: states, ids and headers stay in English. An open entry from a version older than the current one (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`) carries a short marker next to its state, in English like the states: `from <version>` (`from ~<version>` when approximate): its version is the newest of its `Kit:` line (unless `unknown`) and its `Evidence:` lines' `kit <version>`, so a note seen again after a fix counts from then; with neither, approximately, the latest release dated before its `When` (`git -C <kit source> tag --sort=creatordate --format='%(creatordate:iso) %(refname:short)'`, or without git or a kit source the CHANGELOG's release dates, a release of the same day counting as later; never ask for the clone here); none found, no marker.
 
 ## List (no argument)
 
@@ -121,14 +66,6 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
 7. **Ship:** first `git fetch origin main`. When `origin/main` moved past the worktree's base, list what changed in the files the new or changed cases and graders read (`git diff <base>..origin/main -- <paths>`), merge it into the worktree's branch (never a rebase), and rerun only the cases those changes touch, or none, with a CHANGELOG line saying where the numbers were measured. Then show the full diff (`git diff origin/main..HEAD`) and ask, saying how many commits of `main..origin/main` the fast-forward also brings. Only on yes: fast-forward `main` in the main checkout to the worktree's branch, tag `v<version>`, push with tags, then remove the worktree and delete its branch. Then update each installed copy of a plugin whose version changed (`claude plugin list` shows them): `claude plugin marketplace update <marketplace>`, then `claude plugin update <plugin>@<marketplace>`; check that the installed copy holds the new version's code, and tell the user to restart. On no, keep the worktree, say where it is, and leave the entries open.
 8. **Close the entries,** only after shipping (or at once when no change was approved; a closing approved from step 2 never waits for the ship). Set each to `fixed <version> (<short sha>)`, `fixed <version> (already)`, `wontfix: <reason>` or `deferred: <reason>`. Never delete an entry.
 9. **Tell the user** what changed, and that it takes effect from the next session. Then the closing step (principles).
-
-## Method
-
-Show `<data root>/method.md`, handed-over kinds first: id, judgement, class, state, matches and the last dates, labels as the principles say. Without the file, say that no kind is recorded yet. Change nothing; a take-back the user says afterwards in this session is applied as the principles' method says.
-
-## Log
-
-Show every entry (or one skill's), open ones first, newest first within each group, with the version that fixed each closed one. End with totals by state.
 
 ## Rules
 

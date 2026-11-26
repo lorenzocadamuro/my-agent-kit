@@ -2,6 +2,8 @@
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md` and `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`.
 
+**Activity:** follow `${CLAUDE_PLUGIN_ROOT}/rules/local-data.md` § The activity file.
+
 Load the project profile `<data root>/projects/<owner>-<repo>.md`. Without a profile, use only generic git steps, and say so.
 
 ## Steps
