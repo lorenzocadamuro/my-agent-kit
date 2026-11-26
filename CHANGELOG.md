@@ -27,6 +27,8 @@ The kit gets one door and one folder per skill. `/my:go` is the only skill Claud
 
 Notes, signals and activity files keep naming a skill by area and mode (`plan:scope`, `pr:review`), so every file written before stays valid.
 
+A `/my:` command with punctuation glued to it (`/my:log,`) no longer reaches its skill: the line does not run as a command, only `go` is model-invoked, and the model does not route such a line through it.
+
 ### Layout
 
 - `skills/<area>/<skill>/SKILL.md`, one per skill, listed in the `skills` array of `plugin.json`; `commands/` is gone. Each `SKILL.md` has the fields `name`, `description`, `disable-model-invocation` (true for all but `go`), `when` (the trigger phrases of its old description) and `reads`, plus `argument-hint` where its command had one.
@@ -54,7 +56,7 @@ Notes, signals and activity files keep naming a skill by area and mode (`plan:sc
 
 ### Evals
 
-- The 93 cases move to `evals/<skill>/` by their first command, and every `/my:` mention names the new command. The triage-check graders also accept `check-agent.md`, the eight no-plugin-write graders cover `rules/`, and `comments/human-review-explained` accepts the skill's own load. A command with punctuation glued to it (`/my:log,`) does not run as a command, so every case prompt starts with the bare command.
+- The 93 cases move to `evals/<skill>/` by their first command, and every `/my:` mention names the new command. The triage-check graders also accept `check-agent.md`, the eight no-plugin-write graders cover `rules/`, and `comments/human-review-explained` accepts the skill's own load. A command with punctuation glued to it (`/my:log,`) does not run as a command, so every case prompt that starts with a command starts with the bare one.
 - Four new cases, each passing on this version: `go/routes-plan-request` and `go/routes-review-request` (3 runs each), `round/round-digest-writes-note`, `profile/profile-built-from-sources` (3 runs). Each fails on a mutant: the two `go` cases when the router is removed (0 of 3 each), `round-digest-writes-note` when the round's digest call is removed (0.00), and `profile-built-from-sources` when the rule "Mark every guess with (unconfirmed)" is removed (its grader `guess-marked`, 0 of 3; it pins the "(unconfirmed)" marker, which the rule names). Their first mutants (a Skill tool call instead of the read, an empty index, no "Sources, in order" list) still passed: the model finds the skill file on its own.
 - Spend measured for this release: $13.54 for the branch and mutant runs of the new cases, $110.66 for the full suite (97 cases) and its reruns on both versions, and $8.55 for the runs that followed it (the two fixed prompts, the router fallback trials, one `origin/main` run per open regression): $132.75 in all.
 
