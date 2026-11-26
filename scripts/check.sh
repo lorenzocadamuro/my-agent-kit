@@ -94,6 +94,11 @@ layout_checks() {
     [[ -z "$v" || "$v" == *://* || "$v" == mailto:* || "$v" == *"<"* ]] && continue
     [[ -e "$(dirname "$root/$rel")/$v" ]] || err "dangling relative link: $rel links to $v"
   done < <(grep -rnoIE '\]\([^) ]+\)' "${texts[@]}")
+  # A bare kit path in backticks ends at the first space or backtick: `rules/x.md`, `scripts/y.sh --flag`.
+  while IFS=: read -r rel _ v; do
+    v="${v#\`}"
+    [[ -e "$root/$v" ]] || err "dangling bare path: $rel names $v"
+  done < <(grep -rnoIE '`(rules|skills|scripts)/[^ `]*' "${texts[@]}")
 
   if [[ -d mods/my-status/hooks ]]; then
     while IFS=: read -r rel _ v; do

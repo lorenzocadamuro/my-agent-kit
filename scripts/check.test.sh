@@ -72,6 +72,8 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`.
 Then `/my:go` again, as [the core rules](../../../rules/core.md) say.
 EOF
   printf '# Core\n\nThe router reads [its index](../skills/go/index.md).\n' > "$d/rules/core.md"
+  # Bare kit paths that exist: a file, a directory, and a path followed by its arguments.
+  printf 'Run `scripts/check.sh --fast` on `rules/`, as `rules/core.md` says.\n' >> "$d/rules/core.md"
   printf 'x\n' > "$d/evals/go/a/prompt.md"
   printf 'x\n' > "$d/evals/scope/a/prompt.md"
   printf '# Kit\n\n<!-- skills:start -->\n<!-- skills:end -->\n' > "$d/README.md"
@@ -125,6 +127,7 @@ layout_case "skill without eval folder" "rm -r evals/scope"
 layout_case "missing skill" "echo 'Then run /my:ghost.' >> rules/core.md"
 layout_case "missing file" "echo 'Read \`\${CLAUDE_PLUGIN_ROOT}/rules/nope.md\`.' >> rules/core.md"
 layout_case "dangling relative link" "echo 'See [the lenses](review-lenses.md).' >> rules/core.md"
+layout_case "dangling bare path" "echo 'Read \`rules/missing.md\`.' >> rules/core.md"
 layout_case "second model-invoked skill" "perl -pi -e 's/^disable-model-invocation: true/disable-model-invocation: false/' skills/plan/scope/SKILL.md"
 layout_case "mod names a missing skill" "echo 'const two = \"/my:round\";' >> mods/my-status/hooks/adapter.ts"
 layout_case "duplicate name" "perl -pi -e 's/^name: go/name: scope/' skills/go/SKILL.md"
