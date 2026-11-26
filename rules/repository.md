@@ -1,0 +1,13 @@
+## Repository rules are inputs, not assumptions
+
+- **Each repository has a local profile** in `<data root>/projects/<owner>-<repo>.md`. It names the commands (tests, codegen, migrations, deep review, PR description), the guides to load, and the post-merge checks. The format is in [local-data.md](local-data.md).
+- **Load the relevant rules explicitly.** Before work starts, find the rules that apply to the files being touched and to what the change does (a rollout, text that agents or users read, a schema), the repository's agent instructions included, and hand them to both the executor and the reviewer.
+- **When a fix suggested by a reviewer conflicts with a repository rule,** the rule wins until the user decides otherwise.
+
+## Always in a worktree
+
+- **Work happens in the worktree of the change, never in the main checkout,** planning included, unless the project profile says how the user works there instead (for example "work on `main`, no worktree" in a single-thread repository). Every skill checks the worktree (or what the profile names), branch, HEAD and clean tree at start, and stops if they are wrong.
+- **New branches start from `origin/main`,** never from whatever branch happens to be checked out.
+- **Entering a worktree.** Create it and run its setup with absolute paths or `git -C`, never a `cd`: a shell already moved there makes EnterWorktree refuse. After `git worktree add`, copy the git-ignored files the repository's `.worktreeinclude` lists (plain git does not; Claude Code and Codex do), except those the profile names as assembled per checkout. Move the session with the EnterWorktree tool (`path`), never with `cd`, and in the desktop app also with its change-directory tool: EnterWorktree moves the agent and the new Terminal tabs, not the app's record of the session, which the Changes and Terminal panes follow, and the app applies its move when the turn ends: say so in chat, and at the start of the next turn check that the app's own record (`get_session` with `self`) names the worktree; git, or the working directory the agent sees, follow a `cd` and prove nothing. Then, when no Terminal tab is in the worktree, open one there. Without the app's tools (a terminal session), EnterWorktree is the move and its result the proof; the user's own terminal stays where it was. A move that cannot be made is said, with the offer of a new session opened in the worktree.
+- **Data-root writes from a worktree.** Once the session works in a worktree, write the data root's files with the Write tool or one plain command per call (a kit script, a single `mv`), never a compound shell command: the app's worktree guard refuses those outside the worktree.
+- **One writer per worktree at a time.**
