@@ -1,6 +1,6 @@
 {
   "name": "my-status",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A status band above the prompt for the my kit: where a plan stands, its parts and steps, how long it has run and has left, what runs in the background, what needs you, and the next action.",
   "types": "./types/index.d.ts",
   "author": {

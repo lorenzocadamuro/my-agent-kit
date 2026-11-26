@@ -4,10 +4,53 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 
 ## [8.1.0] - 2026-11-26
 
+The accepted behaviour changes of the restructure. `/my:run` always runs the whole plan; the `round` skill is gone. A note is saved only with your yes. The kit gains `unslop`, `wait-what` and `blast-radius`, a rule on writing for agents, and a `Reply:` line at the end of every workflow.
+
 ### Constitution
 
 - Clause 5 amended at the user's explicit request (2026-11-26): "The kit learns from what happens while I use it (my corrections, reviewers' comments, work done twice). When I question or correct it in the conversation, it proposes a note, and it saves the note only with my yes. What it notices while it works alone never stops the work, and it reports that at the end. It fixes the cause upstream, not the single case. Over time it proposes solutions in line with my past choices, inside the agreed boundary." The reason: the user wants active control over every note, with no interruption while the kit works alone.
 - Clause 7 amended at the user's explicit request (2026-11-26): "I choose the language and the style of everything the kit explains to me, and I can change them at any moment. The kit adds no rule of its own on the language of that text. On its form, it adds only the `unslop` rules, on top of the style I choose, and my style wins where the two disagree. It explains the why before the what. Code and repository names are never translated." The reason: shorter replies with no AI patterns, as in pstack.
+
+### Plan (`run`)
+
+- C3: `/my:run` runs the plan round after round; the `round` skill, `/my:round`, `--verify` and `--triage-only` are gone. A request or a finding during a plan joins the open round (step 4) or the next one (`rules/plan-contract.md`), and `run` goes on. Step 10 moves to `skills/plan/run/ready-gate.md`. Each round reports one line; the six-line round report is gone, and the full summary comes at the end of the run.
+- With `--verify` gone, a run resumes a round whose executor finished from the state file and its progress sidecar (§ Rounds and steps).
+- `go` sends a plan request to `run` when a plan exists in the worktree.
+- The end summary gains `Signals:`, this run's pending signals; `Lessons:` names the notes the user approved, or none.
+- Every workflow ends with a `Reply:` line that names what its report already holds (C13); `check.sh` fails a workflow without one (all skills but `go`, `unslop` and `wait-what`).
+
+### Notes (`note`, `improve`)
+
+- C4: a note is saved only with the user's yes. A question, a request to explain or a correction from the user ends with a judgement on whether it points to a kit fix; if so, the reply proposes a note and asks (`rules/core.md` § When the user questions or corrects the kit). Work the kit does alone never stops for a note: every skill lists its pending signals in its end report (`rules/learning.md` § Closing step of every skill).
+- `digest` merges into `note`: `/my:note <what happened>` still saves at once (the text is the yes); `/my:note signals [file]` groups pending signals into proposed notes and saves each only on the yes, marking a declined group's signals `→ declined: <date>`. `/my:improve digest [file]` does the same. Old `improve:digest` ids read as `improve:note`.
+- A note may carry `File:` (the kit file it is about) and `Leaves read:` (the rule files the skill had loaded); the detail view shows them. Notes without them stay valid.
+
+### Writing
+
+- C5: `/my:unslop`, from pstack (MIT), verbatim with one source line. The kit applies it to its replies to the user and to text for other people (reports, questions, review and reply drafts, PR text), on top of the user's style, which wins where they disagree; working texts are out of its scope (`rules/core.md` § Language). `review`, `comments`, `run` and `improve` read it.
+- C6: `/my:wait-what`, from mattpocock/skills (MIT), verbatim, plus one line that adds the glossary `/my:learn` keeps.
+- C7: `rules/writing-for-agents.md` holds mattpocock/skills' `writing-for-agents` and its `SKILL-MECHANICS.md` (MIT), verbatim, their links made in-file anchors; `improve` reads it.
+- The lines that said the kit sets no form now say no form beyond the `unslop` rules: `rules/core.md`, `note`, the README and `no-form-rules.test.sh`, whose guard still passes with no new allowed line.
+- `THIRD_PARTY_NOTICES.md` holds both MIT notices.
+
+### Review (`pr`)
+
+- C10: `/my:blast-radius`, from pstack (MIT), with three adaptations: `arena` becomes up to 3 fresh agents with the same question, `unslop` the kit's `writing/unslop`, and the line about the companion skills `how` and `why` is gone.
+
+### Status mod (`my-status` 1.2.0)
+
+- The "One round" button is gone; a ready or stopped plan shows Run plan.
+
+### Fixes after the round 6 review
+
+- The README no longer lists `round` under `plan/`; `rules/plan-contract.md` names where a request during a plan goes (the open round at step 4, or the next one); `no-old-names` rejects `plan:round`.
+
+### Evals
+
+- The 32 `round` cases and the 3 `run` cases start `/my:run` and live in `evals/run/`, with new fixtures that mark the earlier steps done; new case `run/run-continues-to-next-round` (it also checks that round 2's review was written).
+- 23 rewritten cases pass without the rule they guard (decision D29), kept as guards: added-item-checked, changed-step-still-checked, clause-pinned-both-sides, decided-step-still-checked, deferred-row-verified, failed-step-cleared, failed-step-reworked, gate-explained-cold, moved-step-still-checked, out-of-scope-becomes-ticket, parts-follow-plan-order, review-fix-still-checked, round-reviewed-by-fresh-agent, run-carries-blocks, run-stops-before-publishing, s-lane-file-first, skipped-item-caught, skipped-rework-stays-done, state-says-what-is-left, step-labels-plain, test-in-documented-shape, triage-check-reuses-helper, triage-estimates-size.
+- `digest-groups-signals` moves to `evals/note/`; it and `run/round-digest-writes-note` now grade proposed notes and no note written.
+- New cases: `note/correction-asks-before-saving` (0/1 before, 3/3 after; fails with the 7.3.0 closing step and without the `rules/core.md` trigger), `comments/reply-unslopped` and `unslop/text-unslopped` (3/3 each; both also pass before the change and on their mutants: the model writes without "leverage" or dashes on its own), `wait-what/re-pitch-adds-premise` (0/1 before, 3/3 after; fails when the glossary path is gone from the skill and its reads), `blast-radius/five-sections` (0/1 before, 3/3 after; fails without "What to hand back").
 
 ## [8.0.0] - 2026-11-26
 
