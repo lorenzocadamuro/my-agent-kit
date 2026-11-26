@@ -89,6 +89,7 @@ One line per skill, generated from each skill's frontmatter by `scripts/index.sh
 **writing**
 
 - `/my:unslop`: Cut AI tells from any writing.
+- `/my:wait-what`: Stop. That last message did not land: re-pitch it.
 <!-- skills:end -->
 
 ## Commands

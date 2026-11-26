@@ -1,0 +1,11 @@
+schema_version: "1"
+name: re-pitch-adds-premise
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 10
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill]
+  prompt: |
+    /my:wait-what
+
+    Your last message to me was: "The position of each generated item is computed twice, once in the request handler and once in the board sync, and the second pass overwrites the first, so the fix is to drop the handler's computation and keep the sync's."
