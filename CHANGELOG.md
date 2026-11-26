@@ -55,8 +55,8 @@ Notes, signals and activity files keep naming a skill by area and mode (`plan:sc
 ### Evals
 
 - The 93 cases move to `evals/<skill>/` by their first command, and every `/my:` mention names the new command. The triage-check graders also accept `check-agent.md`, the eight no-plugin-write graders cover `rules/`, and `comments/human-review-explained` accepts the skill's own load.
-- Four new cases, each passing on this version: `go/routes-plan-request` and `go/routes-review-request` (3 runs each), `round/round-digest-writes-note`, `profile/profile-built-from-sources` (2 runs). `round-digest-writes-note` fails when the round's digest call is removed (0.00). Their planned mutants (a Skill tool call instead of the read, an empty index, no "Sources, in order" list) still pass: the model finds the skill file on its own.
-- Spend measured for this release so far: $9.59, branch and mutant runs of the new cases. The full suite runs at the end of the part.
+- Four new cases, each passing on this version: `go/routes-plan-request` and `go/routes-review-request` (3 runs each), `round/round-digest-writes-note`, `profile/profile-built-from-sources` (3 runs). Each fails on a mutant: the two `go` cases when the router is removed (0 of 3 each), `round-digest-writes-note` when the round's digest call is removed (0.00), and `profile-built-from-sources` when the rule "Mark every guess with (unconfirmed)" is removed (its grader `guess-marked`, 0 of 3). Their first mutants (a Skill tool call instead of the read, an empty index, no "Sources, in order" list) still passed: the model finds the skill file on its own.
+- Spend measured for this release so far: $13.54, branch and mutant runs of the new cases. The full suite runs at the end of the part.
 
 ## [7.3.0] - 2026-11-23
 
