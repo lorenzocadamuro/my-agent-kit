@@ -3,10 +3,10 @@ name: run-continues-to-next-round
 context:
   scaffold_script: setup.sh
 execution:
-  max_turns: 40
-  timeout_seconds: 900
+  max_turns: 60
+  timeout_seconds: 1200
   allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
   prompt: |
-    fix the findings of the last review, and do not push
+    carry on with the plan, and do not push
 
     (The worktree is ./wt, repository acme/shop, branch feature. Data root ./kit-data. In this environment git and gh do not run: their outputs are in ./git-out/git.txt; use them instead of git and of the scripts. Write your final report to ./report.md too.)
