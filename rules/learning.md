@@ -8,7 +8,7 @@
 
 ## Closing step of every skill
 
-The kit learns while it is used. Every skill collects signals during the work and digests them at the end; only `/my:note`, `/my:improve` list, `/my:log`, `/my:method` and `/my:digest` are exempt.
+The kit learns while it is used. Every skill collects signals during the work and lists them in its end report; only `/my:note`, `/my:improve` list, `/my:log` and `/my:method` are exempt.
 
 - **A signal is a sign that the kit's directives missed something:**
   - the user answers with a free answer ("Other") or dismisses a question. Record why: the question was unclear, the proposed method did not fit, or the user added an instruction of their own;
@@ -17,7 +17,7 @@ The kit learns while it is used. Every skill collects signals during the work an
   - a review finding, or a real comment from a reviewer or a bot, that the plan, the research or the round's own review should have caught;
   - rework in a round.
 - **Record each one when it happens, without interrupting the work.** Append one line to this session's signals file, `<data root>/signals/<owner-name>-<branch>.md` (`/` in the branch becomes `-`; without a branch, `<owner-name or "none">-<date>-<session id or time>.md`), creating it with a `# Signals: <repo> · <branch>` heading: `- <date time> · <kind> · <skill:mode> · <what happened> · <source> · kit <version>`, the version as in a log entry's `Kit:` line ([skills/improve/note/note-template.md](../skills/improve/note/note-template.md); older lines without it stay valid). Only the coordinating session writes signals.
-- **At the end, read `${CLAUDE_PLUGIN_ROOT}/skills/improve/digest/SKILL.md` and follow it with `<this session's signals file>`.** It turns pending signals into a few clear notes in the log. When there were none, say nothing about it.
+- **At the end, list this session's pending signals in the end report,** one line each, and never turn them into notes alone: a note is saved only with the user's yes, when they question or correct the kit in the conversation (`rules/core.md`) or start `/my:note signals <this session's signals file>` from the report. When there were none, say nothing about it.
 - **Never edit a skill on your own.**
 
 ## The kit's improvement loop

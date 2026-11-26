@@ -27,6 +27,10 @@ These principles serve [CONSTITUTION.md](../CONSTITUTION.md). Where they disagre
 
 Follow [question-format.md](question-format.md) for when to ask, and for the shape of every question and of each of its options.
 
+## When the user questions or corrects the kit
+
+- **A question, a request to explain or a correction from the user** ends with a judgement: does the exchange point to a kit fix? If it does, the reply proposes a note in the same conversation (its skill and what happened, in one line) and asks whether to save it; the note is saved, through `${CLAUDE_PLUGIN_ROOT}/skills/improve/note/SKILL.md`, only on the user's yes. Work the kit does alone never stops for a note: its signals wait for the end report ([learning.md](learning.md) § Closing step of every skill).
+
 ## Review depth follows the stakes
 
 - **Every round: a conformance review** of that round's diff against its items and the plan, by a fresh agent, in at most about 400 words. The round that completes a part also reviews the whole part, from its part start (`plan:run` step 7), following its main scenario with the lenses that fit ([review-lenses.md](review-lenses.md)).

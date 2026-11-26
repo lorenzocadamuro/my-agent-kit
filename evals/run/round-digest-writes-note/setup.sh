@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # A round of a small plan whose executor has finished; this session's signals file holds one pending
-# signal, so the round's closing step must turn it into a note in ./kit-data/suite-log.md.
+# signal, so the run's end report must list it and write no note in ./kit-data/suite-log.md.
 mkdir -p wt/.plans git-out kit-data/state kit-data/signals
 cat > wt/.plans/plan.md <<'P'
 # Make order totals consistent

@@ -5,9 +5,9 @@ Personal and employer-specific material lives outside this repository, in the da
 ```
 <data root>/              ~/.my-agent-kit/ by default
   deny-words.txt          words that must never enter this repository (read by scripts/check.sh; `$MY_AGENT_KIT_DENY` names another file)
-  suite-log.md            problems with the kit, written by /my:note and /my:digest
+  suite-log.md            problems with the kit, written by /my:note after the user's yes
   method.md               the user's decision kinds and which ones are handed over (§ Method)
-  signals/<owner-name>-<branch>.md  raw signals collected during the work, until /my:digest turns them into notes
+  signals/<owner-name>-<branch>.md  raw signals collected during the work, listed in the end report, until /my:note signals turns the approved ones into notes
   projects/<owner>-<repo>.md  one profile per repository
   reviewers/<handle>.md   how a reviewer thinks, written by /my:learn (comment focus), read by /my:review
   reads/                  PR readings written by /my:learn (header records the head commit)
@@ -32,7 +32,7 @@ Template: [skills/pr/learn/reviewer-profile-template.md](../skills/pr/learn/revi
 
 ## Suite log
 
-One entry per problem, in the format of [skills/improve/note/note-template.md](../skills/improve/note/note-template.md); entries written before 5.2.0 have no `Kit:` line nor a version on their `Evidence:` lines, and stay valid. Entries are appended and never deleted. A fixed entry keeps its text and gains a `fixed <version>` status. The digest may append `Evidence:` lines to an open entry, never change its other lines.
+One entry per problem, in the format of [skills/improve/note/note-template.md](../skills/improve/note/note-template.md); entries written before 5.2.0 have no `Kit:` line nor a version on their `Evidence:` lines, and stay valid. Entries are appended and never deleted. A fixed entry keeps its text and gains a `fixed <version>` status. `/my:note signals` may append `Evidence:` lines to an open entry after the user's yes, never change its other lines.
 
 ## Method
 
@@ -94,13 +94,14 @@ One file per change and folder, rewritten whole through a temp file and a rename
 
 ## Old names
 
-Entries and signals written before 3.0.0 name skills that are now modes, and before 5.0.0 and 8.1.0 a mode now part of another. Read them as their new names everywhere: in List and Log views, in Run selection, and in Digest. Show only the new names, in tables and in prose alike; the old ones never reach the user, not even to explain the rename. A filter on a skill (`log plan`) matches every mode of it.
+Entries and signals written before 3.0.0 name skills that are now modes, and before 5.0.0 and 8.1.0 a mode now part of another. Read them as their new names everywhere: in List and Log views, in Run selection, and in `/my:note signals`. Show only the new names, in tables and in prose alike; the old ones never reach the user, not even to explain the rename. A filter on a skill (`log plan`) matches every mode of it.
 
 | Old         | New           |
 | ----------- | ------------- |
 | `scope-plan` | `plan:scope` |
 | `pr-round`  | `plan:run`    |
 | `plan:round` | `plan:run`   |
+| `improve:digest` | `improve:note` |
 | `learn`     | `pr:learn`    |
 | `pr:study`  | `pr:learn`    |
 | `review-lens` | `pr:review` |
@@ -109,7 +110,7 @@ Entries and signals written before 3.0.0 name skills that are now modes, and bef
 
 ## Showing entries
 
-List and Log share one view. Each entry shows its id, skill, state, and the problem in one line, from "Why it was a problem" (or "What happened" in older entries). Its detail (what happened, why it was a problem, missing question, expected, suspected cause, where, evidence) is shown when the user asks for it. Closed entries follow the open ones, under `Closed (<n>)`. Labels follow `rules/core.md`: states, ids and headers stay in English. An open entry from a version older than the current one (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`) carries a short marker next to its state, in English like the states: `from <version>` (`from ~<version>` when approximate): its version is the newest of its `Kit:` line (unless `unknown`) and its `Evidence:` lines' `kit <version>`, so a note seen again after a fix counts from then; with neither, approximately, the latest release dated before its `When` (`git -C <kit source> tag --sort=creatordate --format='%(creatordate:iso) %(refname:short)'`, or without git or a kit source the CHANGELOG's release dates, a release of the same day counting as later; never ask for the clone here); none found, no marker.
+List and Log share one view. Each entry shows its id, skill, state, and the problem in one line, from "Why it was a problem" (or "What happened" in older entries). Its detail (what happened, why it was a problem, missing question, expected, suspected cause, where, evidence, and `File:` and `Leaves read:` when present) is shown when the user asks for it. Closed entries follow the open ones, under `Closed (<n>)`. Labels follow `rules/core.md`: states, ids and headers stay in English. An open entry from a version older than the current one (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`) carries a short marker next to its state, in English like the states: `from <version>` (`from ~<version>` when approximate): its version is the newest of its `Kit:` line (unless `unknown`) and its `Evidence:` lines' `kit <version>`, so a note seen again after a fix counts from then; with neither, approximately, the latest release dated before its `When` (`git -C <kit source> tag --sort=creatordate --format='%(creatordate:iso) %(refname:short)'`, or without git or a kit source the CHANGELOG's release dates, a release of the same day counting as later; never ask for the clone here); none found, no marker.
 
 ## The activity file
 

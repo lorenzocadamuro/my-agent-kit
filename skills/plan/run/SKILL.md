@@ -114,7 +114,7 @@ When the round's verification needs a manual check in the browser, follow the pr
 
 ### 9. Report
 
-One line, as § Run says. The digest, the desktop notification and the full summary wait for the end of the run.
+One line, as § Run says. The signals, the desktop notification and the full summary wait for the end of the run.
 
 ### 10. Ready-for-review gate
 
@@ -142,14 +142,15 @@ The run repeats steps 1–9 without the user, round after round. Each round repo
   - any other round that does not succeed (a rejected push, an executor that stopped).
 - **After the user answers a gate,** the run goes on under the same rules, unless the answer ends it.
 - **At each round start,** re-read this section, the plan and the state file, so a compacted session resumes where it was.
-- **At the end:** read `${CLAUDE_PLUGIN_ROOT}/skills/improve/digest/SKILL.md` and follow it once, send one desktop notification, set the state file to `needs_you`, `stopped` or `done`, and give one summary, labels as shown:
+- **At the end:** send one desktop notification, set the state file to `needs_you`, `stopped` or `done`, and give one summary, labels as shown:
 
 ```
 Run: <r> rounds · <parts done>/<parts> parts · <elapsed>
 Rounds: <one line each: N, items done, verdict>
 Decided alone: <each unflagged decision of the run (a flagged one is a gate), and each handed-over one as "decided alone (handed over: K<n>)"; or none>
 Stopped: <why, in one phrase, and what is needed from the user>
-Lessons: <note ids from the digest | none>
+Signals: <this run's pending signals, one line each (`rules/learning.md`: closing step) | none>
+Lessons: <ids of the notes the user approved | none>
 Next: <the action that unblocks it>
 ```
 

@@ -1,0 +1,11 @@
+schema_version: "1"
+name: correction-asks-before-saving
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 30
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:scope --dry-run Add a watcher that runs the sync of ./notes every 5 minutes (sync/run.py). Data root ./kit-data; the plan is ./plan.md; this session's signals file is ./kit-data/signals/none-2026-01-10-0900.md. There is no git repository: plan from the files at hand.
+
+    Resuming: in the previous turn you wrote ./plan.md and chose cron to start the watcher without asking me. That is wrong: the kit should have asked first, since how the watcher starts is my call. I choose a launchd agent that starts at login: put it in the plan. With that change the plan is approved; this is a dry run, so stop there.

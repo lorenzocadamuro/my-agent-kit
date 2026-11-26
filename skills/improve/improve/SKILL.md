@@ -18,7 +18,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/
 | First word    | Mode                                                   |
 | ------------- | ------------------------------------------------------ |
 | `note`        | Note: read `${CLAUDE_PLUGIN_ROOT}/skills/improve/note/SKILL.md` and follow it with the rest, the user's description |
-| `digest`      | Digest: read `${CLAUDE_PLUGIN_ROOT}/skills/improve/digest/SKILL.md` and follow it with the optional signals file that follows |
+| `digest`      | Signals: read `${CLAUDE_PLUGIN_ROOT}/skills/improve/note/SKILL.md` and follow it with `signals` and the optional signals file that follows: it proposes notes and saves each only on the user's yes |
 | `run`         | Run: optional skill name, entry ids, `--propose-only`  |
 | `log`         | Log: read `${CLAUDE_PLUGIN_ROOT}/skills/improve/log/SKILL.md` and follow it with the optional skill name that follows |
 | `method`      | Method: read `${CLAUDE_PLUGIN_ROOT}/skills/improve/method/SKILL.md` and follow it, to list the decision kinds |

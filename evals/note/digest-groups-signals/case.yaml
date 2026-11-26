@@ -6,4 +6,4 @@ execution:
   max_turns: 20
   allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill]
   prompt: |
-    /my:digest — usa ./kit-data come data root per questo test. Rispondimi in italiano.
+    /my:note signals — usa ./kit-data come data root per questo test. Rispondimi in italiano.
