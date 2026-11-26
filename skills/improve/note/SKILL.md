@@ -15,7 +15,7 @@ How the kit changes: `${CLAUDE_PLUGIN_ROOT}/rules/learning.md` § The kit's impr
 
 Goal: under a minute, no questions unless the text is empty. The text the user gives is their yes: the note is saved. With `signals` as the first word, follow § Signals instead.
 
-1. **Identify the skill and mode,** written `skill:mode` (`plan:scope`, `plan:run`, `pr:review`, `improve:run`): from the text, or else from the most recent `/my:` command used in this session, or else `general`. Use `principles`, `templates`, `scripts`, `mod` or `profile:<repo>` when the problem is there. A reply that only broke the user's output style is not a kit problem, since the kit sets no reply form (`rules/core.md`: language): say so in one line, name the style's plugin as the place to fix it, and log nothing. When a kit text asked for that form, log it against that text.
+1. **Identify the skill and mode,** written `skill:mode` (`plan:scope`, `plan:run`, `pr:review`, `improve:run`): from the text, or else from the most recent `/my:` command used in this session, or else `general`. Use `principles`, `templates`, `scripts`, `mod` or `profile:<repo>` when the problem is there. A reply that only broke the user's output style is not a kit problem, since the kit sets no reply form beyond the `unslop` rules (`rules/core.md`: language): say so in one line, name the style's plugin as the place to fix it, and log nothing. When a kit text asked for that form, log it against that text.
 2. **Collect context without asking:**
    - date and time, and the kit version (the template's `Kit:` line);
    - current repository (`git rev-parse --show-toplevel`, remote slug), branch, and PR number (`gh pr view --json number -q .number`, if any);

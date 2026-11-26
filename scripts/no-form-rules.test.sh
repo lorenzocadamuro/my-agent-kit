@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# I9: no skill, rule or README line of the kit sets the language or the sentence form
-# of text written for the user; the active output style does. Lines listed in no-form-rules.allow pass.
+# I9: no skill, rule or README line of the kit sets the language of text written for the user,
+# or its sentence form beyond the `unslop` rules; the active output style does. Lines listed in no-form-rules.allow pass.
 # Usage: bash scripts/no-form-rules.test.sh [kit folder]  (default: this script's kit)
 set -uo pipefail
 

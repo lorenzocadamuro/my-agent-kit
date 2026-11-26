@@ -25,6 +25,7 @@
     "./skills/improve/note",
     "./skills/improve/improve",
     "./skills/improve/log",
-    "./skills/improve/method"
+    "./skills/improve/method",
+    "./skills/writing/unslop"
   ]
 }

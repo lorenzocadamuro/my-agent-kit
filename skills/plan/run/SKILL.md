@@ -4,7 +4,7 @@ description: "Run the plan round after round, on its own, until something needs 
 argument-hint: "[source] [--deep] [--no-push]"
 disable-model-invocation: true
 when: "\"/my:run\", \"run the plan\", \"vai avanti col piano\", \"finish the plan on your own\""
-reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, rules/question-format.md, rules/review-lenses.md, rules/model-choice.md]
+reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, rules/question-format.md, rules/review-lenses.md, rules/model-choice.md, skills/writing/unslop/SKILL.md]
 ---
 
 # /my:run — rounds, no babysitting
@@ -14,7 +14,7 @@ You are the coordinator. You stay in the user's session and hand the work to bac
 - **The run goes round after round,** as § Run says, until something needs the user.
 - **Every gate follows the method of `rules/learning.md`:** you decide a handed-over kind alone and list it in the report, record the other answers in the plan (question format § After the answer) and in `<data root>/method.md`, and propose due hand-overs; the executor only reports.
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/files.md`, `${CLAUDE_PLUGIN_ROOT}/rules/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md` and `${CLAUDE_PLUGIN_ROOT}/rules/model-choice.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/files.md`, `${CLAUDE_PLUGIN_ROOT}/rules/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md`, `${CLAUDE_PLUGIN_ROOT}/rules/model-choice.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
 
 ## Arguments
 
