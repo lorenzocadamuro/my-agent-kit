@@ -78,6 +78,7 @@ One line per skill, generated from each skill's frontmatter by `scripts/index.sh
 - `/my:review`: Review a PR the way a senior colleague would, yours before human review or a colleague's: first a private analysis (ready to merge or not, the main scenario end to end, verified findings weighed by reach and impact; nothing worth adding is a valid answer), then, once you agree, questions and comment drafts in English; by default a GitHub review submitted with the event you choose at the gate.
 - `/my:comments`: Make sense of PR comments from bots or colleagues: two lines each, real / duplicate / not a bug / out of scope checked against the code, weight, a proportional action and a reply draft (short for a bot, one explaining reply for a colleague's review); posts only after you say yes.
 - `/my:sync`: Bring the branch up to date with main safely: conflict preview, conflict classes, stops on design conflicts, regenerates generated files and lockfiles with pinned tools, runs post-merge checks, merges (never rebases) and pushes.
+- `/my:blast-radius`: Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it's safe because of by running real code instead of writing it up. Use for 'blast radius of X', 'what could this break', or reviewing a small diff you don't trust.
 
 **improve**
 

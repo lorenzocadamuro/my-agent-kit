@@ -22,6 +22,7 @@
     "./skills/pr/review",
     "./skills/pr/comments",
     "./skills/pr/sync",
+    "./skills/pr/blast-radius",
     "./skills/improve/note",
     "./skills/improve/improve",
     "./skills/improve/log",
