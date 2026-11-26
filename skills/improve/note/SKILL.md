@@ -3,7 +3,7 @@ name: note
 description: "Log a problem with the my kit, without changing anything; with `signals`, propose notes from the signals the work collected and save each on your yes"
 argument-hint: "<what happened> | signals [file]"
 disable-model-invocation: true
-when: "\"/my:note <what happened>\", \"annota\", \"note this problem with the kit\", \"the skill did X wrong\"; \"/my:note signals [file]\" to turn the signals the work collected into proposed notes"
+when: "\"/my:note <what happened>\", \"annota\", \"note this problem with the kit\"; \"/my:note signals [file]\" to turn the signals the work collected into proposed notes"
 reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, rules/question-format.md, rules/model-choice.md, rules/local-data.md]
 ---
 
@@ -13,7 +13,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/
 
 How the kit changes: `${CLAUDE_PLUGIN_ROOT}/rules/learning.md` § The kit's improvement loop.
 
-Goal: under a minute, no questions unless the text is empty. The text the user gives is their yes: the note is saved. With `signals` as the first word, follow § Signals instead.
+Goal: under a minute, no questions unless the text is empty. The text is the user's yes, and the note is saved, only when the user asked for the note: `/my:note <text>`, `/my:improve note <text>` or `/my:improve <text>`, or a request in words such as "annota" or "note this problem with the kit". A plain correction that reached this skill or `/my:improve` through `go` is not a yes: reply with the proposal of `rules/core.md` § When the user questions or corrects the kit, and save the note only after the user's yes. With `signals` as the first word, follow § Signals instead.
 
 1. **Identify the skill and mode,** written `skill:mode` (`plan:scope`, `plan:run`, `pr:review`, `improve:run`): from the text, or else from the most recent `/my:` command used in this session, or else `general`. Use `principles`, `templates`, `scripts`, `mod` or `profile:<repo>` when the problem is there. A reply that only broke the user's output style is not a kit problem, since the kit sets no reply form beyond the `unslop` rules (`rules/core.md`: language): say so in one line, name the style's plugin as the place to fix it, and log nothing. When a kit text asked for that form, log it against that text.
 2. **Collect context without asking:**
