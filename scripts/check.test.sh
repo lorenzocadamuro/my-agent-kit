@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Tests check.sh: a missing deny-word file fails, unless MY_AGENT_KIT_ALLOW_NO_DENY=1 says so;
-# the file is found under $MY_AGENT_KIT_HOME when MY_AGENT_KIT_DENY is unset.
+# the file is found under $MY_AGENT_KIT_HOME when MY_AGENT_KIT_DENY is unset; and, on a kit of
+# version 8 or later, the layout checks I1 to I7 fail on a broken fixture, each naming its case.
 # Usage: bash scripts/check.test.sh
 set -uo pipefail
 
@@ -47,5 +48,86 @@ else
   echo "FAIL: check.sh failed for another reason: $(tail -1 "$tmp/err")" >&2; fail=1
 fi
 rm -rf "$tmp"
+
+# The layout checks (I1 to I7): a minimal 8.x kit passes; each broken copy fails, naming its case.
+make_kit() { # <dir>
+  local d="$1"
+  mkdir -p "$d/.claude-plugin" "$d/scripts" "$d/skills/go" "$d/skills/plan/scope" "$d/rules" \
+    "$d/evals/go/a" "$d/evals/scope/a" "$d/mods/my-status/hooks"
+  printf '{ "name": "my", "version": "8.0.0", "description": "Fixture kit.", "skills": ["./skills/go", "./skills/plan/scope"] }\n' \
+    > "$d/.claude-plugin/plugin.json"
+  cp "$root/scripts/check.sh" "$d/scripts/"
+  [[ -f "$root/scripts/index.sh" ]] && cp "$root/scripts/index.sh" "$d/scripts/"
+  cat > "$d/skills/go/SKILL.md" <<'EOF'
+---
+name: go
+description: "Route a request to the right skill."
+disable-model-invocation: false
+when: "any request about a plan or a PR"
+reads: [rules/core.md, skills/go/index.md]
+---
+
+# /my:go
+
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md` and `${CLAUDE_PLUGIN_ROOT}/skills/go/index.md`.
+EOF
+  cat > "$d/skills/plan/scope/SKILL.md" <<'EOF'
+---
+name: scope
+description: "Build the plan before any code."
+argument-hint: "<ticket>"
+disable-model-invocation: true
+when: "\"/my:scope\", \"let's plan this ticket\""
+reads: [rules/core.md]
+---
+
+# /my:scope
+
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`.
+
+Then `/my:go` again, as [the core rules](../../../rules/core.md) say.
+EOF
+  printf '# Core\n\nThe router reads [its index](../skills/go/index.md).\n' > "$d/rules/core.md"
+  printf 'x\n' > "$d/evals/go/a/prompt.md"
+  printf 'x\n' > "$d/evals/scope/a/prompt.md"
+  printf '# Kit\n\n<!-- skills:start -->\n<!-- skills:end -->\n' > "$d/README.md"
+  printf 'const cmd = "/my:scope";\n' > "$d/mods/my-status/hooks/adapter.ts"
+  [[ -f "$d/scripts/index.sh" ]] && bash "$d/scripts/index.sh" --write "$d"
+  return 0
+}
+layout_case() { # <case> <edit command run in the kit>
+  local k; k="$(mktemp -d)"
+  make_kit "$k"
+  (cd "$k" && eval "$2")
+  if MY_AGENT_KIT_DENY=/nonexistent MY_AGENT_KIT_ALLOW_NO_DENY=1 bash "$k/scripts/check.sh" >/dev/null 2>"$k/err"; then
+    echo "FAIL: check.sh passed with: $1" >&2; fail=1
+  elif grep -qF "$1" "$k/err"; then
+    echo "ok: $1 fails"
+  else
+    echo "FAIL: $1: check.sh failed for another reason: $(grep -v '^$' "$k/err" | tail -1)" >&2; fail=1
+  fi
+  rm -rf "$k"
+}
+k="$(mktemp -d)"
+make_kit "$k"
+if MY_AGENT_KIT_DENY=/nonexistent MY_AGENT_KIT_ALLOW_NO_DENY=1 bash "$k/scripts/check.sh" >/dev/null 2>"$k/err"; then
+  echo "ok: a well-formed 8.x kit passes"
+else
+  echo "FAIL: a well-formed 8.x kit failed: $(grep -v '^$' "$k/err" | tail -1)" >&2; fail=1
+fi
+rm -rf "$k"
+layout_case "missing field" "perl -ni -e 'print unless /^when:/' skills/plan/scope/SKILL.md"
+layout_case "unclosed list" "perl -pi -e 's/^reads: \[rules\/core.md\]/reads: [rules\/core.md/' skills/plan/scope/SKILL.md"
+layout_case "missing reads path" "perl -pi -e 's/^reads: \[rules\/core.md\]/reads: [rules\/nope.md]/; s/rules\/core.md\`\./rules\/nope.md\`./' skills/plan/scope/SKILL.md"
+layout_case "reads and Read first differ" "perl -pi -e 's/^reads: \[rules\/core.md\]/reads: [rules\/core.md, skills\/go\/index.md]/' skills/plan/scope/SKILL.md"
+layout_case "stale index" "perl -pi -e 's/Build the plan before any code/Build the plan first/' skills/plan/scope/SKILL.md"
+layout_case "orphan eval folder" "mkdir -p evals/ghost/a && echo x > evals/ghost/a/prompt.md"
+layout_case "skill without eval folder" "rm -r evals/scope"
+layout_case "missing skill" "echo 'Then run /my:ghost.' >> rules/core.md"
+layout_case "missing file" "echo 'Read \`\${CLAUDE_PLUGIN_ROOT}/rules/nope.md\`.' >> rules/core.md"
+layout_case "dangling relative link" "echo 'See [the lenses](review-lenses.md).' >> rules/core.md"
+layout_case "second model-invoked skill" "perl -pi -e 's/^disable-model-invocation: true/disable-model-invocation: false/' skills/plan/scope/SKILL.md"
+layout_case "mod names a missing skill" "echo 'const two = \"/my:round\";' >> mods/my-status/hooks/adapter.ts"
+layout_case "duplicate name" "perl -pi -e 's/^name: go/name: scope/' skills/go/SKILL.md"
 
 exit "$fail"
