@@ -57,7 +57,8 @@ build_index() {
     while read -r d; do
       f="$root/$d/SKILL.md"
       [[ -f "$f" ]] && routed "$f" && [[ "$(area_of "$d")" == "$a" ]] || continue
-      echo "- \`/my:$(field "$f" name)\` · \`$d/SKILL.md\`: $(field "$f" description) When: $(field "$f" when)"
+      local desc; desc="$(field "$f" description)"; desc="${desc%.}."
+      echo "- \`/my:$(field "$f" name)\` · \`$d/SKILL.md\`: $desc When: $(field "$f" when)"
     done < <(skill_dirs)
   done < <(areas)
 }

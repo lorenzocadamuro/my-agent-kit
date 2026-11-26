@@ -1,0 +1,11 @@
+schema_version: "1"
+name: routes-plan-request
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 12
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    plan ENG-123
+
+    (Data root ./kit-data. In this environment git and gh do not run: their outputs are in ./git-out/git.txt.)
