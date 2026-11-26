@@ -11,5 +11,5 @@
 ## The kit carries the plan it made
 
 - **An approved plan runs only through `/my:run`.** Together with `/my:scope`, which keeps it while planning, it keeps the state file, and so the status line, true from the first step to the last.
-- **A request or a finding during a plan becomes an item of the plan,** an item of its next round, and `/my:run` continues: whoever starts it, a request to do part of the plan's work directly ("implement part B"), a finding to fix, or the work left after a gate (after a rollout step or a restart). Whoever makes the change, even a few lines, it gets the round's fresh review (`plan:run` step 7) before the push.
+- **A request or a finding during a plan becomes an item of the plan,** an item of the open round (step 4) or of the next one, and `/my:run` continues: whoever starts it, a request to do part of the plan's work directly ("implement part B"), a finding to fix, or the work left after a gate (after a rollout step or a restart). Whoever makes the change, even a few lines, it gets the round's fresh review (`plan:run` step 7) before the push.
 - **Leave the kit for a change only when the user says so;** then delete its state file, and work as plain Claude Code.

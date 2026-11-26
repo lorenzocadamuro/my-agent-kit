@@ -2,7 +2,7 @@
 mkdir -p wt/.plans git-out kit-data/state
 cat > wt/.plans/plan.md <<'P'
 # Make order totals consistent
-Boundary: totals for orders without discounts are unchanged. Bar: items 1-3 of round 1 done with tests.
+Size: S. Boundary: totals for orders without discounts are unchanged. Bar: items 1-3 of round 1 done with tests.
 P
 cat > wt/.plans/round-1.md <<'P'
 # Round 1: consistent totals
