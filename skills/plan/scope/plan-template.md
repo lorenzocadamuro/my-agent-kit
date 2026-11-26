@@ -30,7 +30,7 @@ How it is checked, and what it costs:
 
 ## Gates [always]
 
-Default gates from the principles, plus: <any extra gate, or "none">.
+Default gates from `rules/core.md`, plus: <any extra gate, or "none">.
 
 ## Invariants [M+]
 

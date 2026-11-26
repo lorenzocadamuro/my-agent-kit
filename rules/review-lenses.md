@@ -1,6 +1,6 @@
 # Review lenses
 
-Shared by `/my:pr:review`, the plan review of `/my:plan:scope`, the review step of `/my:plan:round` and `/my:plan:run` at the round that completes a part (other rounds grade findings by § Grading a finding only), and `/my:pr:comments`. Senior reviewers rarely hunt for line-level bugs first. They ask whether the change keeps its promises. Start from the promise: follow the change's main scenario (the case it exists for) end to end through every piece it touches, where most real defects sit. Then use the other lenses that fit the change, and skip the rest silently.
+Shared by `/my:review`, the plan review of `/my:scope`, the review step of `/my:round` and `/my:run` at the round that completes a part (other rounds grade findings by § Grading a finding only), and `/my:comments`. Senior reviewers rarely hunt for line-level bugs first. They ask whether the change keeps its promises. Start from the promise: follow the change's main scenario (the case it exists for) end to end through every piece it touches, where most real defects sit. Then use the other lenses that fit the change, and skip the rest silently.
 
 ## The lenses
 
@@ -25,7 +25,7 @@ Shared by `/my:pr:review`, the plan review of `/my:plan:scope`, the review step 
 ## Grading a finding
 
 - **block:** breaks the promise, an invariant, the boundary or the bar for done.
-- **ticket:** real, but outside the plan's scope. Write the ticket text and do not fix it in this change; the user may accept it instead, its reason in the plan (principles: out of scope is a list).
+- **ticket:** real, but outside the plan's scope. Write the ticket text and do not fix it in this change; the user may accept it instead, its reason in the plan (`rules/plan-contract.md`: out of scope is a list).
 - **note:** style, naming, optional improvements.
 
 **Weigh reach and impact:** who can trigger it (every user, one API client, an operator) and what it costs when they do. A flaw only a rare caller can reach, with a contained cost, is a note unless it breaks the promise, an invariant, the boundary or the bar for done.

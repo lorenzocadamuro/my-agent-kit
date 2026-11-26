@@ -54,4 +54,4 @@ PR: <owner/name#n> · Author: <handle> · Head: <sha> · Read on: <date> · Read
 
 - @<reviewer> (<review state>): <what they asked, in a few words> · <still open: which | all resolved>
 
-To study them: `/my:pr:learn <n> comments`.
+To study them: `/my:learn <n> comments`.

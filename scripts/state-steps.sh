@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Derives the state file's parts from plan.md's boxes (docs/local-data.md § State file, parts[].steps),
+# Derives the state file's parts from plan.md's boxes (rules/local-data.md § State file, parts[].steps),
 # so no status is ever set by hand: each step is failed (already failed and unticked), running (named
 # by --running), done (ticked) or todo, in that order; each part's done, total and status follow.
 # Labels and short titles the coordinator wrote are kept by position; a step past the last label gets

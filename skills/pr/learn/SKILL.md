@@ -7,7 +7,7 @@ when: "\"/my:learn\", \"spiegami la PR 456\", \"help me understand this PR\", \"
 reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, skills/pr/learn/learning.md]
 ---
 
-# /my:pr:learn — understand a PR, or the review it received
+# /my:learn — understand a PR, or the review it received
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/files.md` and `${CLAUDE_PLUGIN_ROOT}/skills/pr/learn/learning.md`.
 
@@ -20,7 +20,7 @@ Input:
   - an area, in plain words: the reading below goes deeper there;
   - **review comments:** a comment id or URL, reviewer handles (a word naming one of the PR's reviewers), `comments` (every human comment), or pasted comment text, each followed by `all` to take comments already studied again. Then follow § Studying review comments instead of the reading.
 
-This mode explains; it does not judge. Write hypotheses as questions, never as findings. Judging is `/my:pr:review`, which reuses this reading.
+This mode explains; it does not judge. Write hypotheses as questions, never as findings. Judging is `/my:review`, which reuses this reading.
 
 ## Reading the PR
 
@@ -31,7 +31,7 @@ This mode explains; it does not judge. Write hypotheses as questions, never as f
    - `gh pr view <n> --json title,body,author,files,headRefOid,baseRefName,url,reviewRequests`;
    - `gh pr diff <n>`;
    - linked tickets;
-   - the existing reviews and their comments, with each thread's state (the query in `review.md` step 1), for the overview at the end, not to study them;
+   - the existing reviews and their comments, with each thread's state (the query in `skills/pr/review/SKILL.md` step 1), for the overview at the end, not to study them;
    - the project profile, for the guides to load.
 
    When the profile names a repository tool that explains PRs, you may use its output as a source. Never use its publish options.
@@ -55,9 +55,9 @@ This mode explains; it does not judge. Write hypotheses as questions, never as f
      - what the PR deliberately does not do (from the description or the code);
      - how it is tested.
    - **Questions to keep in mind:** 3–6 questions from the lenses that this PR makes relevant, for example "who else writes this record?" or "what happens on a restart between X and Y?". These are open questions, not verdicts.
-   - **Review comments so far,** last, after layer 2, when the PR has any: who said what, one line per reviewer (at most 5 lines), which threads are still open, and `/my:pr:learn <n> comments` to study them.
+   - **Review comments so far,** last, after layer 2, when the PR has any: who said what, one line per reviewer (at most 5 lines), which threads are still open, and `/my:learn <n> comments` to study them.
 5. **Update the glossary.** Readings do not touch reviewer profiles.
-6. **Ask in chat:** "Do you want me to go deeper into a part, or start `/my:pr:review <n>`?"
+6. **Ask in chat:** "Do you want me to go deeper into a part, or start `/my:review <n>`?" On a yes to the review, read `${CLAUDE_PLUGIN_ROOT}/skills/pr/review/SKILL.md` and follow it with `<n>`.
 
 ## Studying review comments
 

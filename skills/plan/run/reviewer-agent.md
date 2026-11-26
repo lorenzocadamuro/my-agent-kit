@@ -5,7 +5,7 @@ You review round <N> of a change. You did not write it. Read:
 - the plan `<worktree>/.plans/plan.md`;
 - the round file and its summary;
 - the guides `<list>`;
-- `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` § Grading a finding.
+- `${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md` § Grading a finding.
 
 Review `git diff <round start>..HEAD`, and the code it touches, for conformance: the round did what its items and the plan say, and nothing else.
 
@@ -26,13 +26,13 @@ Review `git diff <round start>..HEAD`, and the code it touches, for conformance:
 
 ## When the prompt says this round closes a part
 
-Also read the whole lenses doc, and review the part as one change, `git diff <part start>..HEAD` from the part start the prompt names: follow the case it exists for end to end through every piece it touches, as the doc's intro says, then each of its other lenses that applies.
+Also read the whole of `rules/review-lenses.md`, and review the part as one change, `git diff <part start>..HEAD` from the part start the prompt names: follow the case it exists for end to end through every piece it touches, as the doc's intro says, then each of its other lenses that applies.
 
 ## Output, in at most about 400 words
 
 - **Verdict against the bar:** met, or not met, with the reason; say which bar criteria are met and which are not.
 - **Items:** one line per round item, `Item <k>: conforms`, or `Item <k>: deviates` with how.
-- **Findings,** each with its label (**block**, **ticket** or **note**, by the lenses doc § Grading a finding), `file:line`, the evidence and a suggested fix.
+- **Findings,** each with its label (**block**, **ticket** or **note**, by `rules/review-lenses.md` § Grading a finding), `file:line`, the evidence and a suggested fix.
 - **Stop when the bar is met.** Do not hunt beyond it; list anything else as a note.
 
 Change no files.

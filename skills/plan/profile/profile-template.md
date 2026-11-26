@@ -6,7 +6,7 @@ Confirmed by the user on <date>. Correct it through `/my:improve` when it is wro
 
 - Default branch: `main` · New branches from: `origin/main`
 - Worktree root: <path pattern; prefer the editor's own worktree folder, e.g. <repo>/.claude/worktrees/<short-name> | none: work on `main` (one task at a time)>
-- Session follows the worktree: <yes: move the session in (principles: entering a worktree) | no: open the worktree in a new session>
+- Session follows the worktree: <yes: move the session in (`rules/repository.md`: entering a worktree) | no: open the worktree in a new session>
 - Files assembled per checkout, never copied from `.worktreeinclude`: <paths | none>
 - Setup after creating a worktree: `<command>`
 - Test paths for the size budget (optional): <pathspecs, each single-quoted, passed as `drift.sh --tests`; default: test folders and test file names>

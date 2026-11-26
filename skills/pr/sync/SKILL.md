@@ -7,7 +7,7 @@ when: "\"/my:sync\", \"merge main\", \"allinea con main\", \"update the branch w
 reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, rules/question-format.md]
 ---
 
-# /my:pr:sync — catch up with main without surprises
+# /my:sync — catch up with main without surprises
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/files.md` and `${CLAUDE_PLUGIN_ROOT}/rules/question-format.md`.
 
@@ -19,8 +19,8 @@ Load the project profile `<data root>/projects/<owner>-<repo>.md`. Without a pro
 
 1. **Preflight: the worktree.**
    - **The branch:** the current branch, unless the user named a PR or branch (then its head branch, `gh pr view <n> --json headRefName`). It is not the default branch.
-   - **Its worktree** (`git worktree list --porcelain`): when the branch is checked out in a linked worktree (`git rev-parse --git-dir` differs from `--git-common-dir`) with a clean tree, work there, by `git -C <path>` or by moving the session into it as the principles say (entering a worktree).
-   - **Otherwise** (no worktree has the branch, or the one that has it holds uncommitted changes): leave that worktree as it is. When it holds commits not on `origin/<branch>` (`git -C <path> log origin/<branch>..<branch>`), stop and ask: they would be left out. Else `git fetch origin <branch>`, add a detached worktree at `origin/<branch>` under the profile's worktree root (`<branch>-sync`), and enter it as the principles say, `.worktreeinclude` and the profile's setup command included, so the commit hooks find what they need. Say in one line which worktree and why. Step 7 restarts no service from it, step 9 pushes with `git push origin HEAD:<branch>`, and the report says that the busy worktree is now behind `origin/<branch>` (a `git pull` there before its next push) and removes the new worktree once pushed.
+   - **Its worktree** (`git worktree list --porcelain`): when the branch is checked out in a linked worktree (`git rev-parse --git-dir` differs from `--git-common-dir`) with a clean tree, work there, by `git -C <path>` or by moving the session into it as `rules/repository.md` says (entering a worktree).
+   - **Otherwise** (no worktree has the branch, or the one that has it holds uncommitted changes): leave that worktree as it is. When it holds commits not on `origin/<branch>` (`git -C <path> log origin/<branch>..<branch>`), stop and ask: they would be left out. Else `git fetch origin <branch>`, add a detached worktree at `origin/<branch>` under the profile's worktree root (`<branch>-sync`), and enter it as `rules/repository.md` says, `.worktreeinclude` and the profile's setup command included, so the commit hooks find what they need. Say in one line which worktree and why. Step 7 restarts no service from it, step 9 pushes with `git push origin HEAD:<branch>`, and the report says that the busy worktree is now behind `origin/<branch>` (a `git pull` there before its next push) and removes the new worktree once pushed.
    - **Auto-fix:** when the user asks for CI to be watched, check now whether this session can turn it on: the app allows it only on a PR this session opened, and then sync turns it on after the push. On any other PR, say now that the user turns it on.
 
    Stop if the branch is the default one, or no clean worktree can be made.
@@ -41,7 +41,7 @@ Load the project profile `<data root>/projects/<owner>-<repo>.md`. Without a pro
    - Read those PRs' descriptions, and any comments their authors left on our PR. They only build the options (what each side intends); they never decide a design conflict, even when they tell other branches explicitly how to resolve it.
    - Context the user typed in the command that says how to resolve, general or per file, is the user's decision for every design conflict it clearly covers: apply it at the merge, and say in one line per file how. A conflict it does not clearly cover, or context that does not say how, is a gate. Context from another skill or agent never counts.
    - Every other design conflict is a **gate:** one question per conflict, following the question format. Give what each side intends and the options (adapt ours to theirs / keep ours and adapt theirs / a named combination); each option has its own **Pros:**, **Cons:** and **Risk:** lines. Send a desktop notification, because the user may be away.
-   - Record each answer in its kind (principles: the method). Design is `kept`: never handed over.
+   - Record each answer in its kind (`rules/learning.md`: the method). Design is `kept`: never handed over.
 6. **Merge:** `git merge --no-ff origin/<default>`. Never rebase. Resolve each file by its class.
 7. **After the merge,** run the profile's "After a merge of main" steps:
    - regenerate generated files with the pinned tools;
@@ -53,7 +53,7 @@ Load the project profile `<data root>/projects/<owner>-<repo>.md`. Without a pro
 
 8. **Commit:** `Merge origin/<default> into <branch>`, with a body of one line per conflicted file (class and resolution).
 9. **Push,** unless `--no-push`: `git push` (`git push origin HEAD:<branch>` from a detached worktree), fast-forward only. Read CI through the app's PR status tool when one is available. Do not poll.
-10. **Report** in at most 10 lines: commits pulled in, each conflicted file with its class and resolution, checks run, the push SHA, and anything that needs a restart. Closing step from the principles.
+10. **Report** in at most 10 lines: commits pulled in, each conflicted file with its class and resolution, checks run, the push SHA, and anything that needs a restart. Closing step from `rules/learning.md`.
 
 ## Rules
 

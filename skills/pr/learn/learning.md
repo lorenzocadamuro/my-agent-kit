@@ -1,8 +1,8 @@
-# Learning rules — /my:pr:learn
+# Learning rules — /my:learn
 
 The goal is learning, not summarising. Every page connects words to the real code, makes the reasoning repeatable, and fits a reading budget. These rules apply to `learn` only: to the reading of a PR and to the study of its review comments.
 
-Use `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` to name reasoning moves and the questions worth asking.
+Use `${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md` to name reasoning moves and the questions worth asking.
 
 ## Rules
 
@@ -12,7 +12,7 @@ Use `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` to name reasoning moves and th
 - **Budget:** layer 0 is at most 150 words; the whole page is at most about 1,800 words.
   - Before opening the page, count the words with `wc -w`, and cut until it fits.
   - Never cut code anchors or weights.
-- **Three layers** (a reading then ends with the review comments overview: `learn.md` step 4):
+- **Three layers** (a reading then ends with the review comments overview: `skills/pr/learn/SKILL.md` step 4):
   - **layer 0:** what the user needs now, in one minute;
   - **layer 1:** the ten-minute read;
   - **layer 2:** optional depth, inside `<details>`.
@@ -24,9 +24,9 @@ Use `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` to name reasoning moves and th
 - **Glossary:**
   - A term already in `study/glossary.md` gets a link, never a second explanation; add only a "Seen in" line to it.
   - Add at most 5 new terms per page, as `### <Term> — <meaning>`, followed by "In general", "In the code", "Seen in".
-- **Memory:** the reading and the study each record what they have covered, so a re-run covers only what is new (see `learn.md`).
+- **Memory:** the reading and the study each record what they have covered, so a re-run covers only what is new (see `skills/pr/learn/SKILL.md`).
 - **Finish:**
-  - Present the page (principles: where files go).
+  - Present the page (`rules/files.md`: where files go).
   - Reply in chat in at most 8 lines: the path, layer 0 in brief, and one question that checks the user understood.
-  - Then offer the natural next step: after a reading, `/my:pr:review <n>`; after a study of comments, `/my:pr:comments <n>` when replies are owed.
-- **Closing step:** follow the principles.
+  - Then offer the natural next step: after a reading, `/my:review <n>`; after a study of comments, `/my:comments <n>` when replies are owed. On the user's yes, read `${CLAUDE_PLUGIN_ROOT}/skills/pr/review/SKILL.md` or `${CLAUDE_PLUGIN_ROOT}/skills/pr/comments/SKILL.md` and follow it with `<n>`.
+- **Closing step:** follow `rules/learning.md`.

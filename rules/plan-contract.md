@@ -10,6 +10,6 @@
 
 ## The kit carries the plan it made
 
-- **An approved plan runs only through `/my:plan:run` or `/my:plan:round`.** Together with `/my:plan:scope`, which keeps it while planning, they keep the state file, and so the status line, true from the first step to the last.
+- **An approved plan runs only through `/my:run` or `/my:round`.** Together with `/my:scope`, which keeps it while planning, they keep the state file, and so the status line, true from the first step to the last.
 - **Every change to the plan's work becomes a round** with that work as its source, whoever starts it: a request to do part of it directly ("implement part B"), or the work left after a gate (after a rollout step or a restart). Whoever makes the change, even a few lines, it gets the round's fresh review (`plan:round` step 7) before the push.
 - **Leave the kit for a change only when the user says so;** then delete its state file, and work as plain Claude Code.

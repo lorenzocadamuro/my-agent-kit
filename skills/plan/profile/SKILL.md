@@ -10,7 +10,7 @@ reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifyin
 
 Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md` and `${CLAUDE_PLUGIN_ROOT}/rules/files.md`.
 
-Used by `/my:plan:scope` when `<data root>/projects/<owner>-<repo>.md` does not exist. The result follows `${CLAUDE_PLUGIN_ROOT}/skills/plan/profile/profile-template.md`. The profile holds employer-specific facts and therefore never enters the kit repository.
+Used by `/my:scope` when `<data root>/projects/<owner>-<repo>.md` does not exist. The result follows `${CLAUDE_PLUGIN_ROOT}/skills/plan/profile/profile-template.md`. The profile holds employer-specific facts and therefore never enters the kit repository.
 
 ## Sources, in order
 
