@@ -56,6 +56,10 @@ The route page lists the chat's past runs next to the live ones.
 
 How it is checked: every round, `python3 -m unittest discover -s tests -q` (baseline on origin/main: 2 passed).
 
+## Gates
+- Plan approval (given).
+- Before any code of Part B is written (after its triage and its check): the user reads the round file and says go.
+
 ## Invariants
 | # | Statement | Holds at | Test that fails if broken |
 | --- | --- | --- | --- |

@@ -51,5 +51,8 @@ $ git rev-parse --git-dir ; git rev-parse --git-common-dir
 /repo/.git
 P
 cat > kit-data/state/acme-shop-feature.json <<'P'
-{"repo":"acme/shop","branch":"feature","worktree":"./wt","session":"unknown","startedAt":"2026-01-10T07:00:00Z","updatedAt":"2026-01-10T09:00:00Z","mode":"round","plan":{"title":"Refuse expired coupons","path":"./wt/.plans/plan.md"},"parts":[{"title":"Part A: expired coupons","short":"Expired coupons","status":"running","done":0,"total":2,"steps":[{"label":"Reject expired","status":"running"},{"label":"Checkout test","status":"running"}]},{"title":"Part B: coupon docs","short":"Coupon docs","status":"todo","done":0,"total":1,"steps":[{"label":"Expiry docs","status":"todo"}]}],"round":1,"step":"execute","state":"running","reason":null,"rounds":[{"n":1,"startedAt":"2026-01-10T08:30:00Z"}],"pr":null}
+{"repo":"acme/shop","branch":"feature","worktree":"./wt","session":"unknown","startedAt":"2026-01-10T07:00:00Z","updatedAt":"2026-01-10T09:00:00Z","mode":"run","plan":{"title":"Refuse expired coupons","path":"./wt/.plans/plan.md"},"parts":[{"title":"Part A: expired coupons","short":"Expired coupons","status":"running","done":0,"total":2,"steps":[{"label":"Reject expired","status":"running"},{"label":"Checkout test","status":"running"}]},{"title":"Part B: coupon docs","short":"Coupon docs","status":"todo","done":0,"total":1,"steps":[{"label":"Expiry docs","status":"todo"}]}],"round":1,"step":"execute","items":{"done":2,"total":2},"state":"running","reason":null,"rounds":[{"n":1,"startedAt":"2026-01-10T08:30:00Z"}],"pr":null}
+P
+cat > kit-data/state/acme-shop-feature.progress.json <<'P'
+{"round":1,"items":{"done":2,"total":2},"updatedAt":"2026-01-10T09:00:00Z"}
 P
