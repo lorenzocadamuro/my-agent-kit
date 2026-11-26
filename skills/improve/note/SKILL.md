@@ -44,3 +44,5 @@ Goal: under a minute, no questions unless the text is empty. The text the user g
 6. **Reply** with the proposals and the question; after the yes, in one line: `Saved <k> signals → <ids>`. With no pending signals, reply nothing.
 
 Never change a skill, doc, template or profile.
+
+Reply: `Logged <id> · <skill> · <n> open`; with `signals`, the proposed notes and the question, then `Saved <k> signals → <ids>`.

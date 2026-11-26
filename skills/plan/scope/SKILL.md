@@ -127,3 +127,5 @@ Skip this step for `--dry-run`, and delete the planning state file: there is not
 ### 9. Closing step
 
 Follow the closing step of `rules/learning.md`.
+
+Reply: at the approval gate, the plan's path and its summary of at most 14 lines; after the approval, the worktree and branch, the plan path and the next step, `/my:run`.

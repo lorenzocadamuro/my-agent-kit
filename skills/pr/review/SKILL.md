@@ -77,3 +77,5 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/
    - **`local`:** nothing to publish.
 9. **Closing step** from `rules/learning.md`, before any watch starts.
 10. **Watch, when the user said yes at the gate** to a submitted review. A background command polls the PR's comments, reviews and review requests (never its CI), and ends when the author tags the user, requests the user's review again, or the PR closes. On the first two, run a follow-up review from the saved analysis: the commits after the reviewed head, every open thread, and all new code at the same depth (steps 3–6). When every block is fixed and no new one appears, submit `APPROVE` with a short summary only when the user allowed it at the gate; otherwise bring back the analysis and the drafts, and decide the event with the user as in step 7. After each follow-up, the watch starts again, until the PR closes or the user stops it.
+
+Reply: first the private analysis (what the PR does, the verdict, the main scenario, the findings) and its file; once the user agrees, the drafts and the gate question.

@@ -70,6 +70,8 @@ reads: [rules/core.md]
 Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`.
 
 Then `/my:go` again, as [the core rules](../../../rules/core.md) say.
+
+Reply: the plan and the approval question.
 EOF
   printf '# Core\n\nThe router reads [its index](../skills/go/index.md).\n' > "$d/rules/core.md"
   # Bare kit paths that exist: a file, a directory, and a path followed by its arguments.
@@ -134,6 +136,18 @@ layout_case "dangling bare path" "echo 'Read \`rules/missing.md:3\`.' >> rules/c
 layout_case "second model-invoked skill" "perl -pi -e 's/^disable-model-invocation: true/disable-model-invocation: false/' skills/plan/scope/SKILL.md"
 layout_case "mod names a missing skill" "echo 'const two = \"/my:round\";' >> mods/my-status/hooks/adapter.ts"
 layout_case "duplicate name" "perl -pi -e 's/^name: go/name: scope/' skills/go/SKILL.md"
+layout_case "workflow without Reply line" "perl -ni -e 'print unless /^Reply:/' skills/plan/scope/SKILL.md"
+layout_case "workflow without Reply line" "perl -pi -e 's/^Reply: (.*)/Reply: \\1\\n\\nMore text after it./' skills/plan/scope/SKILL.md" "Reply line not at the end"
+# A bold **Reply:** line counts as the Reply line.
+k="$(mktemp -d)"
+make_kit "$k"
+perl -pi -e 's/^Reply: /**Reply:** /' "$k/skills/plan/scope/SKILL.md"
+if MY_AGENT_KIT_DENY=/nonexistent MY_AGENT_KIT_ALLOW_NO_DENY=1 bash "$k/scripts/check.sh" >/dev/null 2>"$k/err"; then
+  echo "ok: a bold Reply line passes"
+else
+  echo "FAIL: a bold Reply line failed: $(grep -v '^$' "$k/err" | tail -1)" >&2; fail=1
+fi
+rm -rf "$k"
 # The layout checks run whatever plugin.json says: a broken skill fails with no "version" too.
 layout_case "missing field" "jq 'del(.version)' .claude-plugin/plugin.json > p.json && mv p.json .claude-plugin/plugin.json && perl -ni -e 'print unless /^when:/' skills/plan/scope/SKILL.md" "missing field with no version"
 

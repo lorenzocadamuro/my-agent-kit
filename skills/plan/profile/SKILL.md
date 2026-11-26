@@ -27,3 +27,5 @@ Used by `/my:scope` when `<data root>/projects/<owner>-<repo>.md` does not exist
 - **Mark every guess** with "(unconfirmed)". The user confirms or corrects these.
 - **Keep it short:** one line per command or rule, and links instead of copies.
 - **Ask the user only** what the sources cannot answer: how they work in this repository (parallel tasks in worktrees, or one at a time on `main`, and which files `.worktreeinclude` lists that are assembled per checkout rather than copied), how their local stack runs (variant, and the commands to move it to a worktree and back), the ticket tracker and its start status, and which slow suites to avoid locally.
+
+Reply: a summary of the profile, its guesses marked "(unconfirmed)", and the question to confirm or correct it.

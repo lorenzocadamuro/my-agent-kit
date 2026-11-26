@@ -26,7 +26,7 @@ fi
 
 # The layout checks I1 to I7 (the layout of skill folders and rules/):
 # frontmatter and "Read first:" (I1), the index (I2), eval folders (I3), no missing skill or file (I4),
-# only the router model-invoked (I5), the mod's commands (I6), unique names (I7).
+# only the router model-invoked (I5), the mod's commands (I6), unique names (I7), and a closing Reply: line on every workflow.
 fm() { # <file> <key>: the frontmatter value, surrounding quotes removed; nothing when absent
   awk -v k="$2" '
     NR == 1 && $0 != "---" { exit }
@@ -65,6 +65,12 @@ layout_checks() {
     done <<<"$reads"
     first="$(grep -m1 '^Read first:' "$f" | grep -o '\${CLAUDE_PLUGIN_ROOT}/[^`]*' | sed 's#^\${CLAUDE_PLUGIN_ROOT}/##' | sort -u || true)"
     [[ "$first" == "$reads" ]] || err "reads and Read first differ: $rel: reads [$(paste -sd, - <<<"$reads")], Read first [$(paste -sd, - <<<"$first")]"
+    # Every workflow ends with a Reply: line (C13); the router and the two writing tools are not workflows.
+    case "$n" in
+      go | unslop | wait-what) ;;
+      *) awk 'NF { last = $0 } END { exit !(last ~ /^(Reply:|\*\*Reply:\*\*)/) }' "$f" ||
+        err "workflow without Reply line: $rel ($n) does not end with a 'Reply:' line" ;;
+    esac
   done < <(find ./skills -name SKILL.md | sort)
 
   while IFS= read -r n; do [[ -n "$n" ]] && err "duplicate name: two skills are named $n"; done < <(sort <<<"$names" | uniq -d)

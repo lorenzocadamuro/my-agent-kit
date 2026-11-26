@@ -155,3 +155,5 @@ Next: <the action that unblocks it>
 ```
 
 When it stops on a decision, introduce it after the summary as question-format § Shape says, so the user can answer it cold after a break: what its terms mean, why the plan needs it, and what each option changes.
+
+Reply: one line per round, and at the end the summary of § Run (`Run:`, `Rounds:`, `Decided alone:`, `Stopped:`, `Signals:`, `Lessons:`, `Next:`).

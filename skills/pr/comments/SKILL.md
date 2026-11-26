@@ -52,3 +52,5 @@ Pasted comments work too, when `gh` is unavailable.
    - `/my:run <comments file>` when fixes are pending (on the user's yes, read `${CLAUDE_PLUGIN_ROOT}/skills/plan/run/SKILL.md` and follow it with `<comments file>`);
    - the repository's own comment resolver, when the project profile names one, as an alternative.
 9. **Closing step** from `rules/learning.md`.
+
+Reply: for each group, its comments, a two-line explanation, class, weight and action; then the reply drafts and the question which to post.
