@@ -22,4 +22,4 @@ The kit learns while it is used. Every skill collects signals during the work an
 
 ## The kit's improvement loop
 
-The kit changes only through an approved plan (`/my:scope`, `/my:round` or `/my:run`) or `run`, and only with the user's yes. A note never changes anything; a run changes only what the user approves.
+The kit changes only through an approved plan (`/my:scope`, `/my:round` or `/my:run`) or `/my:improve run`, and only with the user's yes. A note never changes anything; a run changes only what the user approves.
