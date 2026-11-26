@@ -2,6 +2,62 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [8.0.0] - 2026-11-26
+
+The kit gets one door and one folder per skill. `/my:go` is the only skill Claude starts by itself: it reads a generated index and opens the skill that fits. Every command is now its own skill, `/my:<skill>`, with no aliases for the old names. The shared rules leave `docs/` for small files in `rules/`. Each skill keeps the text and behaviour it had in 7.3.0: the texts moved verbatim, and only their paths, short references, slash names and calls to other skills changed.
+
+### Slash names
+
+| 7.3.0 | 8.0.0 |
+| --- | --- |
+| `/my:plan:scope` | `/my:scope` |
+| `/my:plan:round` | `/my:round` |
+| `/my:plan:run` | `/my:run` |
+| `/my:pr:learn` | `/my:learn` |
+| `/my:pr:review` | `/my:review` |
+| `/my:pr:comments` | `/my:comments` |
+| `/my:pr:sync` | `/my:sync` |
+| `/my:improve note`, `/my:improve:note` | `/my:note` |
+| `/my:improve digest`, `/my:improve:digest` | `/my:digest` |
+| `/my:improve log`, `/my:improve:log` | `/my:log` |
+| `/my:improve method`, `/my:improve:method` | `/my:method` |
+| `/my:improve`, `/my:improve run` | unchanged; its argument table still sends `note`, `digest`, `log` and `method` to those skills |
+| `/my:plan`, `/my:pr` with no mode | `/my:go` |
+| none | `/my:go`, `/my:profile` |
+
+Notes, signals and activity files keep naming a skill by area and mode (`plan:scope`, `pr:review`), so every file written before stays valid.
+
+### Layout
+
+- `skills/<area>/<skill>/SKILL.md`, one per skill, listed in the `skills` array of `plugin.json`; `commands/` is gone. Each `SKILL.md` has the fields `name`, `description`, `disable-model-invocation` (true for all but `go`), `when` (the trigger phrases of its old description) and `reads`, plus `argument-hint` where its command had one.
+- `plan:round` and `plan:run` keep one text: all of `round.md` is `skills/plan/run/SKILL.md`, and `skills/plan/round/SKILL.md` follows it once.
+- The improve skill splits into `note`, `digest`, `improve`, `log` and `method`. Its paths, old names and entry view move to `rules/local-data.md`, its first sentence to `rules/learning.md` § The kit's improvement loop.
+- The profile setup becomes `/my:profile`; `/my:scope` still runs it when a repository has no profile.
+- The agent briefs become `skills/plan/run/executor-agent.md`, `reviewer-agent.md` and `check-agent.md`; each template moves next to the skill that writes it.
+- A call to another skill reads that skill's `SKILL.md` by path and follows it, because a user-invoked skill refuses the Skill tool; an offer does it on the user's yes.
+
+### Rules
+
+- `docs/principles.md` splits, verbatim, into `rules/core.md`, `plan-contract.md`, `learning.md`, `verifying.md`, `worker.md`, `repository.md` and `files.md`. `question-format.md`, `review-lenses.md`, `model-choice.md` and `local-data.md` move to `rules/` whole.
+- Every skill that read the principles reads the seven files; each "Read first:" line lists the same files as `reads`. A short reference names its file: "(principles: the method)" is now "(`rules/learning.md`: the method)".
+- The pr activity rule moves to `rules/local-data.md` § The activity file, with a pointer in each pr skill.
+
+### Scripts
+
+- `scripts/index.sh` builds `skills/go/index.md` and the README skill list; `scripts/index.test.sh` tests it.
+- `scripts/check.sh` adds the layout checks, from 8.0.0 on: the frontmatter and "Read first:" line of every skill, a current index, one eval folder per skill and one skill per eval folder, no kit text naming a missing skill or file (relative links included), only `go` model-invoked, the status mod's commands, unique names. `check.test.sh` sees each one fail on a broken fixture.
+- `no-form-rules.test.sh` scans `skills/`, `rules/` and the README.
+
+### Status mod (`my-status` 1.1.0)
+
+- Review comments, Merge main, One round and Run plan fill in `/my:comments`, `/my:sync`, `/my:round` and `/my:run`.
+
+### Evals
+
+- The 93 cases move to `evals/<skill>/` by their first command, and every `/my:` mention names the new command. The triage-check graders also accept `check-agent.md`, the eight no-plugin-write graders cover `rules/`, and `comments/human-review-explained` accepts the skill's own load.
+- Four new cases, each passing on this version: `go/routes-plan-request` and `go/routes-review-request` (3 runs each), `round/round-digest-writes-note`, `profile/profile-built-from-sources` (2 runs). `round-digest-writes-note` fails when the round's digest call is removed (0.00). Their planned mutants (a Skill tool call instead of the read, an empty index, no "Sources, in order" list) still pass: the model finds the skill file on its own.
+- Spend measured for this release so far: $9.59, branch and mutant runs of the new cases. The full suite runs at the end of the part.
+
 ## [7.3.0] - 2026-11-23
 
 A plan run spends its time on the work, not on checking it again. `plan:scope` writes each step ready to execute and checks it once. A round executes those steps without a triage check, and its review checks conformance. The interview asks only at real forks. Kit 7.3.0, minor: no command or argument changes, and plans written by 7.2.0 still run.

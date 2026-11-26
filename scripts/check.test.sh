@@ -32,22 +32,6 @@ else
 fi
 rm -rf "$tmp"
 
-# A mod's script test runs too: a scratch copy holding only the manifest, check.sh, a passing
-# scripts/ok.test.sh and a failing mods/x/scripts/fail.test.sh must fail, naming that test.
-tmp="$(mktemp -d)"
-mkdir -p "$tmp/.claude-plugin" "$tmp/scripts" "$tmp/mods/x/scripts"
-cp "$root/.claude-plugin/plugin.json" "$tmp/.claude-plugin/"
-cp "$root/scripts/check.sh" "$tmp/scripts/"
-printf '#!/usr/bin/env bash\nexit 0\n' > "$tmp/scripts/ok.test.sh"
-printf '#!/usr/bin/env bash\nexit 1\n' > "$tmp/mods/x/scripts/fail.test.sh"
-if MY_AGENT_KIT_DENY=/nonexistent MY_AGENT_KIT_ALLOW_NO_DENY=1 bash "$tmp/scripts/check.sh" >/dev/null 2>"$tmp/err"; then
-  echo "FAIL: check.sh passed with a failing mods/x/scripts/fail.test.sh" >&2; fail=1
-elif grep -q "mods/x/scripts/fail.test.sh failed" "$tmp/err"; then
-  echo "ok: a failing mod script test fails check.sh"
-else
-  echo "FAIL: check.sh failed for another reason: $(tail -1 "$tmp/err")" >&2; fail=1
-fi
-rm -rf "$tmp"
 
 # The layout checks (I1 to I7): a minimal 8.x kit passes; each broken copy fails, naming its case.
 make_kit() { # <dir>
@@ -116,6 +100,21 @@ else
   echo "FAIL: a well-formed 8.x kit failed: $(grep -v '^$' "$k/err" | tail -1)" >&2; fail=1
 fi
 rm -rf "$k"
+# A mod's script test runs too: a well-formed kit with a passing scripts/ok.test.sh and a failing
+# mods/x/scripts/fail.test.sh must fail, naming that test.
+tmp="$(mktemp -d)"
+make_kit "$tmp"
+mkdir -p "$tmp/mods/x/scripts"
+printf '#!/usr/bin/env bash\nexit 0\n' > "$tmp/scripts/ok.test.sh"
+printf '#!/usr/bin/env bash\nexit 1\n' > "$tmp/mods/x/scripts/fail.test.sh"
+if MY_AGENT_KIT_DENY=/nonexistent MY_AGENT_KIT_ALLOW_NO_DENY=1 bash "$tmp/scripts/check.sh" >/dev/null 2>"$tmp/err"; then
+  echo "FAIL: check.sh passed with a failing mods/x/scripts/fail.test.sh" >&2; fail=1
+elif grep -q "mods/x/scripts/fail.test.sh failed" "$tmp/err"; then
+  echo "ok: a failing mod script test fails check.sh"
+else
+  echo "FAIL: check.sh failed for another reason: $(tail -1 "$tmp/err")" >&2; fail=1
+fi
+rm -rf "$tmp"
 layout_case "missing field" "perl -ni -e 'print unless /^when:/' skills/plan/scope/SKILL.md"
 layout_case "unclosed list" "perl -pi -e 's/^reads: \[rules\/core.md\]/reads: [rules\/core.md/' skills/plan/scope/SKILL.md"
 layout_case "missing reads path" "perl -pi -e 's/^reads: \[rules\/core.md\]/reads: [rules\/nope.md]/; s/rules\/core.md\`\./rules\/nope.md\`./' skills/plan/scope/SKILL.md"
