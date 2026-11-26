@@ -1,4 +1,14 @@
+---
+name: go
+description: "Route a request about a plan, a pull request or the kit to the skill that fits it, and open that skill."
+disable-model-invocation: false
+when: "any request about planning, running or reviewing a code change, a pull request and its comments, or the kit itself"
+reads: [rules/core.md, skills/go/index.md]
+---
+
 # /my:go
+
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md` and `${CLAUDE_PLUGIN_ROOT}/skills/go/index.md`.
 
 | Request | Skill |
 | --- | --- |

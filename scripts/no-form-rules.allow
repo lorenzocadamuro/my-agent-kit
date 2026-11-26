@@ -4,6 +4,9 @@
 commands/pr/learn.md:argument-hint: "<PR> [area in plain words
 commands/pr/review.md:argument-hint: "<PR number or URL> [instructions in plain words]"
 commands/pr/sync.md:argument-hint: "[context in plain words] [--no-push]"
+skills/pr/learn/SKILL.md:argument-hint: "<PR> [area in plain words
+skills/pr/review/SKILL.md:argument-hint: "<PR number or URL> [instructions in plain words]"
+skills/pr/sync/SKILL.md:argument-hint: "[context in plain words] [--no-push]"
 skills/plan/run/SKILL.md:or a list in plain words.
 skills/pr/learn/SKILL.md:an area, in plain words: the reading below goes deeper there
 README.md:ask in plain words ("explain PR 456", "run the plan")

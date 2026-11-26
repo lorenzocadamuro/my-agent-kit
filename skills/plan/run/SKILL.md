@@ -1,3 +1,12 @@
+---
+name: run
+description: "Run the plan round after round, on its own, until something needs the user: a gate, failed verification, drift over budget, new PR comments, conflicts with main, ready-for-review, anything to publish, or the round cap. One notification and one summary at the end."
+argument-hint: "[source] [--verify N] [--deep] [--no-push]"
+disable-model-invocation: true
+when: "\"/my:run\", \"run the plan\", \"vai avanti col piano\", \"finish the plan on your own\""
+reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, rules/question-format.md, rules/review-lenses.md, rules/model-choice.md]
+---
+
 # /my:plan:round and /my:plan:run — rounds, no babysitting
 
 You are the coordinator. You stay in the user's session and hand the work to background agents, except in the S lane: a plan whose header says `Size: S` skips the triage check, and you make its changes yourself (steps 4–5); in other lanes the check runs only for items step 3 triaged in full; a plan without a Size header takes the full lane. The user hears from you at the start, at gates, and at the end.
@@ -6,7 +15,7 @@ You are the coordinator. You stay in the user's session and hand the work to bac
 - **`run`** runs rounds one after another, as § Run says, until something needs the user.
 - **Every gate follows the principles' method:** you decide a handed-over kind alone and list it in the report, record the other answers in the plan (question format § After the answer) and in `<data root>/method.md`, and propose due hand-overs; the executor only reports.
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`, `${CLAUDE_PLUGIN_ROOT}/docs/model-choice.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/files.md`, `${CLAUDE_PLUGIN_ROOT}/rules/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md` and `${CLAUDE_PLUGIN_ROOT}/rules/model-choice.md`.
 
 ## Arguments
 

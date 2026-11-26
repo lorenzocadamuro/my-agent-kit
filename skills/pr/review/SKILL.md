@@ -1,6 +1,15 @@
+---
+name: review
+description: "Review a PR the way a senior colleague would, yours before human review or a colleague's: first a private analysis (ready to merge or not, the main scenario end to end, verified findings weighed by reach and impact; nothing worth adding is a valid answer), then, once you agree, questions and comment drafts in English; by default a GitHub review submitted with the event you choose at the gate."
+argument-hint: "<PR number or URL> [instructions in plain words]"
+disable-model-invocation: true
+when: "\"/my:review\", \"review this PR\", \"fammi la review\", \"what would a senior ask here\""
+reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, rules/review-lenses.md, rules/question-format.md, rules/model-choice.md]
+---
+
 # /my:pr:review — the judgement first, the drafts after
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/model-choice.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/files.md`, `${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md`, `${CLAUDE_PLUGIN_ROOT}/rules/question-format.md` and `${CLAUDE_PLUGIN_ROOT}/rules/model-choice.md`.
 
 **Activity:** follow `${CLAUDE_PLUGIN_ROOT}/rules/local-data.md` § The activity file.
 
