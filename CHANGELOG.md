@@ -7,6 +7,7 @@ All notable changes to this kit are recorded here. The format follows [Keep a Ch
 ### Constitution
 
 - Clause 5 amended at the user's explicit request (2026-11-26): "The kit learns from what happens while I use it (my corrections, reviewers' comments, work done twice). When I question or correct it in the conversation, it proposes a note, and it saves the note only with my yes. What it notices while it works alone never stops the work, and it reports that at the end. It fixes the cause upstream, not the single case. Over time it proposes solutions in line with my past choices, inside the agreed boundary." The reason: the user wants active control over every note, with no interruption while the kit works alone.
+- Clause 7 amended at the user's explicit request (2026-11-26): "I choose the language and the style of everything the kit explains to me, and I can change them at any moment. The kit adds no rule of its own on the language of that text. On its form, it adds only the `unslop` rules, on top of the style I choose, and my style wins where the two disagree. It explains the why before the what. Code and repository names are never translated." The reason: shorter replies with no AI patterns, as in pstack.
 
 ## [8.0.0] - 2026-11-26
 
