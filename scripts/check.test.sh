@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tests check.sh: a missing deny-word file fails, unless MY_AGENT_KIT_ALLOW_NO_DENY=1 says so;
-# the file is found under $MY_AGENT_KIT_HOME when MY_AGENT_KIT_DENY is unset; and, on a kit of
-# version 8 or later, the layout checks I1 to I7 fail on a broken fixture, each naming its case.
+# the file is found under $MY_AGENT_KIT_HOME when MY_AGENT_KIT_DENY is unset; and the layout checks
+# I1 to I7 fail on a broken fixture, each naming its case.
 # Usage: bash scripts/check.test.sh
 set -uo pipefail
 
@@ -33,7 +33,7 @@ fi
 rm -rf "$tmp"
 
 
-# The layout checks (I1 to I7): a minimal 8.x kit passes; each broken copy fails, naming its case.
+# The layout checks (I1 to I7): a minimal kit passes; each broken copy fails, naming its case.
 make_kit() { # <dir>
   local d="$1"
   mkdir -p "$d/.claude-plugin" "$d/scripts" "$d/skills/go" "$d/skills/plan/scope" "$d/rules" \
@@ -79,25 +79,25 @@ EOF
   [[ -f "$d/scripts/index.sh" ]] && bash "$d/scripts/index.sh" --write "$d"
   return 0
 }
-layout_case() { # <case> <edit command run in the kit>
-  local k; k="$(mktemp -d)"
+layout_case() { # <case> <edit command run in the kit> [<label>]: check.sh fails, naming <case>
+  local k label="${3:-$1}"; k="$(mktemp -d)"
   make_kit "$k"
   (cd "$k" && eval "$2")
   if MY_AGENT_KIT_DENY=/nonexistent MY_AGENT_KIT_ALLOW_NO_DENY=1 bash "$k/scripts/check.sh" >/dev/null 2>"$k/err"; then
-    echo "FAIL: check.sh passed with: $1" >&2; fail=1
+    echo "FAIL: check.sh passed with: $label" >&2; fail=1
   elif grep -qF "$1" "$k/err"; then
-    echo "ok: $1 fails"
+    echo "ok: $label fails"
   else
-    echo "FAIL: $1: check.sh failed for another reason: $(grep -v '^$' "$k/err" | tail -1)" >&2; fail=1
+    echo "FAIL: $label: check.sh failed for another reason: $(grep -v '^$' "$k/err" | tail -1)" >&2; fail=1
   fi
   rm -rf "$k"
 }
 k="$(mktemp -d)"
 make_kit "$k"
 if MY_AGENT_KIT_DENY=/nonexistent MY_AGENT_KIT_ALLOW_NO_DENY=1 bash "$k/scripts/check.sh" >/dev/null 2>"$k/err"; then
-  echo "ok: a well-formed 8.x kit passes"
+  echo "ok: a well-formed kit passes"
 else
-  echo "FAIL: a well-formed 8.x kit failed: $(grep -v '^$' "$k/err" | tail -1)" >&2; fail=1
+  echo "FAIL: a well-formed kit failed: $(grep -v '^$' "$k/err" | tail -1)" >&2; fail=1
 fi
 rm -rf "$k"
 # A mod's script test runs too: a well-formed kit with a passing scripts/ok.test.sh and a failing
@@ -128,5 +128,7 @@ layout_case "dangling relative link" "echo 'See [the lenses](review-lenses.md).'
 layout_case "second model-invoked skill" "perl -pi -e 's/^disable-model-invocation: true/disable-model-invocation: false/' skills/plan/scope/SKILL.md"
 layout_case "mod names a missing skill" "echo 'const two = \"/my:round\";' >> mods/my-status/hooks/adapter.ts"
 layout_case "duplicate name" "perl -pi -e 's/^name: go/name: scope/' skills/go/SKILL.md"
+# The layout checks run whatever plugin.json says: a broken skill fails with no "version" too.
+layout_case "missing field" "jq 'del(.version)' .claude-plugin/plugin.json > p.json && mv p.json .claude-plugin/plugin.json && perl -ni -e 'print unless /^when:/' skills/plan/scope/SKILL.md" "missing field with no version"
 
 exit "$fail"

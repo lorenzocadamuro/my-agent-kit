@@ -24,7 +24,7 @@ else
   exit 1
 fi
 
-# The layout checks I1 to I7, from version 8 on (the layout of skill folders and rules/):
+# The layout checks I1 to I7 (the layout of skill folders and rules/):
 # frontmatter and "Read first:" (I1), the index (I2), eval folders (I3), no missing skill or file (I4),
 # only the router model-invoked (I5), the mod's commands (I6), unique names (I7).
 fm() { # <file> <key>: the frontmatter value, surrounding quotes removed; nothing when absent
@@ -103,10 +103,7 @@ layout_checks() {
   cd - > /dev/null
   [[ $errs -eq 0 ]]
 }
-major="$(jq -r '.version // "0"' "$root/.claude-plugin/plugin.json" | cut -d. -f1)"
-if [[ "$major" =~ ^[0-9]+$ ]] && (( major >= 8 )); then
-  layout_checks || { echo "check.sh: layout checks failed" >&2; exit 1; }
-fi
+layout_checks || { echo "check.sh: layout checks failed" >&2; exit 1; }
 
 # The scripts' own tests and the mods' script tests (check.test.sh tests this file, so it runs apart).
 # Inside a git hook, git exports GIT_DIR and GIT_INDEX_FILE: a test's own repositories would then

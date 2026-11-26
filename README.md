@@ -213,7 +213,7 @@ CONSTITUTION.md      what the kit is for; wins over every other rule; changed on
 rules/               rules every skill follows (core, plan-contract, learning, verifying, worker,
                      repository, files), question format, review lenses, local data layout,
                      which model each agent runs on
-scripts/check.sh     validation, privacy check and, from 8.0.0, the layout checks, run by the pre-commit hook
+scripts/check.sh     validation, privacy check and the layout checks, run by the pre-commit hook
 scripts/check.test.sh  tests the privacy check and each layout check on a broken fixture
 scripts/index.sh     builds skills/go/index.md and the README skill list from each skill's frontmatter
 scripts/index.test.sh  tests the index and the README list
