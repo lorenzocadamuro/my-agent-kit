@@ -12,5 +12,21 @@
     "code-review",
     "pull-requests",
     "self-improving"
+  ],
+  "skills": [
+    "./skills/go",
+    "./skills/plan/profile",
+    "./skills/plan/scope",
+    "./skills/plan/round",
+    "./skills/plan/run",
+    "./skills/pr/learn",
+    "./skills/pr/review",
+    "./skills/pr/comments",
+    "./skills/pr/sync",
+    "./skills/improve/note",
+    "./skills/improve/digest",
+    "./skills/improve/improve",
+    "./skills/improve/log",
+    "./skills/improve/method"
   ]
 }
