@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-mkdir -p wt/.plans wt/shop wt/tests git-out kit-data
+mkdir -p wt/.plans wt/shop wt/tests git-out kit-data/state
 : > wt/conftest.py
 cat > wt/shop/pricing.py <<'P'
 def apply_discount(total: float, discount: float) -> float:
@@ -36,6 +36,9 @@ Totals without a discount stay exactly as today.
 ## Bar for done
 - [ ] out-of-range discounts rejected, with a test
 - [ ] no block finding open
+
+## Steps
+- [ ] Reject discounts outside [0, 1] in apply_discount() — test first: test_out_of_range_discount_rejected
 P
 cat > wt/.plans/round-1.md <<'P'
 # Round 1: validate discounts
@@ -85,4 +88,7 @@ $ git remote get-url origin
 git@github.com:acme/shop.git
 $ gh pr view --json number
 no pull requests found for branch "feature"
+P
+cat > kit-data/state/acme-shop-feature.json <<'P'
+{"repo":"acme/shop","branch":"feature","worktree":"./wt","session":"unknown","startedAt":"2026-01-10T07:00:00Z","updatedAt":"2026-01-10T09:00:00Z","mode":"run","plan":{"title":"Validate discounts","path":"./wt/.plans/plan.md"},"parts":[{"title":"Validate discounts","short":"Validate","status":"running","done":0,"total":1,"steps":[{"label":"Reject range","status":"running"}]}],"round":1,"step":"execute","items":{"done":1,"total":1},"state":"running","reason":null,"rounds":[{"n":1,"startedAt":"2026-01-10T08:30:00Z"}],"pr":null}
 P

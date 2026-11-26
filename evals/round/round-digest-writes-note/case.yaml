@@ -1,9 +1,0 @@
-schema_version: "1"
-name: round-digest-writes-note
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 40
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
-  prompt: |
-    /my:round --verify 1 --no-push. The worktree is ./wt, repository acme/shop, branch feature. In this environment git does not run: the git outputs are in ./git-out/git.txt, use them instead of git and of the verification script, and skip the review. Data root ./kit-data.

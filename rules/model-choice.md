@@ -7,10 +7,10 @@ An agent the kit starts runs on the session's model unless this table names anot
 | Research search agent | `plan:scope` step 3, phase 1 | `sonnet` | it only searches and decides nothing; each answer cites `file:line` or says `unknown`, and the coordinator checks what it uses | claude-sonnet-5-5, 2026-11-05: `plan/research-search-on-sonnet` (size M), 2 of 2; no A/B (it decides nothing) |
 | Research analysis agents | `plan:scope` step 3, phase 2 | session model | they judge how the code works and what the change does to it | — |
 | Plan review | `plan:scope` step 6 | session model | a guard: what it misses reaches every round | — |
-| Triage check | `plan:round` step 4 | session model | a guard: what it misses reaches the executor silently | — |
-| Executor, and its `SendMessage` continuation | `plan:round` step 5 | session model | it writes the code | — |
-| Round review | `plan:round` step 7 | session model | a guard: what it misses is pushed silently | — |
-| Deep review (the outer agent) | `plan:round` step 7 | session model | the repository's own tool picks the models of the agents it starts; the kit does not set them | — |
+| Triage check | `plan:run` step 4 | session model | a guard: what it misses reaches the executor silently | — |
+| Executor, and its `SendMessage` continuation | `plan:run` step 5 | session model | it writes the code | — |
+| Round review | `plan:run` step 7 | session model | a guard: what it misses is pushed silently | — |
+| Deep review (the outer agent) | `plan:run` step 7 | session model | the repository's own tool picks the models of the agents it starts; the kit does not set them | — |
 | `pr:review` agents | `pr:review` step 3 | session model | they judge the PR | — |
 | `improve run` review | `improve` § Run, step 6 | session model | it judges a change to the kit | — |
 | Any other agent the coordinator starts | — | session model | the default | — |

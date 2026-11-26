@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-mkdir -p wt/.plans wt/shop git-out kit-data
+mkdir -p wt/.plans wt/shop git-out kit-data/state
 mkdir -p wt/tests
 cat > wt/shop/pricing.py <<'P'
 def apply_discount(prices: list[float], discount: float) -> list[float]:
@@ -33,6 +33,9 @@ The public signature of `apply_discount(prices, discount)` stays exactly as it i
 ## Bar for done
 - [ ] discounts validated, with tests
 - [ ] no block finding open
+
+## Gates
+- Before any code of round 2 is written (after its triage and its check): the user reads the round file and says go.
 
 ## Invariants
 | I1 | apply_discount never changes the caller's list | shop/pricing.py · apply_discount | test_input_untouched |
@@ -88,4 +91,10 @@ $ git remote get-url origin
 git@github.com:acme/shop.git
 $ gh pr view --json number
 no pull requests found for branch "feature"
+P
+cat > kit-data/state/acme-shop-feature.json <<'P'
+{"repo":"acme/shop","branch":"feature","worktree":"./wt","session":"unknown","startedAt":"2026-01-10T07:00:00Z","updatedAt":"2026-01-10T09:00:00Z","mode":"run","plan":{"title":"Discounts on carts","path":"./wt/.plans/plan.md"},"parts":[{"title":"Part A: validate discounts","short":"Validate","status":"done","done":1,"total":1,"steps":[{"label":"Reject range","status":"running"}]},{"title":"Part B: discounts on saved carts","short":"Saved carts","status":"todo","done":0,"total":1,"steps":[{"label":"Saved discount","status":"todo"}]}],"round":1,"step":"execute","items":{"done":1,"total":1},"state":"running","reason":null,"rounds":[{"n":1,"startedAt":"2026-01-10T08:30:00Z"}],"pr":null}
+P
+cat > kit-data/state/acme-shop-feature.progress.json <<'P'
+{"round":1,"items":{"done":1,"total":1},"updatedAt":"2026-01-10T09:00:00Z"}
 P

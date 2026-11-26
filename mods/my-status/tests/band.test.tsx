@@ -218,7 +218,7 @@ const CASES: Case[] = [
     name: 'ready with new comments',
     w: { run: { ...V2_READY, pr: 456, commentsReadUntil: SINCE }, comments: [OTHER, OTHER, { ...OTHER, at: '2026-01-10T11:00:00Z' }] },
     svgs: ['header', 'track'],
-    buttons: ['toggle', 'comments', 'one-round', 'run-plan', 'open-plan'],
+    buttons: ['toggle', 'comments', 'run-plan', 'open-plan'],
     text: /Ready: Round 3 done, next: Part C, Dark mode; 42% 8 of 19 steps, .*left \(estimate\), 1h 12m elapsed.*Review comments \(3\)/,
   },
   { name: 'running', w: { run: V2_RUNNING }, svgs: ['header', 'track'], buttons: ['toggle', 'open-plan'], text: /Running: Part D, Remove form, step 2 of 3; 82% 9 of 11 steps, \d+–\d+ min left \(estimate\), 1h 12m elapsed/ },
@@ -230,7 +230,7 @@ const CASES: Case[] = [
     text: /Part C, Loading skeletons, step 5 of 6; .*estimating… time left.*Conflicts with main/,
   },
   { name: 'needs you', w: { run: V2_NEEDS_YOU }, svgs: ['header', 'track'], buttons: ['toggle', 'open-plan'], text: /Needs you: PR description, Part D, step 3 of 3.*Answer in the chat below/ },
-  { name: 'stopped', w: { run: V2_STOPPED }, svgs: ['header', 'track'], buttons: ['toggle', 'one-round', 'open-plan'], text: /Stopped: Tests failing, Part D, step 2 of 3; .*on hold time left/ },
+  { name: 'stopped', w: { run: V2_STOPPED }, svgs: ['header', 'track'], buttons: ['toggle', 'run-plan', 'open-plan'], text: /Stopped: Tests failing, Part D, step 2 of 3; .*on hold time left/ },
   { name: 'done', w: { run: V2_DONE }, svgs: ['header', 'track'], buttons: ['toggle', 'open-plan'], text: /Done: Bar met, all steps verified; 100% 11 of 11 steps, 1h 31m total time/ },
 ]
 
@@ -507,7 +507,7 @@ test('one state leads, in today\'s order; comments and conflicts are signals bes
     [{ run: V2_RUNNING, activity: waiting }, /^Running: Part D/, ['toggle', 'open-plan']],
     [{ run: V2_STOPPED, activity: running }, /^Running: pr:review/, []],
     [{ run: { ...V2_READY, pr: 451, commentsReadUntil: SINCE }, activity: running, comments: [OTHER] }, /^Running: pr:review/, []],
-    [{ run: { ...V2_STOPPED, pr: 452, commentsReadUntil: SINCE }, comments: [OTHER] }, /^Stopped: Tests failing/, ['toggle', 'comments', 'one-round', 'open-plan']],
+    [{ run: { ...V2_STOPPED, pr: 452, commentsReadUntil: SINCE }, comments: [OTHER] }, /^Stopped: Tests failing/, ['toggle', 'comments', 'run-plan', 'open-plan']],
     [{ run: { ...V2_DONE, pr: 453 }, conflicts: 'shop/pricing.py' }, /^Done: Bar met/, ['toggle', 'merge-main', 'open-plan']],
     [{ activity: { ...running, state: 'done' } }, /^$/, []],
   ]
@@ -560,9 +560,10 @@ test('buttons carry names, and commands only behind them', async ($, on) => {
   await refresh($)
   for (const surface of SURFACES) {
     const ui = await $.ui.mount(band(surface))
-    expect((await ui.findAll({ type: 'Button' })).map(b => b.key)).toEqual(['toggle', 'comments', 'merge-main', 'one-round', 'run-plan', 'open-plan'])
+    expect((await ui.findAll({ type: 'Button' })).map(b => b.key)).toEqual(['toggle', 'comments', 'merge-main', 'run-plan', 'open-plan'])
     const shown = await everything(ui)
-    for (const name of ['Review comments (1)', 'Merge main', 'One round', 'Run plan', 'Open plan']) expect(shown, `${name} on ${surface}`).toContain(name)
+    for (const name of ['Review comments (1)', 'Merge main', 'Run plan', 'Open plan']) expect(shown, `${name} on ${surface}`).toContain(name)
+    expect(shown, `One round on ${surface}`).not.toContain('One round')
     expect(shown.includes('/my:'), surface).toBe(false)
     await ui.unmount()
   }

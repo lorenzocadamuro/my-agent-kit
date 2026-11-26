@@ -24,7 +24,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/
     - `local`: nothing touches GitHub, and drafts come back in chat and in a file;
   - **focus areas;**
   - **tone.**
-- **Own PR** (the author is the authenticated `gh` user): the default mode is `local`. Findings feed `/my:round` and `/my:run`; you cannot review your own PR on GitHub.
+- **Own PR** (the author is the authenticated `gh` user): the default mode is `local`. Findings feed `/my:run`; you cannot review your own PR on GitHub.
 
 ## Steps
 

@@ -122,7 +122,7 @@ Skip this step for `--dry-run`, and delete the planning state file: there is not
 3. **Report:**
    - the worktree path and branch, and, when this session did not move there, that the run starts in a new session opened in the worktree;
    - the plan path;
-   - the next step: `/my:run` (or `/my:round` to watch each round). From here the plan runs only through them (`rules/plan-contract.md`: the kit carries the plan it made).
+   - the next step: `/my:run`. From here the plan runs only through it (`rules/plan-contract.md`: the kit carries the plan it made).
 
 ### 9. Closing step
 

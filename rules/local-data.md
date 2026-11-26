@@ -16,7 +16,7 @@ Personal and employer-specific material lives outside this repository, in the da
   plans/                  plans written by /my:scope --dry-run
   retros/                 one-page retrospective per finished change
   trials/                 private material for the kit's own trials, such as past triages saved before their check and past round reviews' inputs; rounds no longer write it
-  state/<owner>-<repo>-<branch>.json  where a change stands (state/session-<session id>.json while planning outside a worktree), written by /my:scope, /my:round and /my:run, read by the status mod
+  state/<owner>-<repo>-<branch>.json  where a change stands (state/session-<session id>.json while planning outside a worktree), written by /my:scope and /my:run, read by the status mod
   state/<same base>.progress.json, .activity.json  sidecars: a round's item progress; what a pr:* mode or improve run is doing
 ```
 
@@ -40,7 +40,7 @@ One entry per problem, in the format of [skills/improve/note/note-template.md](.
 
 ## State file
 
-One file per change and folder, rewritten whole through a temp file and a rename, like its sidecars; one writer at a time per file. `/my:scope` (from its first step), `/my:round` and `/my:run` write it; the optional status mod reads it and merges the sidecars. A run resuming after compaction reads it too.
+One file per change and folder, rewritten whole through a temp file and a rename, like its sidecars; one writer at a time per file. `/my:scope` (from its first step) and `/my:run` write it; the optional status mod reads it and merges the sidecars. A run resuming after compaction reads it too.
 
 - **Name:** `state/<owner>-<repo>-<branch>.json`, computed from the folder the session works in, never from the project profile's name: `<owner>-<repo>` from `git remote get-url origin` (`git@github.com:acme/shop.git` gives `acme-shop`), or `none-<name of the repository's top-level folder>` when there is no remote; `<branch>` from `git branch --show-current`, `/` becoming `-` (`detached` when empty). When git cannot answer (no repository, or a sandbox), use the repository and branch the user named; a missing repository becomes `none-<folder>`, a missing branch `detached`. The status mod computes it the same way, and shows nothing outside git.
 - **The file follows the work:** `plan:scope` plans in the worktree branch's file once its session works in the worktree it opened. Before that, in a dry run, or when the session stays outside the worktree, the work belongs to the chat: it writes `state/session-<session id>.json` (the id from `$CLAUDE_CODE_SESSION_ID`; when it is empty, or has a character outside `[A-Za-z0-9_-]`, the folder's name above), and deletes it when the session moves into the worktree or at approval, when it writes the branch's file. The status mod reads the chat's own session files first, then the folder's, never another chat's, and ignores a `planning` or `running` file, or an activity, not updated for 6 hours.
@@ -79,9 +79,9 @@ One file per change and folder, rewritten whole through a temp file and a rename
 - `parts[].status` and `parts[].done`: derived at every write from the part's boxes in `plan.md`: `done` counts the ticked ones; `status` is `done` when all are ticked, `running` when some are or one of its steps is `running`, else `todo`. A plan without parts has one part, the plan itself.
 - `startedAt`: when the work started. `plan:scope` writes it at its first step (a file that has one keeps it; a file left by a finished plan, `state: "done"`, counts as having none), carries it from the session file into the branch's file only when the branch's file has none, and nobody changes it afterwards.
 - `parts[].short`: the part's title in two or three words and at most 16 characters, from its heading after "Part X:" (`Checkout flow`), in words that say what the work does, never a function, file or identifier name, even when the heading uses one (like `label` below; repository terms stay as they are elsewhere): what usually fits under a part in the band, which shows the letter alone when the title does not fit. Written by `plan:scope` step 8, and whenever the plan's parts change.
-- `parts[].steps`: the part's steps in the plan's order, each `{ "label", "status" }`, `label` in two or three words that say what the step does (`Checkout test`, `Move grown frames`), never a function, file or identifier name, even when the plan's step uses one. `plan.md`'s boxes are the source of truth: every write, by `plan:scope` step 8 or `plan:round`, derives each `status` again with `scripts/state-steps.sh`, the first that holds: `failed` when it is already `failed` and its box is unticked (only `plan:round` step 6 sets it, on the step of an item to blame; adding a new round's entry to `rounds` clears it); `running` while a round without `endedAt` has an item that implements or reworks it, a ticked step included; `done` when its box is ticked; else `todo`. When the plan's steps change, `steps` is rewritten from the plan and derived again.
+- `parts[].steps`: the part's steps in the plan's order, each `{ "label", "status" }`, `label` in two or three words that say what the step does (`Checkout test`, `Move grown frames`), never a function, file or identifier name, even when the plan's step uses one. `plan.md`'s boxes are the source of truth: every write, by `plan:scope` step 8 or `plan:run`, derives each `status` again with `scripts/state-steps.sh`, the first that holds: `failed` when it is already `failed` and its box is unticked (only `plan:run` step 6 sets it, on the step of an item to blame; adding a new round's entry to `rounds` clears it); `running` while a round without `endedAt` has an item that implements or reworks it, a ticked step included; `done` when its box is ticked; else `todo`. When the plan's steps change, `steps` is rewritten from the plan and derived again.
 - `parts[].left`: older files only. Kit 5.6.0 and before wrote the unticked steps here; no skill writes it now, and the status mod reads it only when `steps` is missing.
-- `rounds[]`: one entry per round, written by `plan:round`: `{ "n", "startedAt" }` at the round's start (with `--verify N`, when round N has none), `endedAt` and `verdict` at its end; until `endedAt` is set the round is open. `verdict` is the review's verdict against the bar, or `failed: <reason>` when verification failed.
+- `rounds[]`: one entry per round, written by `plan:run`: `{ "n", "startedAt" }` at the round's start (unless the round already has one), `endedAt` and `verdict` at its end; until `endedAt` is set the round is open. `verdict` is the review's verdict against the bar, or `failed: <reason>` when verification failed.
 - `ticketFrom`: the ticket's status before `plan:scope` moved it to the start status, so a cancelled plan can move it back.
 - `reason`: two or three words (`Plan approval`). The status band and line never show the work's name or the plan title; part titles and step labels, two or three words each, they may. A `name` left by an older version is ignored.
 - **Progress sidecar** `<same base>.progress.json`: `{ "round": 3, "items": { "done": 4, "total": 6 }, "updatedAt": "…" }`, written only by the round's executor after each item, at the path the coordinator gives it.
@@ -94,12 +94,13 @@ One file per change and folder, rewritten whole through a temp file and a rename
 
 ## Old names
 
-Entries and signals written before 3.0.0 name skills that are now modes, and before 5.0.0 a mode now part of another. Read them as their new names everywhere: in List and Log views, in Run selection, and in Digest. Show only the new names, in tables and in prose alike; the old ones never reach the user, not even to explain the rename. A filter on a skill (`log plan`) matches every mode of it.
+Entries and signals written before 3.0.0 name skills that are now modes, and before 5.0.0 and 8.1.0 a mode now part of another. Read them as their new names everywhere: in List and Log views, in Run selection, and in Digest. Show only the new names, in tables and in prose alike; the old ones never reach the user, not even to explain the rename. A filter on a skill (`log plan`) matches every mode of it.
 
 | Old         | New           |
 | ----------- | ------------- |
 | `scope-plan` | `plan:scope` |
-| `pr-round`  | `plan:round`  |
+| `pr-round`  | `plan:run`    |
+| `plan:round` | `plan:run`   |
 | `learn`     | `pr:learn`    |
 | `pr:study`  | `pr:learn`    |
 | `review-lens` | `pr:review` |

@@ -221,7 +221,6 @@ function signals(snap: MyStatusSnapshot): Cta[] {
   ]
 }
 
-const ONE_ROUND = (kind: 'primary' | 'secondary'): Cta => ({ kind, key: 'one-round', label: 'One round', command: '/my:round' })
 const RUN_PLAN: Cta = { kind: 'primary', key: 'run-plan', label: 'Run plan', command: '/my:run' }
 
 /**
@@ -264,8 +263,7 @@ export function bandModel(snap: MyStatusSnapshot | null, now: number, isQuestion
   }
   const parts = partsOf(run, state)
   const ctas: Cta[] = [...signals(snap)]
-  if (state === 'ready') ctas.push(ONE_ROUND('secondary'), RUN_PLAN)
-  if (state === 'stopped') ctas.push(ONE_ROUND('primary'))
+  if (state === 'ready' || state === 'stopped') ctas.push(RUN_PLAN)
   if (state === 'needs_you')
     ctas.push(isQuestionAway ? { kind: 'question', key: 'show-question', label: 'Show question' } : { kind: 'warning', key: 'answer-below', label: 'Answer in the chat below ↓' })
   return { state, word: WORD[state], line2: line2(run, state, parts), metrics: metrics(run, state, parts, now), parts, isPlanning: false, hasPlanFile: true, ctas }
