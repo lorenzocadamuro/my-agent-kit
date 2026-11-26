@@ -38,4 +38,4 @@ Bar: see plan § Bar for done. Act only on items below; anything else is reporte
 
 ## End of round
 
-Return the summary in the shape of `templates/round-summary.md`, one row per item, including skipped ones.
+Return the summary in the shape of `skills/plan/run/round-summary-template.md`, one row per item, including skipped ones.

@@ -22,17 +22,17 @@ Personal and employer-specific material lives outside this repository, in the da
 
 ## Project profile
 
-Template: [templates/project-profile.md](../templates/project-profile.md). Its file is `projects/<owner>-<repo>.md`, the same slug as the state file's name (`acme-web` for `acme/web`).
+Template: [skills/plan/profile/profile-template.md](../skills/plan/profile/profile-template.md). Its file is `projects/<owner>-<repo>.md`, the same slug as the state file's name (`acme-web` for `acme/web`).
 
 `/my:plan:scope` creates the profile on first use. It reads the repository's agent instructions (`CLAUDE.md`, `AGENTS.md`), contributing guides, CI workflows and skills, then asks the user to confirm it. A skill that finds a profile wrong records a signal, and `/my:improve run` can correct it.
 
 ## Reviewer profile
 
-Template: [templates/reviewer-profile.md](../templates/reviewer-profile.md). It holds a reviewer's recurring lenses, their typical questions, and what they let pass. It is built from study pages, never from guesses.
+Template: [skills/pr/learn/reviewer-profile-template.md](../skills/pr/learn/reviewer-profile-template.md). It holds a reviewer's recurring lenses, their typical questions, and what they let pass. It is built from study pages, never from guesses.
 
 ## Suite log
 
-One entry per problem, in the format of [templates/log-entry.md](../templates/log-entry.md); entries written before 5.2.0 have no `Kit:` line nor a version on their `Evidence:` lines, and stay valid. Entries are appended and never deleted. A fixed entry keeps its text and gains a `fixed <version>` status. The digest may append `Evidence:` lines to an open entry, never change its other lines.
+One entry per problem, in the format of [skills/improve/note/note-template.md](../skills/improve/note/note-template.md); entries written before 5.2.0 have no `Kit:` line nor a version on their `Evidence:` lines, and stay valid. Entries are appended and never deleted. A fixed entry keeps its text and gains a `fixed <version>` status. The digest may append `Evidence:` lines to an open entry, never change its other lines.
 
 ## Method
 

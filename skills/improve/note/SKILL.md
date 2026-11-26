@@ -9,7 +9,7 @@ Goal: under a minute, no questions unless the text is empty.
    - date and time, and the kit version (the template's `Kit:` line);
    - current repository (`git rev-parse --show-toplevel`, remote slug), branch, and PR number (`gh pr view --json number -q .number`, if any);
    - the session id if known.
-3. **Fill the entry** from `${CLAUDE_PLUGIN_ROOT}/templates/log-entry.md`.
+3. **Fill the entry** from `${CLAUDE_PLUGIN_ROOT}/skills/improve/note/note-template.md`.
    - The reasoning fields are what happened, why it was a problem, missing question and expected (principles: language). Keep a short quote of the user's words when the exact meaning matters.
    - The heading reads `## <id> · <skill> · open`, with `<id>` left as it is: the script of step 4 numbers it.
    - "What happened" and "Expected" are concrete: what was done or said, not an opinion. "Why it was a problem" says what it cost the user. "Missing question" is a question someone should have asked at the start, not a fix; `unknown` when it is not clear.

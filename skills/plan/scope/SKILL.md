@@ -1,6 +1,6 @@
 # /my:plan:scope — the plan is the contract
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/model-choice.md` and `${CLAUDE_PLUGIN_ROOT}/templates/plan.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/docs/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/docs/model-choice.md` and `${CLAUDE_PLUGIN_ROOT}/skills/plan/scope/plan-template.md`.
 
 ## Arguments
 
@@ -18,7 +18,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/docs/principles.md`, `${CLAUDE_PLUGIN_ROOT}/d
 ### 1. Repository and project profile
 
 - **Find the repository:** the current directory's git top level and remote slug. If there is none, ask which one; for `--dry-run` without a repository, plan from the files at hand.
-- **Load `<data root>/projects/<owner>-<repo>.md`.** If it is missing, build it following [project-profile-setup.md](project-profile-setup.md), show a summary, and ask the user to confirm or correct it before going on.
+- **Load `<data root>/projects/<owner>-<repo>.md`.** If it is missing, build it following [`skills/plan/profile/SKILL.md`](../profile/SKILL.md), show a summary, and ask the user to confirm or correct it before going on.
 
 ### 2. Understand and classify
 
@@ -68,7 +68,7 @@ Keep research notes in the scratchpad. They feed the plan and, for M and L, the 
 
 ### 4. Interview
 
-First settle the frame (question format: when to ask): a request to explore or prototype is answered in chat with the alternatives shown, and the interview waits for the user's reply. Then go through the topics the plan's sections hold for its size (`templates/plan.md`): goal, boundary and bar for done; for M and L, invariants, existing versus new behaviour, out of scope, intentional changes, size budget and split trigger; for L, people, rollout, extra gates and stop conditions.
+First settle the frame (question format: when to ask): a request to explore or prototype is answered in chat with the alternatives shown, and the interview waits for the user's reply. Then go through the topics the plan's sections hold for its size (`skills/plan/scope/plan-template.md`): goal, boundary and bar for done; for M and L, invariants, existing versus new behaviour, out of scope, intentional changes, size budget and split trigger; for L, people, rollout, extra gates and stop conditions.
 
 - **A topic is a question only at a real fork:** the request, the code and the research leave two or more viable options, and the choice is architecture, design, product behaviour, the user's priorities, or anything published. When research found risks behind a product choice, ask the design options that remove them before or beside it. Ask with the multiple-choice tool, following the question format, in batches of up to 4, the recommended option prefilled from the research. Ask now only what the plan and its first part need; a later part's choice becomes a gate or an open question of that part.
 - **Every other topic is decided:** record it as `D<n>` with Chosen `from the request` or `decided from research`, and name it in the approval summary. Zero questions is a valid interview.
@@ -78,14 +78,14 @@ First settle the frame (question format: when to ask): a request to explore or p
 
 ### 5. Write the plan
 
-- Write it to `<worktree>/.plans/plan.md` (for `--dry-run`, where the Arguments say), from `templates/plan.md`. If the profile names a plan style guide, follow its structure and keep the template's sections inside it.
+- Write it to `<worktree>/.plans/plan.md` (for `--dry-run`, where the Arguments say), from `skills/plan/scope/plan-template.md`. If the profile names a plan style guide, follow its structure and keep the template's sections inside it.
 - Drop the sections that do not apply to the size, all in one line and without their headings: `Dropped for size S: Invariants, Existing vs new behaviour, Size budget, People, Rollout, Parts; research skipped: overlap, people and merge requirements.` Content they would have held goes in a section the size keeps (an S plan's steps go in Verification).
 - For M and L, each step under Parts fills the template's six labels (`Files:`, `Searches:`, `Test:`, `Environment:`, `Pins:`, `Estimate:`) from the research, so a round can execute it as written.
 - An S plan fits on about one page.
 
 ### 6. Independent review
 
-For S, start no agent: confirm that the goal, the boundary, the bar and the gates are present; the user's approval at step 7 is the plan's review. For M and L, hand the plan, the research notes, the principles, [triage-check.md](triage-check.md) and `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` to a fresh general-purpose agent (model: `docs/model-choice.md`). It checks each step of every part once, as `triage-check.md` items 1–4, 6 and 7 check a round item (read "step" for "item": the claim at the base, the callers untruncated, the owning code point, a test that can fail and its pins, no hidden second reading, the review lenses), and also that:
+For S, start no agent: confirm that the goal, the boundary, the bar and the gates are present; the user's approval at step 7 is the plan's review. For M and L, hand the plan, the research notes, the principles, [check-agent.md](../run/check-agent.md) and `${CLAUDE_PLUGIN_ROOT}/docs/review-lenses.md` to a fresh general-purpose agent (model: `docs/model-choice.md`). It checks each step of every part once, as `check-agent.md` items 1–4, 6 and 7 check a round item (read "step" for "item": the claim at the base, the callers untruncated, the owning code point, a test that can fail and its pins, no hidden second reading, the review lenses), and also that:
 
 - every label of every step is filled, and each `Searches:` count, rerun at the base, still matches;
 - each step's main scenario, traced through the code at the base as the lenses doc's intro says, holds: what the round review would grade block there (by the lenses doc) is a finding now, since a ready step skips the round's triage check;
