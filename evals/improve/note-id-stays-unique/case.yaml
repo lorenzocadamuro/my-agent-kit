@@ -1,9 +1,0 @@
-schema_version: "1"
-name: note-id-stays-unique
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 15
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill]
-  prompt: |
-    /my:improve note the review skill posted its summary before I agreed with the analysis. Use ./kit-data as the data root for this test.

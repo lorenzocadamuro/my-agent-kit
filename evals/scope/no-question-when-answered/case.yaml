@@ -1,0 +1,10 @@
+schema_version: "1"
+name: no-question-when-answered
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 40
+  timeout_seconds: 900
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:scope --dry-run Il ticket è in ./ticket.md, l'ho scritto io. Data root ./kit-data; il profilo del progetto è ./kit-data/projects/me-notes.md ed è già confermato. Salva il piano in ./plan.md. Taglia M: decisa, non riclassificare. Non posso rispondere alle domande ora: scrivi in ./questions.md le domande che mi faresti, ognuna sotto un titolo `## Q<n>`, con le opzioni e la raccomandazione, poi continua con le raccomandate. Se non hai domande, scrivi `none` in ./questions.md. Non c'è un repository git: pianifica dai file presenti.

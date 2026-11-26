@@ -1,9 +1,0 @@
-schema_version: "1"
-name: method-shows-kinds
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 12
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill]
-  prompt: |
-    /my:improve:method — usa ./kit-data come data root per questo test. Rispondimi in italiano.

@@ -27,7 +27,7 @@ execution:
 
 ## Running
 
-Always local-only, one run per case (2–3 for a noisy grader: principles § Verify, don't assume, "Stop and report"), with no spend cap: each release reports what it spent. `--ablation none` skips the no-plugin baseline, which doubles the cost and rarely helps here.
+Always local-only, one run per case (2–3 for a noisy grader: `rules/verifying.md` § Verify, don't assume, "Stop and report"), with no spend cap: each release reports what it spent. `--ablation none` skips the no-plugin baseline, which doubles the cost and rarely helps here.
 
 ```bash
 claude plugin eval <kit> --no-publish --runs 1 --trust-plugin \

@@ -1,9 +1,0 @@
-schema_version: "1"
-name: gated-actions-listed
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 40
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
-  prompt: |
-    /my:plan:scope --dry-run Il ticket è in ./ticket.md, il profilo del progetto in ./kit-data/projects/none-work.md. Data root ./kit-data, salva il piano in ./plan.md. Non posso rispondere alle domande ora: prendi le raccomandate. Non c'è un repository git: pianifica dai file presenti. Alla fine mostrami il riepilogo per l'approvazione.

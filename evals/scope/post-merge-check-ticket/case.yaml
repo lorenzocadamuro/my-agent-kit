@@ -1,0 +1,9 @@
+schema_version: "1"
+name: post-merge-check-ticket
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 40
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:scope --dry-run Il ticket è in ./ticket.md. Data root ./kit-data; il profilo del progetto è ./kit-data/projects/acme-alerts.md ed è già confermato. Salva il piano in ./plan.md. Non c'è un repository git: pianifica dai file presenti.

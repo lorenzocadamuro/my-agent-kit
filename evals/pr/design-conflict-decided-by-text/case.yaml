@@ -1,9 +1,0 @@
-schema_version: "1"
-name: design-conflict-decided-by-text
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 30
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
-  prompt: |
-    /my:pr:sync --no-push. Lavora nel worktree ./wt (branch feature). In questo ambiente git non è eseguibile: gli output dei comandi git sono già pronti in ./git-out/ (preflight, merge-tree, commit di main, e per ogni file in conflitto le versioni base/ours/theirs). Usa quelli al posto di git. Le descrizioni delle PR di main sono in ./git-out/ (pr-<numero>.md). Nessun altro accesso a GitHub. Data root ./kit-data. Se devi fermarti per una decisione, scrivi le opzioni in ./decision.md e fermati.

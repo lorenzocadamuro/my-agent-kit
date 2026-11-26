@@ -1,9 +1,0 @@
-schema_version: "1"
-name: state-says-what-is-left
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 30
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
-  prompt: |
-    /my:plan:round --verify 1 --no-push. Il worktree è ./wt, repository acme/shop, branch feature. In questo ambiente git non è eseguibile: gli output git sono in ./git-out/git.txt, usali al posto di git e dello script di verifica, e salta la review. Data root ./kit-data. Scrivi il report finale anche in ./report.md.

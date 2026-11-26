@@ -1,9 +1,0 @@
-schema_version: "1"
-name: review-gate-for-colleague
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 40
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
-  prompt: |
-    /my:pr:review Nessun accesso a GitHub: la PR di un collega è descritta in ./pr.md (repository acme/shop, branch export-api), con descrizione, diff e i commenti già presenti; il codice alla testa è in ./shop, le regole del repository in ./CLAUDE.md. Modalità di default, ma non posso pubblicare da qui. Sono già d'accordo con l'analisi: scrivi analisi, bozze e la proposta per il gate di pubblicazione in ./review.md, poi fermati prima di pubblicare. Data root ./kit-data.

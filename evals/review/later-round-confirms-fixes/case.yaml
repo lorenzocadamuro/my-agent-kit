@@ -1,0 +1,9 @@
+schema_version: "1"
+name: later-round-confirms-fixes
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 30
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:review Nessun accesso a GitHub: la PR è descritta in ./pr.md (repository acme/pay, branch review-9), con i suoi commit e i thread di review già aperti; il codice alla testa è in ./payments. Modalità local: niente su GitHub. Data root ./kit-data, salva la review in ./review.md. Non serve aspettare il mio accordo sull'analisi: scrivi anche le bozze.

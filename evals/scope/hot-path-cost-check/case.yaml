@@ -1,0 +1,10 @@
+schema_version: "1"
+name: hot-path-cost-check
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 40
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:scope --dry-run Quando una shape ha un titolo, il titolo viene disegnato in una banda alta 24 px sopra la shape: find_free_spot in board/layout.py deve considerare anche quella banda, sia per la shape nuova sia per quelle già sulla board, così i titoli non finiscono sotto altre shape. Data root ./kit-data; il profilo del progetto è ./kit-data/projects/acme-board.md ed è già confermato. Salva il piano in ./plan.md. Non c'è un repository git: pianifica dai file presenti.

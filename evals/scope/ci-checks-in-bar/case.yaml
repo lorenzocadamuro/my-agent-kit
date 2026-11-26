@@ -1,0 +1,10 @@
+schema_version: "1"
+name: ci-checks-in-bar
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 40
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:scope --dry-run Il riepilogo del checkout (summary in web/checkout.py) deve mostrare anche lo sconto, usando discount_for di web/promo.py: "N items, €X (sconto €Y)" quando lo sconto è maggiore di zero. Data root ./kit-data; il profilo del progetto è ./kit-data/projects/acme-shop.md ed è già confermato. Salva il piano in ./plan.md. Non posso rispondere alle domande ora: prendi le raccomandate. Non c'è un repository git: pianifica dai file presenti.

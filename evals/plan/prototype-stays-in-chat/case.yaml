@@ -1,9 +1,0 @@
-schema_version: "1"
-name: prototype-stays-in-chat
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 40
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
-  prompt: |
-    /my:plan:scope --dry-run Il ticket è in ./ticket.md. Prima di decidere qualsiasi cosa voglio esplorare e prototipare velocemente il nuovo aspetto della card: fammi vedere le alternative, poi ne parliamo. Data root ./kit-data, salva il piano in ./plan.md quando ci arriviamo. Non c'è un repository git: pianifica dai file presenti.

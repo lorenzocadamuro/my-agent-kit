@@ -1,9 +1,0 @@
-schema_version: "1"
-name: gate-answer-moves-state
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 25
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
-  prompt: |
-    /my:plan:round. Il worktree è ./wt, repository acme/shop, branch feature, data root ./kit-data. Siamo al gate ready-for-review dello step 10, già chiesto nel round 2: le mie risposte sono PR ready: no, per ora; descrizione: approvata, l'ho già aggiornata io su GitHub; reviewer: non notificarli. Non c'è altro da fare in questo round. In questo ambiente git e gh non sono eseguibili: non usarli. Scrivi il report finale anche in ./report.md.

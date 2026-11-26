@@ -1,0 +1,11 @@
+schema_version: "1"
+name: research-search-on-sonnet
+context:
+  scaffold_script: setup.sh
+execution:
+  model: opus
+  max_turns: 40
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:scope --dry-run ./ticket.md — Data root ./kit-data; the project profile is ./kit-data/projects/acme-notes.md and it is already confirmed. Save the plan in ./plan.md. Size M: decided, do not reclassify. I cannot answer questions now: take the recommended options. There is no git repository and no gh: plan from the files present.
