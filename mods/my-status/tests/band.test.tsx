@@ -607,7 +607,7 @@ test('Run plan fills the prompt with the command and submits nothing', async ($,
     await ui.press({ key: 'run-plan' })
     await ui.unmount()
   }
-  expect(filled).toEqual(['/my:plan:run', '/my:plan:run'])
+  expect(filled).toEqual(['/my:run', '/my:run'])
   expect(submitted).toEqual([])
 })
 

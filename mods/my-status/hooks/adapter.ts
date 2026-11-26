@@ -214,15 +214,15 @@ function signals(snap: MyStatusSnapshot): Cta[] {
   const comments = snap.newComments ?? 0
   const conflicts = snap.conflicts ?? 0
   return [
-    ...(comments > 0 ? [{ kind: 'secondary', key: 'comments', label: `Review comments (${comments})`, command: '/my:pr:comments' } as const] : []),
+    ...(comments > 0 ? [{ kind: 'secondary', key: 'comments', label: `Review comments (${comments})`, command: '/my:comments' } as const] : []),
     ...(conflicts > 0
-      ? [{ kind: 'warning', key: 'conflicts-text', label: 'Conflicts with main' } as const, { kind: 'secondary', key: 'merge-main', label: 'Merge main', command: '/my:pr:sync' } as const]
+      ? [{ kind: 'warning', key: 'conflicts-text', label: 'Conflicts with main' } as const, { kind: 'secondary', key: 'merge-main', label: 'Merge main', command: '/my:sync' } as const]
       : []),
   ]
 }
 
-const ONE_ROUND = (kind: 'primary' | 'secondary'): Cta => ({ kind, key: 'one-round', label: 'One round', command: '/my:plan:round' })
-const RUN_PLAN: Cta = { kind: 'primary', key: 'run-plan', label: 'Run plan', command: '/my:plan:run' }
+const ONE_ROUND = (kind: 'primary' | 'secondary'): Cta => ({ kind, key: 'one-round', label: 'One round', command: '/my:round' })
+const RUN_PLAN: Cta = { kind: 'primary', key: 'run-plan', label: 'Run plan', command: '/my:run' }
 
 /**
  * The band's scene, or null when there is nothing to show. `now` is the clock at the draw (elapsed times);
