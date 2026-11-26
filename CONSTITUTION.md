@@ -15,7 +15,7 @@
 
 **4. In proportion.** The process is sized to the task: small work stays light. The kit grows in depth, not in length: first refine or remove a rule, and add one only when nothing else will do.
 
-**5. It learns from use, toward my method.** The kit learns from what happens while I use it (my corrections, reviewers' comments, work done twice) without my doing anything. It fixes the cause upstream, not the single case. Over time it proposes solutions in line with my past choices, inside the agreed boundary.
+**5. It learns from use, toward my method.** The kit learns from what happens while I use it (my corrections, reviewers' comments, work done twice). When I question or correct it in the conversation, it proposes a note, and it saves the note only with my yes. What it notices while it works alone never stops the work, and it reports that at the end. It fixes the cause upstream, not the single case. Over time it proposes solutions in line with my past choices, inside the agreed boundary.
 
 **6. It never changes itself without me.** The kit records and proposes; I approve changes to the kit.
 

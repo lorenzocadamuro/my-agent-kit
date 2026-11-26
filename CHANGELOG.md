@@ -2,6 +2,12 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [8.1.0] - 2026-11-26
+
+### Constitution
+
+- Clause 5 amended at the user's explicit request (2026-11-26): "The kit learns from what happens while I use it (my corrections, reviewers' comments, work done twice). When I question or correct it in the conversation, it proposes a note, and it saves the note only with my yes. What it notices while it works alone never stops the work, and it reports that at the end. It fixes the cause upstream, not the single case. Over time it proposes solutions in line with my past choices, inside the agreed boundary." The reason: the user wants active control over every note, with no interruption while the kit works alone.
+
 ## [8.0.0] - 2026-11-26
 
 The kit gets one door and one folder per skill. `/my:go` is the only skill Claude starts by itself: it reads a generated index and opens the skill that fits. Every command is now its own skill, `/my:<skill>`, with no aliases for the old names. The shared rules leave `docs/` for small files in `rules/`. Each skill keeps the text and behaviour it had in 7.3.0: the texts moved verbatim, and only their paths, short references, slash names and calls to other skills changed.
