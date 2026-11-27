@@ -241,7 +241,6 @@ scripts/skill-overlap.sh  ranks the kit's skills by trigger words shared with a 
 scripts/profile-fresh.sh  tells which sources of a project profile changed on the default branch
 scripts/budget.sh    reports the words of each kit file and of each skill with its reads
 scripts/single-source.sh  reports sentences that two kit files repeat
-scripts/affected.sh  lists the eval cases a set of changed files reaches
 scripts/*.test.sh    each script's test, run by check.sh
 .githooks/pre-commit runs scripts/check.sh
 .githooks/commit-msg blocks a commit touching CONSTITUTION.md without "Amend constitution"
@@ -279,7 +278,6 @@ bash scripts/append-entry.test.sh     # test that notes and kinds written at onc
 bash scripts/no-form-rules.test.sh    # test that no kit text sets the language for the user, or a form beyond unslop
 scripts/budget.sh                     # report words per file and per skill (only reports)
 scripts/single-source.sh              # report sentences two kit files repeat (only reports)
-scripts/affected.sh <changed file>... # list the eval cases a change reaches (only reports)
 ```
 
 `git config core.hooksPath .githooks` enables both hooks: `pre-commit` runs `scripts/check.sh`, and `commit-msg` blocks a commit that touches `CONSTITUTION.md` unless its message contains "Amend constitution" (merges pass).
