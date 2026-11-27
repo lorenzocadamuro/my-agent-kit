@@ -60,7 +60,7 @@ focus:
 
 - The judge sees a truncated trace. For "never did X", use `tool_used`, not an `llm` grader with `focus: trace`.
 - Point an `llm` grader at the file it judges (`focus: {source: file, ...}`) rather than at the transcript.
-- Keep data out of the real `~/.my-agent-kit`: prompts name a local data root (for example `./kit-data`), which the skills honour.
+- Keep data out of the real `~/.my-agent-kit`: prompts name a local data root (for example `./kit-data`), which the skills honour. A case may use the eval home's default data root instead when its `setup.sh` refuses any folder outside the eval home, as `wait-what/re-pitch-adds-premise` does.
 - Sandboxed runs have no working `git` (the macOS xcrun shim is blocked) and no `gh` auth. Skills must degrade to `unknown`, not fail. For git-centric skills, the scaffold (which runs outside the sandbox) builds the repository and saves the git outputs the skill needs under `git-out/`; the prompt says to use them. Real git behaviour is covered by the trials, not the evals.
 - `focus: files` shows only the list of written files, not their content. Have the prompt name the output file, and point the grader at it.
 - `--case` takes one glob; repeating the flag keeps only the last one.
