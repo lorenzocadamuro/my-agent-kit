@@ -22,6 +22,7 @@ Runs write code in parallel lanes, and scripts hold the facts. A round whose pla
 - A note's target `principles` becomes `rules`, and `templates` the skill that owns the template; older entries read the new names (`rules/kit-data.md` § Old names).
 - `/my:improve audit` does not apply the router section of `rules/writing-for-agents.md` to `go`, the one model-invoked skill, which opens the skill that fits by design.
 - The Reply lines of `review`, `sync`, `comments` and `learn` name the pending signals of the closing step.
+- D52: an "I don't understand" answer to a question the kit asked is a request to explain and points to a kit fix. The reply only explains and asks nothing; once the user says it is clear, it asks the question again and then proposes the note, in the same reply (`rules/core.md`, pointed to from `rules/asking.md`).
 
 ### Status mod (`my-status` 1.3.0)
 
@@ -34,7 +35,7 @@ Runs write code in parallel lanes, and scripts hold the facts. A round whose pla
 
 ### Evals and tests
 
-- New case `go/two-requests-start-apart`. New script tests: `lanes.test.sh`, `lane-merge.test.sh` (a refused merge commit and a merge that cannot start included), `state.test.sh`, `stop-policy.test.sh`, `verify-round.test.sh` (a round of two merged lanes included).
+- New cases `go/two-requests-start-apart`, `scope/explain-before-note` and `scope/note-after-clear` (the last two below 2 of 3 on this version: see the round 15 trial). New script tests: `lanes.test.sh`, `lane-merge.test.sh` (a refused merge commit and a merge that cannot start included), `state.test.sh`, `stop-policy.test.sh`, `verify-round.test.sh` (a round of two merged lanes included).
 - `run/round-digest-writes-note` keeps its name; its `case.yaml` says it now checks that no note is written. `run/added-item-checked` names the summary template's current path.
 
 ## [8.2.0] - 2026-11-27

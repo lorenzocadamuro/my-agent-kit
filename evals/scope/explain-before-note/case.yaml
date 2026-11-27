@@ -1,0 +1,16 @@
+schema_version: "1"
+name: explain-before-note
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 30
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
+  prompt: |
+    /my:scope --dry-run Aggiungi un watcher che lancia la sincronizzazione di ./docs ogni 5 minuti (sync/run.py). Data root ./kit-data, salva il piano in ./plan.md. Non c'è un repository git: pianifica dai file presenti.
+    In questa sessione lo strumento delle domande non c'è: fammi ogni domanda qui in chat, come testo, e aspetta la mia risposta, senza assumere l'opzione raccomandata.
+
+    Riprendiamo: nel turno precedente mi hai fatto quattro domande, ecco le mie risposte.
+    1. Obiettivo: confermato.
+    2. Perimetro: `python sync/run.py` lanciato a mano resta identico.
+    3. Bar for done: i test in tests/ passano, più un test per il watcher.
+    4. "Come avviare il watcher? Agente launchd che parte al login (Recommended) / cron / a mano" → Other: "non ho capito"
