@@ -2,6 +2,41 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [8.3.0] - 2026-11-27
+
+Runs write code in parallel lanes, and scripts hold the facts. A round whose plan steps name disjoint lanes runs up to three executors at once, each in its own worktree, and merges them back; the state file and the stop list are written and decided by scripts instead of by hand.
+
+### Run (C14, C15)
+
+- C14: a plan step may carry `Lanes:` (`a`, `b` or `c`) and `Depends on:`. `scripts/lanes.py` splits a round's items into lanes and refuses a file in two lanes (a `:<line>` or `:<line>-<line>` suffix is ignored when comparing), a dependency cycle and a dependency across lanes; when it refuses, the round runs one executor with every item. `/my:run` starts one executor per lane, each in its own worktree on `<work branch>-lane-<id>`; `scripts/lane-merge.sh` merges the lane branches with `--no-ff` in lane order and resumes after the lanes already merged. A conflict prints "conflict: lane <id>" and is the stop "conflicts"; a merge that fails without a conflict (a hook refused it) prints "merge failed: lane <id>" and is the stop "an executor that stopped"; either way no merge is left in progress. `rules/parallel.md` holds the rules: a leftover lane branch already merged is deleted and the lane starts from HEAD, an unmerged one is resumed. A plan without `Lanes:` runs one executor, as before.
+- `/my:go` starts two independent requests in parallel as separate sessions, each in its own worktree, never as background agents.
+- C15: `scripts/state.sh` is the only writer of the state file and passes the steps to `scripts/state-steps.sh`, still the only writer of `steps`. `scripts/stop-policy.py` decides the stop list from a round's facts, as 7.3.0 did: a decision stops only when it is flagged boundary, rule, someone else's code or a relaxed check and its kind is not handed over (boundary, rule and someone else's code are never handed over); a decision the user already answered does not stop; a gate or drift over budget of a handed-over kind is decided alone; the decisions taken alone are printed on stop as well as on go; an unknown fact or flag is an error.
+- The plan template says a step's dependencies share its lane, and the executor's brief asks for one row for every item of its lane.
+
+### Profile
+
+- A new profile records its Sources: `profile-fresh.sh --record` fills a placeholder hash or a path-only line, drops the template's example line, and on a profile without the section writes it without the line meant for a profile written before 8.2.0.
+
+### Improve and review (`note`, `improve`, `review`, `sync`, `comments`, `learn`)
+
+- A note's target `principles` becomes `rules`, and `templates` the skill that owns the template; older entries read the new names (`rules/kit-data.md` § Old names).
+- `/my:improve audit` does not apply the router section of `rules/writing-for-agents.md` to `go`, the one model-invoked skill, which opens the skill that fits by design.
+- The Reply lines of `review`, `sync`, `comments` and `learn` name the pending signals of the closing step.
+
+### Status mod (`my-status` 1.3.0)
+
+- D2: while a round with parallel lanes runs, the band shows "lanes <done>/<total> done" after the step label, from the open round's lane sidecars; it is the first piece to drop when the band is narrow, and the newest sidecar keeps the running state fresh. A lane sidecar left by an earlier round is not counted; without lane sidecars the band is unchanged.
+
+### Plan of this release
+
+- D48: the size budget of the restructuring rises to 3,800 production lines.
+- D50: the real trial of lanes runs after this release, on the user's next real ticket; this release records it as open.
+
+### Evals and tests
+
+- New case `go/two-requests-start-apart`. New script tests: `lanes.test.sh`, `lane-merge.test.sh` (a refused merge commit and a merge that cannot start included), `state.test.sh`, `stop-policy.test.sh`, `verify-round.test.sh` (a round of two merged lanes included).
+- `run/round-digest-writes-note` keeps its name; its `case.yaml` says it now checks that no note is written. `run/added-item-checked` names the summary template's current path.
+
 ## [8.2.0] - 2026-11-27
 
 Tools for growth. The kit can take in a skill from outside, audit its own text, keep each project profile current, and report its size, its repeats and the evals a change reaches. The rules merge into fewer files, and each skill reads only the rules it uses.
