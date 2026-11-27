@@ -86,4 +86,4 @@ This mode explains; it does not judge. Write hypotheses as questions, never as f
    - `reviewers/<handle>.md`, following `${CLAUDE_PLUGIN_ROOT}/skills/pr/learn/reviewer-profile-template.md`, where each line cites this page and states only what the comments show;
    - the index row: date, PR, reviewer, file, moves learned, **comment ids studied**.
 
-Reply: the reading's file and the question whether to go deeper or start `/my:review`; with a comment focus, the study page's file.
+Reply: the reading's file and the question whether to go deeper or start `/my:review`; with a comment focus, the study page's file; then the pending signals (`rules/learning.md` § Closing step of every skill).

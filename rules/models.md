@@ -4,7 +4,7 @@ An agent the kit starts runs on the session's model unless this table names anot
 
 | Role | Started at | Model | Why | Tested |
 | ---- | ---------- | ----- | --- | ------ |
-| Research search agent | `plan:scope` step 3, phase 1 | `sonnet` | it only searches and decides nothing; each answer cites `file:line` or says `unknown`, and the coordinator checks what it uses | claude-sonnet-5-5, 2026-11-05: `plan/research-search-on-sonnet` (size M), 2 of 2; no A/B (it decides nothing) |
+| Research search agent | `plan:scope` step 3, phase 1 | `sonnet` | it only searches and decides nothing; each answer cites `file:line` or says `unknown`, and the coordinator checks what it uses | claude-sonnet-5-5, 2026-11-05: `scope/research-search-on-sonnet` (size M), 2 of 2; no A/B (it decides nothing) |
 | Research analysis agents | `plan:scope` step 3, phase 2 | session model | they judge how the code works and what the change does to it | — |
 | Plan review | `plan:scope` step 6 | session model | a guard: what it misses reaches every round | — |
 | Triage check | `plan:run` step 4 | session model | a guard: what it misses reaches the executor silently | — |

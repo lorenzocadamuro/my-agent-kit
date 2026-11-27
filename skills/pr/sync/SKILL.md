@@ -60,4 +60,4 @@ Load the project profile `<data root>/projects/<owner>-<repo>.md`. Without a pro
 - Never resolve a design conflict without the user's decision, and never take "ours" wholesale to make a conflict disappear.
 - If a test fails after the merge, find out whether main itself fails the same way (run it on `origin/<default>` in a temporary worktree) before blaming the merge. Report which it is.
 
-Reply: at most 10 lines: the commits pulled in, each conflicted file with its class and resolution, the checks run, the push SHA, and anything that needs a restart.
+Reply: at most 10 lines: the commits pulled in, each conflicted file with its class and resolution, the checks run, the push SHA, anything that needs a restart, and the pending signals (`rules/learning.md` § Closing step of every skill).

@@ -167,7 +167,7 @@ Bar: see plan § Bar for done. Act only on items below; anything else is reporte
 
 ## End of round
 
-Return the summary in the shape of `templates/round-summary.md`, one row per item, including skipped ones.
+Return the summary in the shape of `skills/plan/run/round-summary-template.md`, one row per item, including skipped ones.
 P
 cat > kit-data/state/acme-shop-feature.progress.json <<'P'
 {"round": 2, "items": {"done": 2, "total": 2}, "updatedAt": "2026-01-10T10:20:00Z"}

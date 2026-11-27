@@ -36,7 +36,7 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
 
 Read-only: it reads the kit in the folder given, else `${CLAUDE_PLUGIN_ROOT}`, and writes nothing.
 
-1. **One agent per skill.** For each skill of that kit (each `SKILL.md` under its `skills/`), start a read-only agent (model: `rules/models.md`), all at once, with the skill's folder and `${CLAUDE_PLUGIN_ROOT}/rules/writing-for-agents.md`: it applies that rule to the skill's text and returns each finding with the line it quotes, the part of the rule it breaks and the smallest fix.
+1. **One agent per skill.** For each skill of that kit (each `SKILL.md` under its `skills/`), start a read-only agent (model: `rules/models.md`), all at once, with the skill's folder and `${CLAUDE_PLUGIN_ROOT}/rules/writing-for-agents.md`: it applies that rule to the skill's text, except § Router skills to `go`, the kit's one model-invoked skill, which opens the skill that fits by design, and returns each finding with the line it quotes, the part of the rule it breaks and the smallest fix.
 2. **Check each finding** against the line it quotes; drop what the text does not show.
 3. **Propose them as notes,** grouped by skill, one line each: the skill, what is wrong, the fix. Each note is saved only on the user's yes, through `${CLAUDE_PLUGIN_ROOT}/skills/improve/note/SKILL.md` with its text (`rules/core.md` § When the user questions or corrects the kit). A skill with no finding gets one line saying so.
 

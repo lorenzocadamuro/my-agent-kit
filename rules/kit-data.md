@@ -95,7 +95,7 @@ One file per change and folder, rewritten whole through a temp file and a rename
 
 ## Old names
 
-Entries and signals written before 3.0.0 name skills that are now modes, and before 5.0.0 and 8.1.0 a mode now part of another. Read them as their new names everywhere: in List and Log views, in Run selection, and in `/my:note signals`. Show only the new names, in tables and in prose alike; the old ones never reach the user, not even to explain the rename. A filter on a skill (`log plan`) matches every mode of it.
+Entries and signals written before 3.0.0 name skills that are now modes, before 5.0.0 and 8.1.0 a mode now part of another, and before 8.3.0 a note's target `principles` or `templates`. Read them as their new names everywhere: in List and Log views, in Run selection, and in `/my:note signals`. Show only the new names, in tables and in prose alike; the old ones never reach the user, not even to explain the rename. A filter on a skill (`log plan`) matches every mode of it.
 
 | Old         | New           |
 | ----------- | ------------- |
@@ -108,6 +108,8 @@ Entries and signals written before 3.0.0 name skills that are now modes, and bef
 | `review-lens` | `pr:review` |
 | `explain-comment` | `pr:comments` |
 | `merge-main` | `pr:sync`    |
+| `principles` (a note's target) | `rules` |
+| `templates` (a note's target) | the skill that owns the template |
 
 ## Showing entries
 

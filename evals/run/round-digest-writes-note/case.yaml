@@ -1,3 +1,4 @@
+# The name is kept from before C4: the case now checks that the round writes no note, only lists the signal.
 schema_version: "1"
 name: round-digest-writes-note
 context:
