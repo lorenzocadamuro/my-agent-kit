@@ -4,12 +4,12 @@ description: "Build the plan for a code change with the user, before any code: r
 argument-hint: "<ticket id | url | description> [--adopt <branch|PR>] [--dry-run]"
 disable-model-invocation: true
 when: "\"/my:scope\", \"let's plan this ticket\", \"pianifichiamo\", \"scope this change\", a ticket id with a request to start work, or re-scoping a PR that got out of hand (--adopt)"
-reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, rules/question-format.md, rules/model-choice.md, skills/plan/scope/plan-template.md]
+reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/kit-data.md, rules/asking.md, rules/models.md, skills/plan/scope/plan-template.md]
 ---
 
 # /my:scope — the plan is the contract
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/files.md`, `${CLAUDE_PLUGIN_ROOT}/rules/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/rules/model-choice.md` and `${CLAUDE_PLUGIN_ROOT}/skills/plan/scope/plan-template.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/models.md` and `${CLAUDE_PLUGIN_ROOT}/skills/plan/scope/plan-template.md`.
 
 ## Arguments
 
@@ -20,7 +20,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/
 | `--adopt <branch\|PR>` | Plan for existing work: read its diff and description, and do not create a new branch                                                                                                    |
 | `--dry-run`            | Write the plan only. No worktree, no branch, no ticket change. Save it where the user says, or at `<data root>/plans/<slug>-<date>.md`                                                   |
 
-**Status:** from step 1 to the approval, keep the planning state file current (`${CLAUDE_PLUGIN_ROOT}/rules/local-data.md` § State file: the worktree branch's file once this session works in the worktree; otherwise, `--dry-run` included, `session-<session id>.json`) with `state: "planning"`, `startedAt` set at step 1 (a file that already has one keeps it: `--adopt`, a re-scope; a file left by a finished plan, `state: "done"`, counts as having none, since a new plan is a new run), the plan's title once known, and `step`: `research` (steps 1–3), `interview` (4), `write` (5), `review` (6), `approval` (7). Rewrite it whole, keeping every field you do not change, through a temp file and a rename. The status line then shows the plan being made.
+**Status:** from step 1 to the approval, keep the planning state file current (`${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md` § State file: the worktree branch's file once this session works in the worktree; otherwise, `--dry-run` included, `session-<session id>.json`) with `state: "planning"`, `startedAt` set at step 1 (a file that already has one keeps it: `--adopt`, a re-scope; a file left by a finished plan, `state: "done"`, counts as having none, since a new plan is a new run), the plan's title once known, and `step`: `research` (steps 1–3), `interview` (4), `write` (5), `review` (6), `approval` (7). Rewrite it whole, keeping every field you do not change, through a temp file and a rename. The status line then shows the plan being made.
 
 ## Steps
 
@@ -55,7 +55,7 @@ State the classification and its reason in one line; the user can override it in
 
 ### 3. Research before asking
 
-For S, do it yourself, and skip overlap and people and merge requirements. For M and L, research in two phases, with Explore agents on the model `${CLAUDE_PLUGIN_ROOT}/rules/model-choice.md` gives each:
+For S, do it yourself, and skip overlap and people and merge requirements. For M and L, research in two phases, with Explore agents on the model `${CLAUDE_PLUGIN_ROOT}/rules/models.md` gives each:
 
 1. **Search:** one agent, whose prompt opens with `Search only, decide nothing`, answers a fixed list, each item with `file:line` evidence or `unknown: <what could not be read>`: for the code the plan relies on, replaces or renames, both directions, each name with its other users and untruncated counts: its callers by path, and every outside name it imports or calls; the settings that code turns off on purpose (a flag set to false, a disabled option, a comment giving a reason); every writer of each state the plan reads or hooks into, with the values each one writes; what the path the boundary keeps unchanged shares with the changed code; open PRs on the paths (overlap); CODEOWNERS and branch rules; the rules to load; the test or code that pins each behaviour the ticket describes. A missing item or a claim without evidence gets the table's fallback; an `unknown` does not.
 2. **Analysis:** up to two agents, given the search's answers (not its opening words): how the things really work, the consequences, which rule decides each case, failure paths, and the baseline.
@@ -94,10 +94,10 @@ First settle the frame (question format: when to ask): a request to explore or p
 
 ### 6. Independent review
 
-For S, start no agent: confirm that the goal, the boundary, the bar and the gates are present; the user's approval at step 7 is the plan's review. For M and L, hand the plan, the research notes, the principles (`core.md`, `plan-contract.md`, `learning.md`, `verifying.md`, `worker.md`, `repository.md` and `files.md` in `${CLAUDE_PLUGIN_ROOT}/rules/`), [check-agent.md](../run/check-agent.md) and `${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md` to a fresh general-purpose agent (model: `rules/model-choice.md`). It checks each step of every part once, as `check-agent.md` items 1–4, 6 and 7 check a round item (read "step" for "item": the claim at the base, the callers untruncated, the owning code point, a test that can fail and its pins, no hidden second reading, the review lenses), and also that:
+For S, start no agent: confirm that the goal, the boundary, the bar and the gates are present; the user's approval at step 7 is the plan's review. For M and L, hand the plan, the research notes, the principles (`core.md`, `plan-contract.md`, `learning.md`, `verifying.md`, `worker.md`, `repository.md` and `kit-data.md` in `${CLAUDE_PLUGIN_ROOT}/rules/`), [check-agent.md](../run/check-agent.md) and `${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md` to a fresh general-purpose agent (model: `rules/models.md`). It checks each step of every part once, as `check-agent.md` items 1–4, 6 and 7 check a round item (read "step" for "item": the claim at the base, the callers untruncated, the owning code point, a test that can fail and its pins, no hidden second reading, the review lenses), and also that:
 
 - every label of every step is filled, and each `Searches:` count, rerun at the base, still matches;
-- each step's main scenario, traced through the code at the base as the intro of `rules/review-lenses.md` says, holds: what the round review would grade block there (by `rules/review-lenses.md`) is a finding now, since a ready step skips the round's triage check;
+- each step's main scenario, traced through the code at the base as the intro of `rules/reviewing.md` says, holds: what the round review would grade block there (by `rules/reviewing.md`) is a finding now, since a ready step skips the round's triage check;
 - each part is a vertical slice: it ships one behaviour end to end with its own test, not one layer;
 - the boundary and the bar are checkable;
 - each rule the plan states (boundary, invariants, out of scope) holds against every step of every part, and against the CI jobs that run on the files the plan adds;
@@ -118,7 +118,7 @@ Show the plan's path and a summary of at most 14 lines: goal, boundary, bar, gat
 Skip this step for `--dry-run`, and delete the planning state file: there is nothing to run. The worktree exists since step 2; only this is left:
 
 1. **Setup:** make sure the setup command started in step 2 finished, or run it now if step 2 did not start it.
-2. **State:** write the worktree branch's state file with `state: "ready"`, its `repo`, `branch` and `worktree`, `startedAt` as planning wrote it (the branch's file keeps its own; this session's planning file's only when the branch's file has none, as in § Status), the plan's title and path, and its parts, each with `short`, its title after "Part X:" in two or three words and at most 16 characters (so it shows under its part in the band), and `steps`, one `{ label, status }` per step, the label in two or three words (labels and `short` follow `local-data.md` § State file: words that say what the work does, never a code name); then run `${CLAUDE_PLUGIN_ROOT}/scripts/state-steps.sh <state file> <plan.md>`, which derives every status from the plan's boxes; then delete this session's planning file if there is one. The bar then shows in any session working in the worktree.
+2. **State:** write the worktree branch's state file with `state: "ready"`, its `repo`, `branch` and `worktree`, `startedAt` as planning wrote it (the branch's file keeps its own; this session's planning file's only when the branch's file has none, as in § Status), the plan's title and path, and its parts, each with `short`, its title after "Part X:" in two or three words and at most 16 characters (so it shows under its part in the band), and `steps`, one `{ label, status }` per step, the label in two or three words (labels and `short` follow `kit-data.md` § State file: words that say what the work does, never a code name); then run `${CLAUDE_PLUGIN_ROOT}/scripts/state-steps.sh <state file> <plan.md>`, which derives every status from the plan's boxes; then delete this session's planning file if there is one. The bar then shows in any session working in the worktree.
 3. **Report:**
    - the worktree path and branch, and, when this session did not move there, that the run starts in a new session opened in the worktree;
    - the plan path;

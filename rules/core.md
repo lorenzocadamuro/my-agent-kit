@@ -6,7 +6,7 @@ These principles serve [CONSTITUTION.md](../CONSTITUTION.md). Where they disagre
 
 ## Proportional, not strict
 
-- **Size the process to the task.** First classify the work (bug fix, feature, refactor, tool, infra, review) and its size (S, M, L). Ask only at the real forks that kind of work has ([question-format.md](question-format.md) § When to ask). A small bug fix gets a half-page plan; a large cross-cutting change gets the full one. The verification too: check what changes, take what is already proven as given, and say so.
+- **Size the process to the task.** First classify the work (bug fix, feature, refactor, tool, infra, review) and its size (S, M, L). Ask only at the real forks that kind of work has ([asking.md](asking.md) § When to ask). A small bug fix gets a half-page plan; a large cross-cutting change gets the full one. The verification too: check what changes, take what is already proven as given, and say so.
 - **Skip what does not apply, and say so in one line.** Leaving a section out on purpose is fine; leaving it out by accident is not.
 - **Four things are always fixed:** the goal, the boundary, the bar for done, and the gates. They are always written in the plan and named in the approval summary, and asked only at a real fork. Everything else scales with the task.
 - **Any rule can be overridden** when the user says why. Record the reason in the plan.
@@ -23,23 +23,9 @@ These principles serve [CONSTITUTION.md](../CONSTITUTION.md). Where they disagre
 - **Chores never land on the user.** Restarting services, cleaning containers and rerunning suites belong to the agent doing the work.
 - **Notify at gates.** When the work stops for a decision, or a long round ends, send a short desktop notification and put the summary in chat.
 
-## Questions the user can answer
-
-Follow [question-format.md](question-format.md) for when to ask, and for the shape of every question and of each of its options.
-
 ## When the user questions or corrects the kit
 
 - **A question, a request to explain or a correction from the user** ends with a judgement: does the exchange point to a kit fix? If it does, the reply proposes a note in the same conversation (its skill and what happened, in one line) and asks whether to save it; the note is saved, through `${CLAUDE_PLUGIN_ROOT}/skills/improve/note/SKILL.md`, only on the user's yes. Work the kit does alone never stops for a note: its signals wait for the end report ([learning.md](learning.md) § Closing step of every skill).
-
-## Review depth follows the stakes
-
-- **Every round: a conformance review** of that round's diff against its items and the plan, by a fresh agent, in at most about 400 words. The round that completes a part also reviews the whole part, from its part start (`plan:run` step 7), following its main scenario with the lenses that fit ([review-lenses.md](review-lenses.md)).
-- **At milestones: the project's deep review tool,** named in the project profile. The milestones are before "ready for human review", and when drift exceeds the budget. The bar is passed in as the stop criterion.
-- **Every finding is labelled** block, ticket or note, by [review-lenses.md](review-lenses.md) § Grading a finding. Only block findings enter the next round.
-
-## Which model an agent runs on
-
-- **[model-choice.md](model-choice.md) names it, one row per agent the skills start;** an agent it does not name keeps the session's model. No skill names a model itself: the sentence that starts an agent points to the table.
 
 ## Language
 

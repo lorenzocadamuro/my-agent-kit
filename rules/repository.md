@@ -1,6 +1,6 @@
 ## Repository rules are inputs, not assumptions
 
-- **Each repository has a local profile** in `<data root>/projects/<owner>-<repo>.md`. It names the commands (tests, codegen, migrations, deep review, PR description), the guides to load, and the post-merge checks. The format is in [local-data.md](local-data.md).
+- **Each repository has a local profile** in `<data root>/projects/<owner>-<repo>.md`. It names the commands (tests, codegen, migrations, deep review, PR description), the guides to load, and the post-merge checks. The format is in [kit-data.md](kit-data.md).
 - **Load the relevant rules explicitly.** Before work starts, find the rules that apply to the files being touched and to what the change does (a rollout, text that agents or users read, a schema), the repository's agent instructions included, and hand them to both the executor and the reviewer.
 - **When a fix suggested by a reviewer conflicts with a repository rule,** the rule wins until the user decides otherwise.
 

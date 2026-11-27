@@ -2,7 +2,7 @@
 
 The goal is learning, not summarising. Every page connects words to the real code, makes the reasoning repeatable, and fits a reading budget. These rules apply to `learn` only: to the reading of a PR and to the study of its review comments.
 
-Use `${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md` to name reasoning moves and the questions worth asking.
+Use `${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md` to name reasoning moves and the questions worth asking.
 
 ## Rules
 
@@ -26,7 +26,7 @@ Use `${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md` to name reasoning moves and t
   - Add at most 5 new terms per page, as `### <Term> — <meaning>`, followed by "In general", "In the code", "Seen in".
 - **Memory:** the reading and the study each record what they have covered, so a re-run covers only what is new (see `skills/pr/learn/SKILL.md`).
 - **Finish:**
-  - Present the page (`rules/files.md`: where files go).
+  - Present the page (`rules/kit-data.md`: where files go).
   - Reply in chat in at most 8 lines: the path, layer 0 in brief, and one question that checks the user understood.
   - Then offer the natural next step: after a reading, `/my:review <n>`; after a study of comments, `/my:comments <n>` when replies are owed. On the user's yes, read `${CLAUDE_PLUGIN_ROOT}/skills/pr/review/SKILL.md` or `${CLAUDE_PLUGIN_ROOT}/skills/pr/comments/SKILL.md` and follow it with `<n>`.
 - **Closing step:** follow `rules/learning.md`.

@@ -4,14 +4,14 @@ description: "Make sense of PR comments from bots or colleagues: two lines each,
 argument-hint: "[PR number or URL] [comment URL | new | all]"
 disable-model-invocation: true
 when: "\"/my:comments\", \"cosa vuol dire questo commento\", \"explain these bot comments\", \"is this Bugbot finding real\", \"help me answer this review\""
-reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, rules/review-lenses.md, skills/writing/unslop/SKILL.md]
+reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/repository.md, rules/kit-data.md, rules/reviewing.md, skills/writing/unslop/SKILL.md]
 ---
 
 # /my:comments — what each comment means, and what to do about it
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/files.md`, `${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
 
-**Activity:** follow `${CLAUDE_PLUGIN_ROOT}/rules/local-data.md` § The activity file.
+**Activity:** follow `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md` § The activity file.
 
 ## Arguments
 
@@ -36,7 +36,7 @@ Pasted comments work too, when `gh` is unavailable.
    - Read the code the comment points to, plus its callers and tests.
    - Classify the group as **real** (a claimed bug, above all one a bot marks uncertain, only once reproduced through the production caller: `rules/verifying.md`, verify), **not verified** (with the command that would decide it: a check-only item, and no reply until it is decided), **duplicate** (of which group), **not a bug** (with evidence), **already fixed** (with the commit), or **out of scope** (outside the PR's plan or diff).
    - A real group that the plan, the research or a round's review should have caught is a signal (`rules/learning.md`: closing step). Read the plan (`.plans/plan.md`, or the one the user names) to judge it.
-4. **Weigh and act.** Weight each group by `rules/review-lenses.md` § Grading a finding. Pick a proportional action: fix, document, ticket, or reply only. A low-value style point on a local tool does not get an elaborate fix.
+4. **Weigh and act.** Weight each group by `rules/reviewing.md` § Grading a finding. Pick a proportional action: fix, document, ticket, or reply only. A low-value style point on a local tool does not get an elaborate fix.
 5. **Draft the replies,** in English.
    - **A person's review** (a colleague, not a bot): one reply for the whole review, as a PR comment that names the points it answers, never one per point; a point already fixed takes its "Addressed in `<sha>`" line inside it. For each other point, where the behaviour comes from and what the alternative would cost, so they can judge (`rules/core.md`: text addressed to a colleague). As long as the points need.
    - **A bot:** at most 3 sentences, factual.

@@ -4,7 +4,7 @@ Built from study pages; every line cites the study page it comes from.
 
 ## Lenses they use most
 
-- <lens from rules/review-lenses.md> — <how it shows in their comments> (<study page>)
+- <lens from rules/reviewing.md> — <how it shows in their comments> (<study page>)
 
 ## Questions they typically ask
 

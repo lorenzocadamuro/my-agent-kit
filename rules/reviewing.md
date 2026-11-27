@@ -41,3 +41,9 @@ Turn the lenses into the questions that matter most for this change, none when n
 - "What happens if the process restarts right after Y?"
 - "Is this behaviour new, or does a test pin it today?"
 - "What would make this hard to roll back once it has run in production?"
+
+## Review depth follows the stakes
+
+- **Every round: a conformance review** of that round's diff against its items and the plan, by a fresh agent, in at most about 400 words. The round that completes a part also reviews the whole part, from its part start (`plan:run` step 7), following its main scenario with the lenses that fit.
+- **At milestones: the project's deep review tool,** named in the project profile. The milestones are before "ready for human review", and when drift exceeds the budget. The bar is passed in as the stop criterion.
+- **Every finding is labelled** block, ticket or note, by § Grading a finding. Only block findings enter the next round.

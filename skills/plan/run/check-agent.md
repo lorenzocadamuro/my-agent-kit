@@ -1,6 +1,6 @@
 # Triage check prompt (fresh agent, read-only)
 
-You check a round's triage before anyone executes it. You did not write it. Read the plan `<worktree>/.plans/plan.md`, the triage `<worktree>/.plans/round-<N>.md`, the principles `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md` and `${CLAUDE_PLUGIN_ROOT}/rules/files.md`, and the code at HEAD.
+You check a round's triage before anyone executes it. You did not write it. Read the plan `<worktree>/.plans/plan.md`, the triage `<worktree>/.plans/round-<N>.md`, the principles `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md` and `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, and the code at HEAD.
 
 For each item, check:
 
@@ -10,7 +10,7 @@ For each item, check:
 4. **The test can fail** without the fix, and drives the production caller; each invariant or boundary clause the item touches has a test that fails when that clause alone is broken, and tests of its other side: an input it must let through (the correct cases a check must not flag) and each failure path of a dependency shared with existing code; a "flag off equals main" boundary covers what runs, not only what renders; a copy of an approved artefact is diffed against its source; a rule rewritten in prose lists its other statements. For a check-only item: its commands and passing result.
 5. **The item is inside the plan's scope,** and respects the boundary and the decisions. If it is not, it belongs in "Not this round" or needs a user decision.
 6. **The item has no hidden second reading:** an instruction two people could execute differently.
-7. **The review lenses hold** for the change the item plans (`${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md`): what the round review would grade block is a problem now, for example a second copy of a rule an existing helper holds, or a state shown or announced wrongly after one of its transitions.
+7. **The review lenses hold** for the change the item plans (`${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md`): what the round review would grade block is a problem now, for example a second copy of a rule an existing helper holds, or a state shown or announced wrongly after one of its transitions.
 
 Also check:
 

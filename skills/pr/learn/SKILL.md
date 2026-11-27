@@ -4,14 +4,14 @@ description: "Understand a PR before reviewing it: what and why, before and afte
 argument-hint: "<PR> [area in plain words | comment id or URL | reviewer… [all] | comments [all] | pasted comments]"
 disable-model-invocation: true
 when: "\"/my:learn\", \"spiegami la PR 456\", \"help me understand this PR\", \"studia questa review\", \"come ragiona il reviewer\", \"what does this reviewer mean\""
-reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, skills/pr/learn/learning.md]
+reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/repository.md, rules/kit-data.md, skills/pr/learn/learning.md]
 ---
 
 # /my:learn — understand a PR, or the review it received
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/files.md` and `${CLAUDE_PLUGIN_ROOT}/skills/pr/learn/learning.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md` and `${CLAUDE_PLUGIN_ROOT}/skills/pr/learn/learning.md`.
 
-**Activity:** follow `${CLAUDE_PLUGIN_ROOT}/rules/local-data.md` § The activity file.
+**Activity:** follow `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md` § The activity file.
 
 Input:
 

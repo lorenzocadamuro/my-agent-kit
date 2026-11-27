@@ -4,12 +4,12 @@ description: "Add a skill to the kit from a pasted text or a link: look for an e
 argument-hint: "<pasted skill text | link>"
 disable-model-invocation: true
 when: "\"/my:add-skill\", \"add this skill to the kit\", \"import this skill\""
-reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/question-format.md, rules/writing-for-agents.md, CONSTITUTION.md]
+reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/asking.md, rules/writing-for-agents.md, CONSTITUTION.md]
 ---
 
 # /my:add-skill — bring a skill into the kit
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/rules/writing-for-agents.md` and `${CLAUDE_PLUGIN_ROOT}/CONSTITUTION.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/writing-for-agents.md` and `${CLAUDE_PLUGIN_ROOT}/CONSTITUTION.md`.
 
 How the kit changes: `${CLAUDE_PLUGIN_ROOT}/rules/learning.md` § The kit's improvement loop.
 
@@ -17,7 +17,7 @@ It works and ships as `/my:improve run` does. Read `${CLAUDE_PLUGIN_ROOT}/skills
 
 1. **Read the candidate:** the pasted text, or the link, read-only (a repository file through `gh api` at a commit). Save it in the session scratchpad. Note its source (the link at that commit, or "pasted by the user") and its license.
 2. **Check it against the constitution,** as that constitution check says, for each thing the candidate does or tells an agent to do. When one contradicts a clause or a "What the kit must not become" bullet, stop and write nothing: quote the candidate's line, name the clause, and say that only the user can amend the constitution.
-3. **Look for the same job.** Run `${CLAUDE_PLUGIN_ROOT}/scripts/skill-overlap.sh --root <kit> <candidate file>`, and read the skills it ranks first. A shared word is not the same job: the same job means the same input and the same result for the user. When an existing skill does the candidate's job, write nothing and ask one question (`rules/question-format.md`), naming that skill: integrate (its useful parts go into the existing skill, as a `/my:improve run` change), improve (the existing skill stays and takes only what the candidate does better), or add (a separate skill whose `when` says how the two differ). Otherwise say in one line which skill came closest and why its job differs.
+3. **Look for the same job.** Run `${CLAUDE_PLUGIN_ROOT}/scripts/skill-overlap.sh --root <kit> <candidate file>`, and read the skills it ranks first. A shared word is not the same job: the same job means the same input and the same result for the user. When an existing skill does the candidate's job, write nothing and ask one question (`rules/asking.md`), naming that skill: integrate (its useful parts go into the existing skill, as a `/my:improve run` change), improve (the existing skill stays and takes only what the candidate does better), or add (a separate skill whose `when` says how the two differ). Otherwise say in one line which skill came closest and why its job differs.
 4. **Adapt it** in `<kit>`, to `skill-template.md` (next to this file): its folder in the area the user named or the one its job fits, the frontmatter, the Source line with each adaptation, the "Read first:" line equal to `reads`, the closing step, the `Reply:` line; a rule a `rules/` file states is cited, not restated. Apply `${CLAUDE_PLUGIN_ROOT}/rules/writing-for-agents.md` to the text. Text copied under a license gets its notice in `THIRD_PARTY_NOTICES.md`. Add the folder to the `skills` array of `.claude-plugin/plugin.json` and run `${CLAUDE_PLUGIN_ROOT}/scripts/index.sh --write <kit>`.
 5. **Its eval case,** from `eval-template.md` (next to this file), on the skill's main promise.
 6. **Make `<kit>/scripts/check.sh` pass,** then go on with the gates, the record (a new skill is a minor version) and the ship question of `/my:improve run`, showing the diff.

@@ -28,3 +28,7 @@ An agent the kit starts runs on the session's model unless this table names anot
 ## Tested
 
 - The Tested column names the model the `sonnet` alias gave when the row was tested. When the alias moves to another model, the tests or the A/B named in a row run again before the row is trusted.
+
+## Which model an agent runs on
+
+- **This file names it, one row per agent the skills start;** an agent it does not name keeps the session's model. No skill names a model itself: the sentence that starts an agent points to the table.

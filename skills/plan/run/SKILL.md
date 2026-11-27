@@ -4,7 +4,7 @@ description: "Run the plan round after round, on its own, until something needs 
 argument-hint: "[source] [--deep] [--no-push]"
 disable-model-invocation: true
 when: "\"/my:run\", \"run the plan\", \"vai avanti col piano\", \"finish the plan on your own\""
-reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, rules/question-format.md, rules/review-lenses.md, rules/model-choice.md, skills/writing/unslop/SKILL.md]
+reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/kit-data.md, rules/asking.md, rules/reviewing.md, rules/models.md, skills/writing/unslop/SKILL.md]
 ---
 
 # /my:run — rounds, no babysitting
@@ -14,7 +14,7 @@ You are the coordinator. You stay in the user's session and hand the work to bac
 - **The run goes round after round,** as § Run says, until something needs the user.
 - **Every gate follows the method of `rules/learning.md`:** you decide a handed-over kind alone and list it in the report, record the other answers in the plan (question format § After the answer) and in `<data root>/method.md`, and propose due hand-overs; the executor only reports.
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/files.md`, `${CLAUDE_PLUGIN_ROOT}/rules/question-format.md`, `${CLAUDE_PLUGIN_ROOT}/rules/review-lenses.md`, `${CLAUDE_PLUGIN_ROOT}/rules/model-choice.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md`, `${CLAUDE_PLUGIN_ROOT}/rules/models.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
 
 ## Arguments
 
@@ -26,9 +26,9 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/
 
 ## The state file
 
-Write the state file (name and shape in `${CLAUDE_PLUGIN_ROOT}/rules/local-data.md` § State file) at the start of each round, at each step below, at each gate and its answer, and at the end. Rewrite it whole, keeping every field you do not change, through a temp file and a rename, so a reader never sees half a file. It feeds the optional status mod, and a resuming run reads it. A gate's answer is a write too: the state leaves `needs_you` for `running` before you act on the answer. A `reason` is two or three words (`Tests failing`).
+Write the state file (name and shape in `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md` § State file) at the start of each round, at each step below, at each gate and its answer, and at the end. Rewrite it whole, keeping every field you do not change, through a temp file and a rename, so a reader never sees half a file. It feeds the optional status mod, and a resuming run reads it. A gate's answer is a write too: the state leaves `needs_you` for `running` before you act on the answer. A `reason` is two or three words (`Tests failing`).
 
-**Rounds and steps.** At a round's start, append `{ n, startedAt }` to `rounds` (unless the round already has an entry), and when a part has no `short` or `steps` (a file an older version wrote), fill them from the plan first (`short` at most 16 characters, as local-data.md says). Every write ends with `${CLAUDE_PLUGIN_ROOT}/scripts/state-steps.sh <state file> <plan.md> --running <steps>` (adding `--new-round` right after appending a round's entry), which derives the steps' and parts' statuses from `plan.md`'s boxes, never by hand. Only what cannot be derived is yours: the `rounds` entries, the steps the open round's items implement or rework, passed as `--running` (part letter and step number, a bare number in a plan without parts, from the triage, step 3; a block item that fixes a step reworks it; the same at every write until the one that ends the round, the writes after the executor finishes and during the review and the push included; none at the write that ends the round), and the `failed` mark of step 6. A gate pauses the round and does not end it: the round ends at step 9's report, a round stopped by failed verification included, or when the user's answer to a gate stops the run, and only then set its `endedAt` and `verdict` (the review's verdict against the bar, or `failed: <reason>` when verification failed).
+**Rounds and steps.** At a round's start, append `{ n, startedAt }` to `rounds` (unless the round already has an entry), and when a part has no `short` or `steps` (a file an older version wrote), fill them from the plan first (`short` at most 16 characters, as kit-data.md says). Every write ends with `${CLAUDE_PLUGIN_ROOT}/scripts/state-steps.sh <state file> <plan.md> --running <steps>` (adding `--new-round` right after appending a round's entry), which derives the steps' and parts' statuses from `plan.md`'s boxes, never by hand. Only what cannot be derived is yours: the `rounds` entries, the steps the open round's items implement or rework, passed as `--running` (part letter and step number, a bare number in a plan without parts, from the triage, step 3; a block item that fixes a step reworks it; the same at every write until the one that ends the round, the writes after the executor finishes and during the review and the push included; none at the write that ends the round), and the `failed` mark of step 6. A gate pauses the round and does not end it: the round ends at step 9's report, a round stopped by failed verification included, or when the user's answer to a gate stops the run, and only then set its `endedAt` and `verdict` (the review's verdict against the bar, or `failed: <reason>` when verification failed).
 
 At the end of a round or a run, set `state`: `done` when the bar is met and the ready-for-review gate is answered; `needs_you` with a `reason` when a gate or a question waits for the user; `stopped` with a `reason` when verification failed or the run hit its cap; otherwise `ready`, waiting for the next round.
 
@@ -73,14 +73,14 @@ Items outside the plan's scope, and findings labelled "ticket", go to "Not this 
 
 ### 4. Independent triage check
 
-The check runs on the items step 3 triaged in full, and the round file says `Triage check: run`. The S lane skips it and writes `Triage check: skipped (size S)`; a round whose items are all `Ready from plan` writes `Triage check: skipped (ready steps)` and starts no agent here. A round of an M or L plan that looks small still gets it for its other items. An item added to a round in progress (the user's request, a finding, a message to the executor) goes into the round file first and, outside the S lane, passes this check before it runs. Run a fresh agent with [check-agent.md](check-agent.md) (model: `rules/model-choice.md`), its prompt naming the items to check and saying to skip those marked `Ready from plan`, and fix what it finds. Anything that needs the user becomes a gate question.
+The check runs on the items step 3 triaged in full, and the round file says `Triage check: run`. The S lane skips it and writes `Triage check: skipped (size S)`; a round whose items are all `Ready from plan` writes `Triage check: skipped (ready steps)` and starts no agent here. A round of an M or L plan that looks small still gets it for its other items. An item added to a round in progress (the user's request, a finding, a message to the executor) goes into the round file first and, outside the S lane, passes this check before it runs. Run a fresh agent with [check-agent.md](check-agent.md) (model: `rules/models.md`), its prompt naming the items to check and saying to skip those marked `Ready from plan`, and fix what it finds. Anything that needs the user becomes a gate question.
 
 ### 5. Execute
 
 - Mark a session chapter `Round N · <goal>` with the app's chapter tool; skip it when the tool is missing.
 - Tell the user in one line that round N started with k items and that they will hear from you at a gate or at the end. Say it for the first round only.
 - **S lane:** once step 3's round file is written, make the changes yourself, following [executor-agent.md](executor-agent.md) § How, except its Progress line, and § Stop and report, except that you ask the user (a gate) where it says to stop. After each item, update `items` in the state file (no progress sidecar); at the end, write `.plans/round-<N>-summary.md` in the shape of `${CLAUDE_PLUGIN_ROOT}/skills/plan/run/round-summary-template.md`. Steps 6–8 follow as in the full lane: a change you make yourself, however small or directly asked, gets step 7's fresh review before the push.
-- **Full lane:** launch a **background** general-purpose agent with [executor-agent.md](executor-agent.md) (model: `rules/model-choice.md`), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
+- **Full lane:** launch a **background** general-purpose agent with [executor-agent.md](executor-agent.md) (model: `rules/models.md`), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
   - **When the agent stops with questions,** ask the user (gate, with a notification), then continue the same agent with `SendMessage`.
   - **When it finishes,** write its returned summary to `.plans/round-<N>-summary.md`.
 
@@ -98,8 +98,8 @@ When the round's verification needs a manual check in the browser, follow the pr
 
 ### 7. Review
 
-- **Every round,** a fresh agent runs [reviewer-agent.md](reviewer-agent.md) on `<round start>..HEAD`, against the round's items and the plan (model: `rules/model-choice.md`). When a part that `state-steps.sh` shows done after step 6 was not done at the round's start, the prompt adds: `This round closes Part <X>: also follow its main scenario end to end, with the lenses that fit. Its work starts at <part start>.` The part start is the `Start:` HEAD of the earliest round file whose `Trigger:` names that part, else the `Start:` HEAD of the earliest round file. Other rounds' prompts name none of these.
-- **At milestones,** also run the profile's deep review tool through a background agent (model: `rules/model-choice.md`), with the plan's bar as the stop criterion. The milestones are `--deep`, the ready-for-review gate, and drift over budget.
+- **Every round,** a fresh agent runs [reviewer-agent.md](reviewer-agent.md) on `<round start>..HEAD`, against the round's items and the plan (model: `rules/models.md`). When a part that `state-steps.sh` shows done after step 6 was not done at the round's start, the prompt adds: `This round closes Part <X>: also follow its main scenario end to end, with the lenses that fit. Its work starts at <part start>.` The part start is the `Start:` HEAD of the earliest round file whose `Trigger:` names that part, else the `Start:` HEAD of the earliest round file. Other rounds' prompts name none of these.
+- **At milestones,** also run the profile's deep review tool through a background agent (model: `rules/models.md`), with the plan's bar as the stop criterion. The milestones are `--deep`, the ready-for-review gate, and drift over budget.
 - **Write `.plans/round-<N>-review.md`:** the verdict against the bar, the line per round item, then the findings under **Block**, **Ticket** and **Note**. The next round reads its block findings from there.
 - **Sort the findings:**
   - **block** → next round's items;
@@ -154,6 +154,6 @@ Lessons: <ids of the notes the user approved | none>
 Next: <the action that unblocks it>
 ```
 
-When it stops on a decision, introduce it after the summary as question-format § Shape says, so the user can answer it cold after a break: what its terms mean, why the plan needs it, and what each option changes.
+When it stops on a decision, introduce it after the summary as `rules/asking.md` § Shape says, so the user can answer it cold after a break: what its terms mean, why the plan needs it, and what each option changes.
 
 Reply: one line per round, and at the end the summary of § Run (`Run:`, `Rounds:`, `Decided alone:`, `Stopped:`, `Signals:`, `Lessons:`, `Next:`).
