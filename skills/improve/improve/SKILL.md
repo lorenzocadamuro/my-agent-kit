@@ -1,7 +1,7 @@
 ---
 name: improve
 description: "Grow the `my` kit from real use: no argument lists open notes; `run [skill|ids]` finds the upstream lesson behind open notes and turns it into approved changes backed by eval cases, then updates README, CHANGELOG and version, and ships them after showing you the diff."
-argument-hint: "note <what happened> | digest [file] | run [skill|ids] [--propose-only] | log [skill] | method | (none: list open)"
+argument-hint: "note <what happened> | digest [file] | run [skill|ids] [--propose-only] | audit [folder] | log [skill] | method | (none: list open)"
 disable-model-invocation: true
 when: "\"/my:improve\", \"improve the kit\", \"what's open on the kit\""
 reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/files.md, rules/question-format.md, rules/model-choice.md, rules/local-data.md, rules/writing-for-agents.md, skills/writing/unslop/SKILL.md]
@@ -20,6 +20,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/
 | `note`        | Note: read `${CLAUDE_PLUGIN_ROOT}/skills/improve/note/SKILL.md` and follow it with the rest, the user's description |
 | `digest`      | Signals: read `${CLAUDE_PLUGIN_ROOT}/skills/improve/note/SKILL.md` and follow it with `signals` and the optional signals file that follows: it proposes notes and saves each only on the user's yes |
 | `run`         | Run: optional skill name, entry ids, `--propose-only`  |
+| `audit`       | Audit: the optional kit folder that follows            |
 | `log`         | Log: read `${CLAUDE_PLUGIN_ROOT}/skills/improve/log/SKILL.md` and follow it with the optional skill name that follows |
 | `method`      | Method: read `${CLAUDE_PLUGIN_ROOT}/skills/improve/method/SKILL.md` and follow it, to list the decision kinds |
 | none, `list`  | List open entries                                      |
@@ -30,6 +31,14 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/
 First run `${CLAUDE_PLUGIN_ROOT}/scripts/append-entry.sh check` on the log and on `<data root>/method.md`: ids held twice are listed in one line before the entries, with the offer to renumber the later ones.
 
 Show the open entries, grouped by skill and then by suspected cause. End with the count, and one line saying whether a run looks worthwhile. Three or more notes on the same cause are a strong signal; a single vague note may need more evidence first.
+
+## Audit
+
+Read-only: it reads the kit in the folder given, else `${CLAUDE_PLUGIN_ROOT}`, and writes nothing.
+
+1. **One agent per skill.** For each skill of that kit (each `SKILL.md` under its `skills/`), start a read-only agent (model: `rules/model-choice.md`), all at once, with the skill's folder and `${CLAUDE_PLUGIN_ROOT}/rules/writing-for-agents.md`: it applies that rule to the skill's text and returns each finding with the line it quotes, the part of the rule it breaks and the smallest fix.
+2. **Check each finding** against the line it quotes; drop what the text does not show.
+3. **Propose them as notes,** grouped by skill, one line each: the skill, what is wrong, the fix. Each note is saved only on the user's yes, through `${CLAUDE_PLUGIN_ROOT}/skills/improve/note/SKILL.md` with its text (`rules/core.md` § When the user questions or corrects the kit). A skill with no finding gets one line saying so.
 
 ## Run
 
@@ -75,4 +84,4 @@ Show the open entries, grouped by skill and then by suspected cause. End with th
 - Never edit `CONSTITUTION.md`, and never write "Amend constitution" in a commit message unless the user asked for the amendment.
 - Never write employer, project, ticket or colleague names into the kit source. The log and the project profiles may hold them, because they live outside the repository.
 
-Reply: with no argument, the open entries grouped by skill and suspected cause, their count and whether a run looks worthwhile; in a run, the proposals, then what changed and that it takes effect from the next session.
+Reply: with no argument, the open entries grouped by skill and suspected cause, their count and whether a run looks worthwhile; in an audit, the proposed notes by skill; in a run, the proposals, then what changed and that it takes effect from the next session.
