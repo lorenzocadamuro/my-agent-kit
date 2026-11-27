@@ -3,13 +3,13 @@ name: blast-radius
 description: "Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it's safe because of by running real code instead of writing it up. Use for 'blast radius of X', 'what could this break', or reviewing a small diff you don't trust."
 disable-model-invocation: true
 when: "\"/my:blast-radius\", \"blast radius of X\", \"what could this break\", reviewing a small diff you don't trust"
-reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/models.md, skills/writing/unslop/SKILL.md]
+reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/kit-data.md, rules/models.md, skills/writing/unslop/SKILL.md]
 ---
 Source: [pstack](https://github.com/cursor/plugins/tree/41e4009/pstack) `pstack/skills/blast-radius/SKILL.md` at `41e4009`, MIT (`pstack/LICENSE`), below its frontmatter, which read `name: blast-radius`, the description above and `disable-model-invocation: true`; adapted: `arena` is up to 3 fresh agents, `unslop` is the kit's `writing/unslop`, the sentence that starts its agents points to `rules/models.md`, the sentence that justified `arena` ("Different models catch different real bugs") and the companion line about `how` and `why` are gone.
 
 # Blast radius
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/models.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/models.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
 
 Find what a change breaks somewhere else, before it ships. Use for "blast radius of X", "what could this break", or reviewing a small diff you don't trust yet.
 
