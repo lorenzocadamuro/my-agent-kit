@@ -24,7 +24,7 @@ Personal and employer-specific material lives outside this repository, in the da
 
 Template: [skills/plan/profile/profile-template.md](../skills/plan/profile/profile-template.md). Its file is `projects/<owner>-<repo>.md`, the same slug as the state file's name (`acme-web` for `acme/web`).
 
-`/my:scope` creates the profile on first use. It reads the repository's agent instructions (`CLAUDE.md`, `AGENTS.md`), contributing guides, CI workflows and skills, then asks the user to confirm it. A skill that finds a profile wrong records a signal, and `/my:improve run` can correct it.
+`/my:scope` creates the profile on first use. It reads the repository's agent instructions (`CLAUDE.md`, `AGENTS.md`), contributing guides, CI workflows and skills, then asks the user to confirm it. A skill that finds a profile wrong records a signal, and `/my:improve run` can correct it. The exception: the facts its recorded sources state refresh at the start of `/my:scope`, `/my:run`, `/my:review` and `/my:sync` (`skills/plan/profile/SKILL.md` § Keeping it current).
 
 ## Reviewer profile
 

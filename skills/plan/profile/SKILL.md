@@ -21,6 +21,19 @@ Used by `/my:scope` when `<data root>/projects/<owner>-<repo>.md` does not exist
 5. **Package manifests** (`package.json` scripts, `pyproject.toml`, `Makefile`): targeted test commands per area.
 6. **Merge requirements:** `gh api repos/<o>/<r>/rules/branches/<default>` and `CODEOWNERS`.
 
+A new profile records the files it was built from in its Sources section: `${CLAUDE_PLUGIN_ROOT}/scripts/profile-fresh.sh --record <profile> <repository>` writes each one's git blob hash once the section lists them. Each fact the user answered is marked `(user)`.
+
+## Keeping it current
+
+At the start of `/my:scope`, `/my:run`, `/my:review` and `/my:sync`, once the profile is loaded:
+
+1. Run `${CLAUDE_PLUGIN_ROOT}/scripts/profile-fresh.sh <profile> <repository>`. It compares each recorded source with its blob on the repository's default branch (`origin/<default>`), never the PR head, and prints the changed ones. A profile without a Sources section gets one, with one line saying so.
+2. For each changed source, read it and update the facts of the profile it states (a command, a rule, a guide), each with a one-line report: `profile: <fact> is now <value> (from <source>)`.
+3. A fact marked `(user)`, and every fact of a profile whose Sources section says it was recorded from a profile without marks, changes only after the user's yes: ask, with the old and the new value, and keep the old one until then.
+4. Run it again with `--record`, so the hashes match what the profile now says.
+
+No source changed: say nothing.
+
 ## Rules
 
 - **Prefer commands the repository already documents** over ones you assemble yourself.

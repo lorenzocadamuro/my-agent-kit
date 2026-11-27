@@ -13,7 +13,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/
 
 **Activity:** follow `${CLAUDE_PLUGIN_ROOT}/rules/local-data.md` § The activity file.
 
-Load the project profile `<data root>/projects/<owner>-<repo>.md`. Without a profile, use only generic git steps, and say so.
+Load the project profile `<data root>/projects/<owner>-<repo>.md`. Without a profile, use only generic git steps, and say so. Then keep it current: `${CLAUDE_PLUGIN_ROOT}/skills/plan/profile/SKILL.md` § Keeping it current.
 
 ## Steps
 

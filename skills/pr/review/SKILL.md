@@ -39,7 +39,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/
    When `gh` is unavailable and the user pasted the diff and description, work from those.
 
 2. **Load the context:**
-   - the project profile (`<data root>/projects/<owner>-<repo>.md`), the guides it maps to the changed paths, and the repository rules that apply to what the change does (`rules/repository.md`: repository rules are inputs);
+   - the project profile (`<data root>/projects/<owner>-<repo>.md`), the guides it maps to the changed paths, and the repository rules that apply to what the change does (`rules/repository.md`: repository rules are inputs). Then keep it current: `${CLAUDE_PLUGIN_ROOT}/skills/plan/profile/SKILL.md` § Keeping it current.
    - reviewer profiles in `<data root>/reviewers/`, for the requested reviewers when the PR is the user's (to anticipate them), or as extra lenses on a colleague's PR;
    - an earlier analysis of this PR in `<data root>/reviews/`, with the head it was written at;
    - the reading from `/my:learn`, if one exists (`<data root>/reads/<repo>-pr<n>.md`, written at the current head). Use its promise and its before → after map as the yardstick, and its "questions to keep in mind" as your starting hypotheses. Do not repeat its explanations in the review. If the reading is for an older head, use it only for what the newer commits did not change.

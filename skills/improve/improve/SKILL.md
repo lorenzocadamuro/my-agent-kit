@@ -52,7 +52,7 @@ Read-only: it reads the kit in the folder given, else `${CLAUDE_PLUGIN_ROOT}`, a
    - **Name the missing question:** what should have been asked or checked at the start.
    - **Find the existing rule that should have covered it,** and say why it did not apply: not reached by the step where it happened, worded too narrowly, or worded for one case.
    - **Place the fix,** in this order of preference: refine, generalise or move that rule; merge it with a neighbour; add a new rule only when none covers the cause. Never word a fix around one case.
-   - **Project profile** (`<data root>/projects/<owner>-<repo>.md`) only for a fact about one repository: propose the change like any other, and apply it only after approval, with no version bump.
+   - **Project profile** (`<data root>/projects/<owner>-<repo>.md`) only for a fact about one repository: propose the change like any other, and apply it only after approval, with no version bump. The exception: the facts its recorded sources state refresh on their own (`skills/plan/profile/SKILL.md` § Keeping it current).
    - **No change** when the kit behaved as designed: explain why, and propose `wontfix`.
 4. **Propose,** following the question format: one question per group, with up to four options.
    - **Write for a reader who never saw the notes,** in the whole report, step 2's classification included: the explanation first, file paths, line numbers and rule names only after it, never in its place. It goes in chat, right before the questions; a report file is extra detail, never the explanation.

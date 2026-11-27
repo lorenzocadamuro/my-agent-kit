@@ -37,7 +37,7 @@ At the end of a round or a run, set `state`: `done` when the bar is met and the 
 ### 1. Load
 
 - **The plan:** `<worktree>/.plans/plan.md`. If it is missing, offer `/my:scope --adopt` (on the user's yes, read `${CLAUDE_PLUGIN_ROOT}/skills/plan/scope/SKILL.md` and follow it with `--adopt`); if it is not approved yet (its state file is `planning`, or `needs_you` for "Plan approval"), offer to finish `/my:scope` instead (on the user's yes, read `${CLAUDE_PLUGIN_ROOT}/skills/plan/scope/SKILL.md` and follow it), and run nothing. For a tiny task, the user may prefer a stub plan instead: it writes goal, boundary and bar from the request, asks only what the request leaves open, writes `Size: S` and takes the S lane.
-- **The project profile:** commands, the guides to load for the touched paths, the deep review tool.
+- **The project profile:** commands, the guides to load for the touched paths, the deep review tool. Then keep it current: `${CLAUDE_PLUGIN_ROOT}/skills/plan/profile/SKILL.md` § Keeping it current.
 - **New PR comments:** those created since the previous round (its `Comments read until` line), read with the query of `pr:comments` step 1 but without touching its state file. A real comment that the plan, the research or the last review should have caught is a signal (`rules/learning.md`: closing step). When comments need work, suggest `/my:comments` to turn them into this round's source. Comments a `pr:comments` file covers count as read when that file is the source: move `Comments read until` past them.
 - **CI:** read it through the app's PR status tool when one is available. Never poll.
 

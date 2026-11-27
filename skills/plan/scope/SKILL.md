@@ -27,7 +27,7 @@ Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/
 ### 1. Repository and project profile
 
 - **Find the repository:** the current directory's git top level and remote slug. If there is none, ask which one; for `--dry-run` without a repository, plan from the files at hand.
-- **Load `<data root>/projects/<owner>-<repo>.md`.** If it is missing, build it following [`skills/plan/profile/SKILL.md`](../profile/SKILL.md), show a summary, and ask the user to confirm or correct it before going on.
+- **Load `<data root>/projects/<owner>-<repo>.md`.** If it is missing, build it following [`skills/plan/profile/SKILL.md`](../profile/SKILL.md), show a summary, and ask the user to confirm or correct it before going on. Then keep it current: `${CLAUDE_PLUGIN_ROOT}/skills/plan/profile/SKILL.md` § Keeping it current.
 
 ### 2. Understand and classify
 

@@ -1,6 +1,6 @@
 # Project profile: <owner/name>
 
-Confirmed by the user on <date>. Correct it through `/my:improve` when it is wrong.
+Confirmed by the user on <date>. Correct it through `/my:improve` when it is wrong; the facts its sources state also refresh at the start of `/my:scope`, `/my:run`, `/my:review` and `/my:sync` (`skills/plan/profile/SKILL.md` § Keeping it current). A fact the user answered ends with `(user)`.
 
 ## Repository
 
@@ -56,3 +56,9 @@ Routing index for module rules, if any: <path>
 ## Known pitfalls
 
 - <short line each, with how to avoid it>
+
+## Sources
+
+The files this profile was built from, each with its git blob hash on `origin/<default>` (`scripts/profile-fresh.sh` compares them):
+
+- `<path>`: `<git blob hash>`
