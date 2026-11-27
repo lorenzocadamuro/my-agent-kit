@@ -33,6 +33,7 @@ Tools for growth. The kit can take in a skill from outside, audit its own text, 
 
 - New cases: `add-skill/new-skill-added`, `add-skill/same-job-asks`, `add-skill/constitution-conflict-stops`, `improve/audit-proposes-notes`, `scope/profile-refreshes-changed-source`, `scope/profile-answer-kept`.
 - `comments/human-review-explained` and `improve/run-flags-old-notes` graders also accept the new rule file names.
+- `improve/audit-proposes-notes` is kept as a guard that passes without its rule (D43, as the 23 guards of D29): it fails without the audit mode, but its mutant without § Audit still passes, because the model audits a skill's text without it.
 
 ## [8.1.0] - 2026-11-26
 
