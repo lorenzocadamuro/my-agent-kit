@@ -27,7 +27,6 @@ Checks the kit makes on it (`scripts/check.sh`):
 - the five frontmatter fields, `disable-model-invocation: true` (only `go` is model-invoked), a unique `name`;
 - `reads` and the "Read first:" line list the same files, and each exists;
 - a workflow ends with its `Reply:` line;
-- `evals/<name>/` holds at least one case (`eval-template.md`);
 - its folder is in the `skills` array of `.claude-plugin/plugin.json`, and `scripts/index.sh --write` has added it to `skills/go/index.md` and the README skill list.
 
 A workflow also ends with the closing step (`rules/learning.md` § Closing step of every skill), unless that section exempts it. Text copied under a license keeps its notice in `THIRD_PARTY_NOTICES.md`.
