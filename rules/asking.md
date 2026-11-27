@@ -29,7 +29,7 @@ Every decision put to the user follows this format. A question the user cannot a
 
 ## When the user dismisses the questions or asks back
 
-A dismissed batch, an answer like "I don't understand", or a free answer that holds a question or a doubt means "explain first", and is a signal. Answer in chat with the context the user is missing, and end the turn: no new question, with the tool or in text, until the user says it is clear. Then ask again with the tool, introduced as in § Shape; a note proposal waits for that question ([core.md](core.md) § When the user questions or corrects the kit). Never fall back to options in plain text.
+A dismissed batch, an answer like "I don't understand", or a free answer that holds a question or a doubt means "explain first", and is a signal. Answer in chat with the context the user is missing, and end the turn: no new question, with the tool or in text, until the user says it is clear. Then ask again with the tool, introduced as in § Shape; after an "I don't understand", a second question in the same batch proposes the note ([core.md](core.md) § When the user questions or corrects the kit). Never fall back to options in plain text.
 
 ## After the answer
 
