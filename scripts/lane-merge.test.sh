@@ -85,4 +85,21 @@ expect "a dirty tree is refused" "$(bash "$script" feature3 > /dev/null 2>&1; ec
 git checkout -q -- y.txt
 expect "a missing lane branch is refused" "$(bash "$script" feature3 d > /dev/null 2>&1; echo $?)" "2"
 
+# A merge that fails without a conflict: a commit-msg hook refuses the merge commit, leaving MERGE_HEAD.
+git checkout -q -b feature4 main
+git worktree add -q -b feature4-lane-a "$tmp/l4-a" feature4; printf 'z\n' > "$tmp/l4-a/z.txt"; git -C "$tmp/l4-a" add . && git -C "$tmp/l4-a" commit -q -m z
+mkdir -p .git/hooks && printf '#!/bin/sh\necho "refused by hook" >&2\nexit 1\n' > .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg
+bash "$script" feature4 a > "$tmp/out" 2>&1
+expect "a refused merge commit stops the merge" "$?" "1"
+expect "it is reported as a failed merge, not a conflict" "$(grep -c '^merge failed: lane a' "$tmp/out") $(grep -c '^conflict:' "$tmp/out")" "1 0"
+expect "the failed merge is aborted" "$(git rev-parse -q --verify MERGE_HEAD > /dev/null && echo yes || echo no)" "no"
+expect "the tree is clean after the failed merge" "$(git status --porcelain | wc -l | tr -d ' ')" "0"
+rm .git/hooks/commit-msg
+
+# A merge that fails before it starts (unrelated histories): no MERGE_HEAD, so nothing to abort.
+git branch -q feature4-lane-b "$(git commit-tree -m unrelated "$(git mktree < /dev/null)")"
+bash "$script" feature4 b > "$tmp/out" 2>&1
+expect "a merge that cannot start stops with exit 1" "$?" "1"
+expect "it is reported as a failed merge" "$(grep -c '^merge failed: lane b' "$tmp/out")" "1"
+
 exit "$fail"

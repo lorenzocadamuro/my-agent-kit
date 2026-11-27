@@ -77,6 +77,13 @@ plan b '`src/redeem.py`' A1 none; round
 expect "a file shared by two lanes is refused" "$(run)" "1"
 expect "the refusal names the shared file" "$(has err 'src/redeem.py')" "yes"
 
+plan b '`src/redeem.py:120`' A1 none; round
+expect "a file with a :line suffix shared by two lanes is refused" "$(run)" "1"
+expect "that refusal names the file without the suffix" "$(has err 'and src/redeem.py in lane b')" "yes"
+
+plan b '`src/redeem.py:12-40`' A1 none; round
+expect "a file with a :line-line suffix shared by two lanes is refused" "$(run)" "1"
+
 plan b '`src/`' A1 none; round
 expect "a folder that holds another lane's file is refused" "$(run)" "1"
 

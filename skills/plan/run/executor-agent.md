@@ -38,4 +38,4 @@ When you stop, finish what is safe, commit it, and return the summary with your 
 
 ## Return
 
-Return the summary as text, in the shape of `${CLAUDE_PLUGIN_ROOT}/skills/plan/run/round-summary-template.md`. Include one row for **every** item (done, checked, incomplete, skipped or stopped), every decision taken alone with its flag, and the environment you left behind. Do not write report files; the coordinator writes them.
+Return the summary as text, in the shape of `${CLAUDE_PLUGIN_ROOT}/skills/plan/run/round-summary-template.md`. Include one row for **every** item of your lane (done, checked, incomplete, skipped or stopped), every decision taken alone with its flag, and the environment you left behind. Do not write report files; the coordinator writes them.

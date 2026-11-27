@@ -7,7 +7,7 @@ Input: a JSON object of facts, from a file or `-` for stdin. A fact left out did
   driftOverBudget    step 2's drift gate
   decisions          [{"kind": "K7", "flag": "boundary", "handedOver": false}], decisions for the user
   verificationFailed, conflictsWithMain, laneConflict, redCiAtStart, readyForReview,
-  pushRejected, pushDisabled, executorStopped   true or false
+  pushRejected, pushDisabled, executorStopped, laneMergeFailed   true or false
   newComments        PR comments not covered by the source;  openQuestions  questions still open
   toPublish          what waits to be published (the draft-PR question, replies, ticket changes)
   consecutiveRounds  rounds this run has done in a row
@@ -18,7 +18,7 @@ Usage: stop-policy.py <facts.json | ->
 import json, sys
 
 BOOLS = {"driftOverBudget", "verificationFailed", "conflictsWithMain", "laneConflict", "redCiAtStart",
-         "readyForReview", "pushRejected", "pushDisabled", "executorStopped"}
+         "readyForReview", "pushRejected", "pushDisabled", "executorStopped", "laneMergeFailed"}
 INTS = {"newComments", "openQuestions", "consecutiveRounds"}
 OTHER = {"gate", "gateAnswer", "decisions", "toPublish"}
 ROUND_CAP = 5
@@ -71,6 +71,8 @@ def decide(f):
         return "stop: Push rejected"
     if f.get("executorStopped"):
         return "stop: Executor stopped"
+    if f.get("laneMergeFailed"):  # lane-merge.sh "merge failed": no conflict, yet the lane did not merge
+        return "stop: Executor stopped (lane merge failed)"
     if f.get("openQuestions", 0) > 0:
         return "stop: Open question"
     return "go: round succeeded" + "".join(f"; {a}" for a in alone)

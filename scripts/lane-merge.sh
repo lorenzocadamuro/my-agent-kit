@@ -2,8 +2,9 @@
 # Merges a round's lane branches into the work branch once every lane has finished (rules/parallel.md):
 # in lane order, each with `git merge --no-ff` (never a rebase, so every lane commit stays on HEAD for
 # verify-round.sh). A lane already merged is skipped, so a second call resumes from the first unmerged
-# lane. At the first conflict it runs `git merge --abort`, leaves a clean tree, names the lane and its
-# files, and exits 1.
+# lane. At the first conflict it runs `git merge --abort`, leaves a clean tree, prints
+# "conflict: lane <id>" with its files, and exits 1. A merge that fails without unmerged paths (a hook
+# refused it, a locked index) prints "merge failed: lane <id>", aborted when MERGE_HEAD exists, exit 1.
 # Usage: lane-merge.sh <work branch> [<lane id>...]   (run in the work branch's worktree; without ids,
 #        every local branch <work branch>-lane-<id>, in id order)
 set -euo pipefail
@@ -33,8 +34,12 @@ for id in "${ids[@]}"; do
     echo "merged: lane $id ($branch)"
   else
     files="$(git diff --name-only --diff-filter=U | paste -sd, -)"
-    git merge --abort
-    echo "conflict: lane $id ($branch) in ${files:-unknown files}; merge aborted, tree clean"
+    if git rev-parse -q --verify MERGE_HEAD > /dev/null; then git merge --abort; fi
+    if [[ -n "$files" ]]; then
+      echo "conflict: lane $id ($branch) in $files; merge aborted, tree clean"
+    else
+      echo "merge failed: lane $id ($branch), with no conflict; merge aborted"
+    fi
     exit 1
   fi
 done

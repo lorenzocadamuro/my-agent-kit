@@ -35,7 +35,7 @@ def paths(value):
         found = [t for t in re.split(r"[,\s]+", value.split("·")[0]) if "/" in t or "." in t]
     out = set()
     for p in found:
-        p = p.rstrip(":,")
+        p = re.sub(r":\d+(-\d+)?$", "", p.rstrip(":,"))
         if p.endswith("()"):
             continue
         p = os.path.normpath(p)

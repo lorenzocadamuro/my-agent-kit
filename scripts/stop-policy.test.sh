@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tests stop-policy.py, one row per rule of /my:run § Run (skills/plan/run/SKILL.md): the 9 stop
 # entries, a decision of a handed-over kind, the success definition, a gate answer, drift over budget,
-# a lane merge conflict, and a plain go. Each row encodes the 7.3.0 rule unchanged.
+# a lane merge conflict, a lane merge that failed otherwise, and a plain go. Each row encodes the 7.3.0 rule unchanged.
 # Usage: bash scripts/stop-policy.test.sh
 set -uo pipefail
 
@@ -41,6 +41,7 @@ row "a gate answer that ends the run" "stop: Run ended by the answer" '{"gate": 
 # Drift over budget is step 2's gate; a lane merge conflict is the stop "conflicts".
 row "drift over budget" "stop: Drift over budget" '{"driftOverBudget": true}'
 row "a lane merge conflict" "stop: Lane conflict" '{"laneConflict": true}'
+row "a lane merge that failed without a conflict" "stop: Executor stopped (lane merge failed)" '{"laneMergeFailed": true}'
 
 # The first matching entry wins, in the stop list's order.
 row "the first entry wins" "stop: Verification failed" '{"verificationFailed": true, "newComments": 1, "consecutiveRounds": 5}'

@@ -84,7 +84,7 @@ A step is ready only when every label under it is filled; `none` with its reason
   - Pins: <each invariant or boundary clause the step touches: the test that fails when that clause alone breaks, and the input it must let through>
   - Estimate: <production lines, as a number>
   - Lanes: <optional: a, b or c, at most 3 lanes; a step without it is in lane a>
-  - Depends on: <optional: the ids of the steps it needs (part letter and position, B2), each in its own lane>
+  - Depends on: <optional: the ids of the steps it needs (part letter and position, B2), in the same lane as this step>
 
 ## Verification [always]
 
