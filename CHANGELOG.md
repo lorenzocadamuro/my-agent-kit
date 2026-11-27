@@ -24,9 +24,9 @@ The evals become a smoke set that runs once at each release. The kit keeps the 1
 
 ### Smoke set
 
-Measured with one run per case (no rerun needed), in 389 s, on the release's head before this entry; this entry and the version change no file a case reads.
+Measured with one run per case (`add-skill/same-job-asks` reran twice after a first failure and passed 2 of 3), in 409 s, on commit 03cd84c; the commit after it changes only this entry, which no grader checks.
 
-Smoke set: 18 of 18, $10.94
+Smoke set: 18 of 18, $11.88
 
 ## [8.3.0] - 2026-11-27
 
