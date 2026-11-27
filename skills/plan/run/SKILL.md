@@ -131,7 +131,7 @@ The run repeats steps 1–9 without the user, round after round. Each round repo
 
 - **A round succeeds** when verification passed, the push is done or disabled, and no question is open.
 - **After a round that succeeds,** start the next one at once: the block findings in `.plans/round-<N>-review.md` first, then the next unfinished part in plan order. Finishing a part does not stop the run, unless the plan puts a gate there.
-- **Stop the run** at the first of the entries below. `${CLAUDE_PLUGIN_ROOT}/scripts/stop-policy.py` decides it: give it the round's facts as JSON, and it prints `stop` with the entry that holds, or `go` with the decisions taken alone:
+- **Stop the run** at the first of the entries below. `${CLAUDE_PLUGIN_ROOT}/scripts/stop-policy.py` decides it: give it the round's facts as JSON, with every decision the summary lists as taken alone (its kind, its flag, whether its kind is handed over, whether the user already answered it), and it prints `stop` with the entry that holds, or `go`, then the decisions taken alone:
   - a gate the plan or `rules/core.md` names, and any decision for the user (boundary, a repository rule, someone else's code), unless the method lets you decide it alone (`rules/learning.md`: the method): then decide it and list it;
   - failed verification;
   - conflicts with main, or between lanes (`rules/parallel.md`);
