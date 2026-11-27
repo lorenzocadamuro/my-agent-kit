@@ -6,6 +6,7 @@ Input: a JSON object of facts, from a file or `-` for stdin. A fact left out did
                      {"name": …, "kind": "K12", "handedOver": true} when the method may decide its kind
   gateAnswer         "go on" or "end": the user's answer to that gate
   driftOverBudget    step 2's drift gate: true, or {"kind": "K127", "handedOver": true}
+  driftAnswer        "go on" or "end": the user's answer to drift over budget (a gateAnswer does not clear it)
   decisions          every decision taken alone in the round, from the summary:
                      [{"kind": "K7", "flag": "none", "handedOver": false, "answered": false}];
                      flag is none, boundary, rule, other's code or relaxed check (a relaxed check or
@@ -26,7 +27,7 @@ import json, sys
 BOOLS = {"verificationFailed", "conflictsWithMain", "laneConflict", "redCiAtStart",
          "readyForReview", "pushRejected", "pushDisabled", "executorStopped", "laneMergeFailed"}
 INTS = {"newComments", "openQuestions", "consecutiveRounds"}
-OTHER = {"gate", "gateAnswer", "driftOverBudget", "decisions", "toPublish"}
+OTHER = {"gate", "gateAnswer", "driftOverBudget", "driftAnswer", "decisions", "toPublish"}
 FLAGS = {"none", "boundary", "rule", "other's code", "relaxed check"}
 NEVER_HANDED_OVER = {"boundary", "rule", "other's code"}
 ROUND_CAP = 5
@@ -46,21 +47,21 @@ def decide(f):
         else:
             alone.append(f"decided alone ({d.get('kind', '?')}, flag none)")
     gate, drift = f.get("gate"), f.get("driftOverBudget")
-    for g in (gate, drift):
-        if isinstance(g, dict) and g.get("handedOver"):
+    for g, answer in ((gate, f.get("gateAnswer")), (drift, f.get("driftAnswer"))):
+        if isinstance(g, dict) and g.get("handedOver") and not answer:  # an answered gate is the user's
             alone.append(f"decided alone (handed over: {g.get('kind', '?')})")
     return reason(f, gate, drift, needed) + "".join(f"; {a}" for a in alone)
 
 
 def reason(f, gate, drift, needed):
-    answered = f.get("gateAnswer")
-    if answered == "end":
+    answered, drift_answered = f.get("gateAnswer"), f.get("driftAnswer")
+    if "end" in (answered, drift_answered):
         return "stop: Run ended by the answer"
     # 1. A gate the plan or rules/core.md names (drift over budget is step 2's), and any decision for the
     #    user, unless the method lets the run decide its kind alone: then it is decided and listed.
     if gate and answered != "go on" and not (isinstance(gate, dict) and gate.get("handedOver")):
         return f"stop: {gate['name'] if isinstance(gate, dict) else gate}"
-    if drift and answered != "go on" and not (isinstance(drift, dict) and drift.get("handedOver")):
+    if drift and drift_answered != "go on" and not (isinstance(drift, dict) and drift.get("handedOver")):
         return "stop: Drift over budget"
     if needed:
         return needed
@@ -109,8 +110,8 @@ def check(f):
             return f"{k} must be true or false"
         if k in INTS and (isinstance(v, bool) or not isinstance(v, int)):
             return f"{k} must be a number"
-        if k == "gateAnswer" and v not in ("go on", "end"):
-            return "gateAnswer must be \"go on\" or \"end\""
+        if k in ("gateAnswer", "driftAnswer") and v not in ("go on", "end"):
+            return f"{k} must be \"go on\" or \"end\""
         if k == "decisions" and not (isinstance(v, list) and all(isinstance(d, dict) for d in v)):
             return "decisions must be a list of objects"
         if k == "decisions":

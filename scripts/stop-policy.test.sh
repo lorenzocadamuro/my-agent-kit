@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Tests stop-policy.py, one row per rule of /my:run § Run (skills/plan/run/SKILL.md): the 9 stop
-# entries, the decision rule of 7.3.0 with hand-overs, the success definition, a gate answer, drift over budget,
+# entries, the decision rule of 7.3.0 with hand-overs, the success definition, a gate answer, drift over budget and its answer,
 # a lane merge conflict, a lane merge that failed otherwise, and a plain go. Each row encodes the 7.3.0 rule unchanged.
 # Usage: bash scripts/stop-policy.test.sh
 set -uo pipefail
@@ -54,6 +54,13 @@ row "a rejected push stops even when pushing is off for the run" "stop: Push rej
 # After a gate answer, go on unless the answer ends the run.
 row "a gate answer goes on" "go: round succeeded" '{"gate": "Drift over budget", "gateAnswer": "go on"}'
 row "a gate answer that ends the run" "stop: Run ended by the answer" '{"gate": "Plan approval", "gateAnswer": "end"}'
+row "an answered handed-over gate is not listed as decided alone" "go: round succeeded" '{"gate": {"name": "Size gate", "kind": "K12", "handedOver": true}, "gateAnswer": "go on"}'
+
+# Drift over budget has its own answer: a gate answer does not clear it.
+row "a drift answer goes on" "go: round succeeded" '{"driftOverBudget": true, "driftAnswer": "go on"}'
+row "a drift answer that ends the run" "stop: Run ended by the answer" '{"driftOverBudget": true, "driftAnswer": "end"}'
+row "a gate answer alone leaves drift over budget" "stop: Drift over budget" '{"gate": "Plan approval", "gateAnswer": "go on", "driftOverBudget": true}'
+row "an answered handed-over drift is not listed as decided alone" "go: round succeeded" '{"driftOverBudget": {"kind": "K127", "handedOver": true}, "driftAnswer": "go on"}'
 
 # Drift over budget is step 2's gate; a lane merge conflict is the stop "conflicts".
 row "drift over budget" "stop: Drift over budget" '{"driftOverBudget": true}'
@@ -71,6 +78,7 @@ expect_err() { printf '%s' "$2" | python3 "$script" - > /dev/null 2>&1; local rc
 expect_err "an unknown fact is refused" '{"verificationFaild": true}'
 expect_err "a fact of the wrong type is refused" '{"newComments": "two"}'
 expect_err "a gate answer other than go on or end is refused" '{"gateAnswer": "maybe"}'
+expect_err "a drift answer other than go on or end is refused" '{"driftAnswer": "maybe"}'
 expect_err "input that is not JSON is refused" 'stop'
 expect_err "an unknown flag is refused" '{"decisions": [{"kind": "K3", "flag": "bondary"}]}'
 expect_err "a gate object without a name is refused" '{"gate": {"kind": "K12", "handedOver": true}}'
