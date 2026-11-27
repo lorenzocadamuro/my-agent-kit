@@ -11,10 +11,12 @@ Tools for growth. The kit can take in a skill from outside, audit its own text, 
 - C8: `/my:add-skill` brings a skill into the kit from a pasted text or a link. It checks the candidate against the constitution first and stops, naming the clause, when it breaks one; `scripts/skill-overlap.sh` ranks the kit's skills by shared trigger words, and when one already does the same job it asks whether to integrate, improve or add. Otherwise it adapts the skill to `skill-template.md`, with a source line and an eval case from `eval-template.md`, makes `check.sh` pass, and ships it as `/my:improve run` does, after the diff and the user's yes. Its note id is `improve:add-skill`.
 - C7: `/my:improve audit [folder]` starts one read-only agent per skill of the kit (the plugin's own, or the one in the folder), each applying `rules/writing-for-agents.md` to that skill's text; the findings come back as proposed notes, saved only on the user's yes.
 - `rules/learning.md` § The kit's improvement loop names `/my:add-skill` among the ways the kit changes.
+- `add-skill` runs its overlap check on the kit at the plugin root, since the kit worktree does not exist yet, and its activity sidecar points to improve's Activity paragraph. `improve`'s description and `when` name `audit`.
 
 ### Profile (`profile`, `scope`, `run`, `review`, `sync`)
 
 - C9: a profile records the files it was built from, each with its git blob hash, in a Sources section, and marks the user's own answers `(user)`. At the start of `/my:scope`, `/my:run`, `/my:review` and `/my:sync`, `scripts/profile-fresh.sh` compares the hashes with the repository's default branch (`origin/<default>`, never the PR head; without git, the files in the folder in git's blob form). A fact a changed source states is refreshed with a one-line report; a fact the user answered, and every fact of a profile written before 8.2.0, changes only after the user's yes. A profile without Sources gets them recorded on its first check, with one line. The procedure lives in `skills/plan/profile/SKILL.md` § Keeping it current; `profile-template.md`, `rules/kit-data.md` and `improve` name it as the exception to "a profile changes through `/my:improve`".
+- The hashes are recorded again (`--record`) only once every question on a `(user)` fact has its answer; a run that cannot ask records nothing and says so. A removed source keeps its old hash through `--record`, so the next check reports it again until the profile is updated. In a git repository without an `origin/<default>` ref, `profile-fresh.sh` prints `no default-branch ref: <ref>` on stderr, exits 2 and compares nothing, and the skill tells the user in one sentence.
 
 ### Rules (C11, C16)
 
@@ -23,7 +25,9 @@ Tools for growth. The kit can take in a skill from outside, audit its own text, 
 - `rules/model-choice.md` and the `rules/core.md` section "Which model an agent runs on" become `rules/models.md`.
 - `rules/local-data.md` and `rules/files.md` become `rules/kit-data.md`.
 - Each section moved verbatim; a pointer the merge made point into its own file was removed or became an in-file reference. Every path follows.
-- Each skill's `reads` and "Read first:" list only the rules it uses: every workflow keeps `core`, `learning` and `verifying`, a skill that starts agents keeps `worker`, and any other rule stays when the skill's text or a file it opens names it or relies on one of its sections. `go`, `unslop` and `wait-what` keep theirs. `log` and `method` now read 4 rule files instead of 10; `note`, `profile` and `learn` 5; `sync` and `comments` 6.
+- Each skill's `reads` and "Read first:" list only the rules it uses: every workflow keeps `core`, `learning` and `verifying`, a skill that starts agents keeps `worker`, and any other rule stays when the skill's text or a file it opens names it or relies on one of its sections. `go`, `unslop` and `wait-what` keep theirs. `log` and `method` now read 4 rule files instead of 10, `note` 5 instead of 10, `sync` 6 instead of 8, `profile` and `learn` 6 instead of 7, and `comments` keeps its 8.
+- Each skill that relies on a merged section reads its file: `scope`, `improve`, `add-skill` and `learn` read `rules/reviewing.md` (block findings, the lenses), `profile` and `comments` read `rules/asking.md`, `comments` reads `rules/plan-contract.md` (out of scope, the plan the kit carries), and `add-skill` reads `rules/models.md` and `rules/kit-data.md` (improve's steps start an agent and write the activity sidecar). `blast-radius` reads `rules/verifying.md`, `rules/worker.md` and `rules/models.md`, and the sentence that starts its agents points to `rules/models.md`.
+- `rules/models.md` loses the section the merge appended under its own title: it repeated the opening paragraph (the table names each agent's model, an agent it does not name keeps the session's, no skill names a model). `rules/kit-data.md` is titled "Kit data".
 
 ### Scripts (C18)
 
@@ -33,6 +37,8 @@ Tools for growth. The kit can take in a skill from outside, audit its own text, 
 
 - New cases: `add-skill/new-skill-added`, `add-skill/same-job-asks`, `add-skill/constitution-conflict-stops`, `improve/audit-proposes-notes`, `scope/profile-refreshes-changed-source`, `scope/profile-answer-kept`.
 - `comments/human-review-explained` and `improve/run-flags-old-notes` graders also accept the new rule file names.
+- `review/review-judges-pr-as-is`: the grader `not-conditioned-on-base` needs a word boundary after "is in", so "is information for the author" no longer matches; a review that waits for the base still fails.
+- `scope/profile-answer-kept` gains `hashes-kept`: the changed source keeps its recorded hash while the question on the user's answer waits.
 - `improve/audit-proposes-notes` is kept as a guard that passes without its rule (D43, as the 23 guards of D29): it fails without the audit mode, but its mutant without § Audit still passes, because the model audits a skill's text without it.
 
 ## [8.1.0] - 2026-11-26
