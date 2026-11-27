@@ -34,11 +34,12 @@ for id in "${ids[@]}"; do
     echo "merged: lane $id ($branch)"
   else
     files="$(git diff --name-only --diff-filter=U | paste -sd, -)"
-    if git rev-parse -q --verify MERGE_HEAD > /dev/null; then git merge --abort; fi
+    aborted=""
+    if git rev-parse -q --verify MERGE_HEAD > /dev/null; then git merge --abort; aborted="; merge aborted"; fi
     if [[ -n "$files" ]]; then
       echo "conflict: lane $id ($branch) in $files; merge aborted, tree clean"
     else
-      echo "merge failed: lane $id ($branch), with no conflict; merge aborted"
+      echo "merge failed: lane $id ($branch), with no conflict$aborted"
     fi
     exit 1
   fi
