@@ -47,8 +47,9 @@ claude plugin eval . --no-publish --runs 1 --trust-plugin --ablation none \
   --allow-tools Bash Write Edit --scaffold -j 4 --json --keep-temp
 ```
 
-Always local: without `--no-publish`, the report is uploaded to claude.ai. `--ablation none` skips the no-plugin baseline, which doubles the cost. `--case '<glob>'` runs one case (it takes one glob; repeating the flag keeps only the last one). Results land in `evals/results/` (git-ignored).
+Always local: without `--no-publish`, the report is uploaded to claude.ai. `--ablation none` skips the no-plugin baseline, which doubles the cost. `--case '<case>'` runs one case: it matches the case's name, the `name:` of its `case.yaml` (keep it equal to the folder's name) or the folder's name for a `prompt.md` case; it is never `<skill>/<case>`. It takes one glob; repeating the flag keeps only the last one. A new case takes a name that no line of § Smoke set ends in (`/<case>`), so the filter selects only it. Results land in `evals/results/` (git-ignored).
 
+- **A run counts** only when the JSON's `cases` lists the case (by `name`, with `dir` `evals/<skill>/<case>`) and its runs (`arms.with`) have no `error`; it failed when `passed` is false. Otherwise, whether no case matched (`No eval cases found …`, exit 1) or the run errored (a failing `setup.sh`, a harness error), the case neither passed nor failed: fix the cause and run again.
 - **The rerun rule.** Each case runs once; a case that passes has passed. A case that fails runs twice more and passes at 2 of 3. This overrides `rules/verifying.md` § Verify, don't assume (a noisy check "runs 2–3 times before it is called passed or failed") for a passing smoke case only: a choice made when the smoke set replaced the full suite, for its cost, and because each of the 18 passed every recorded run.
 - **A case that fails on unchanged text in two releases leaves the set:** remove its folder and its line. Its grader is never widened to make it pass.
 
@@ -59,7 +60,7 @@ Only for a behaviour a small fixture can reach. Otherwise there is no case: a sc
 The mutant is the kit's text without the behaviour: for a new rule, the text before the change; for an existing rule, the text with the rule removed from every place that states it.
 
 1. Write the case.
-2. Run it on the mutant. Keep it only if it fails there; if it passes, delete it and let the review check the wording.
+2. Run it on the mutant. Keep it only if it ran and failed there (§ Running says what counts as a run); if it passes, delete it and let the review check the wording.
 3. Run it on the changed text, by the rerun rule.
 4. Add its line to § Smoke set, in the same commit as its folder: `scripts/check.sh` fails without it.
 
