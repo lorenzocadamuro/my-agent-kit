@@ -2,6 +2,32 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [8.4.0] - 2026-11-27
+
+The evals become a smoke set that runs once at each release. The kit keeps the 18 cases proven to need their rule, a new case enters only when it fails on the kit without its rule, and a kit change no longer pays for a full suite: the set costs about 8 minutes and $12 per release.
+
+### Evals
+
+- 93 eval cases leave `evals/`, with the 8 skill folders they leave empty; git history keeps them (tag `v8.3.0`). The 18 cases kept are unchanged.
+- `evals/README.md` lists the 18 in § Smoke set and holds the rules: the command, run once at each release before the ship question (§ Running); the rerun rule (a case runs once; a failing case runs twice more and passes at 2 of 3), which overrides `rules/verifying.md` for a passing smoke case only; a case that fails on unchanged text in two releases leaves the set, and its grader is never widened; a new case only for a behaviour a small fixture can reach, kept only if it fails on its mutant (the kit's text without the behaviour), with fact graders only (§ A new case); and the release's CHANGELOG line.
+- `.claude/CLAUDE.md` and the README say the same: a behaviour change a small fixture can reach gets a smoke case, written first, whose mutant fails; other behaviour changes get a script test, or the review checks the wording; before each release, the smoke set passes.
+
+### Improve (`improve`, `add-skill`)
+
+- `/my:improve run` writes a case only when a small fixture reaches the problem, and keeps it, with its line in § Smoke set, only if it fails on the text before the change; otherwise it says so in one line and the fresh review checks the wording. Its gates run the new case, if any, instead of the touched skills' evals. Before the ship question it runs the smoke set once on the worktree's head (after merging a moved `main`, so one run covers both), commits the smoke line in the version's CHANGELOG entry and shows it with the diff.
+- `/my:add-skill` gives a new skill a smoke case only when a small fixture reaches its main promise and the case fails on the kit without the skill; otherwise it says so and the fresh review checks the skill's wording. `eval-template.md` says the same and uses the rerun rule instead of "2 runs of 3"; `skill-template.md` no longer lists an eval folder among the checks. It runs the smoke set before the ship question, as `/my:improve run` does.
+
+### Scripts
+
+- `check.sh` I3: an eval folder still names a skill, but a skill no longer needs one. Instead, the case folders under `evals/` and the lines of § Smoke set in `evals/README.md` agree both ways; run output (`results/`, `runs/`) is not a case. `check.test.sh` covers a case not listed, a listed case without a folder, a skill without an eval folder, and a results folder.
+- `scripts/affected.sh` and its test are removed: no step reads the list of cases a change reaches any more.
+
+### Smoke set
+
+Measured with one run per case (no rerun needed), in 389 s, on the release's head before this entry; this entry and the version change no file a case reads.
+
+Smoke set: 18 of 18, $10.94
+
 ## [8.3.0] - 2026-11-27
 
 Runs write code in parallel lanes, and scripts hold the facts. A round whose plan steps name disjoint lanes runs up to three executors at once, each in its own worktree, and merges them back; the state file and the stop list are written and decided by scripts instead of by hand.
