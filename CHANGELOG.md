@@ -28,7 +28,7 @@ The accepted behaviour changes of the restructure. `/my:run` always runs the who
 
 ### Writing
 
-- C5: `/my:unslop`, from pstack (MIT), verbatim with one source line. The kit applies it to its replies to the user and to text for other people (reports, questions, review and reply drafts, PR text), on top of the user's style, which wins where they disagree; working texts are out of its scope (`rules/core.md` § Language). `review`, `comments`, `run` and `improve` read it.
+- C5: `/my:unslop`, from pstack (MIT), verbatim with one source line. The kit applies it to its replies to the user and to text for other people (reports, questions, review and reply drafts, PR text), on top of the user's style, which wins where they disagree; review and reply drafts stay working texts in English, and the other working texts are out of its scope (`rules/core.md` § Language). `review`, `comments`, `run` and `improve` read it.
 - C6: `/my:wait-what`, from mattpocock/skills (MIT), verbatim, plus one line that adds the glossary `/my:learn` keeps.
 - C7: `rules/writing-for-agents.md` holds mattpocock/skills' `writing-for-agents` and its `SKILL-MECHANICS.md` (MIT), verbatim, their links made in-file anchors; `improve` reads it.
 - The lines that said the kit sets no form now say no form beyond the `unslop` rules: `rules/core.md`, `note`, the README and `no-form-rules.test.sh`, whose guard still passes with no new allowed line.
@@ -36,7 +36,7 @@ The accepted behaviour changes of the restructure. `/my:run` always runs the who
 
 ### Review (`pr`)
 
-- C10: `/my:blast-radius`, from pstack (MIT), with three adaptations: `arena` becomes up to 3 fresh agents with the same question, `unslop` the kit's `writing/unslop`, and the line about the companion skills `how` and `why` is gone.
+- C10: `/my:blast-radius`, from pstack (MIT), with four adaptations: `arena` becomes up to 3 fresh agents with the same question, and the sentence that justified it, "Different models catch different real bugs", is gone, since kit agents run on the session model (`rules/model-choice.md`); `unslop` becomes the kit's `writing/unslop`; the line about the companion skills `how` and `why` is gone. It reads `rules/learning.md`, whose closing step it follows; `unslop` and `wait-what` join the skills exempt from that step.
 
 ### Status mod (`my-status` 1.2.0)
 

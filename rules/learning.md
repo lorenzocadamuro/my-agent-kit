@@ -8,7 +8,7 @@
 
 ## Closing step of every skill
 
-The kit learns while it is used. Every skill collects signals during the work and lists them in its end report; only `/my:note`, `/my:improve` list, `/my:log` and `/my:method` are exempt.
+The kit learns while it is used. Every skill collects signals during the work and lists them in its end report; only `/my:note`, `/my:improve` list, `/my:log`, `/my:method`, `/my:unslop` and `/my:wait-what` are exempt.
 
 - **A signal is a sign that the kit's directives missed something:**
   - the user answers with a free answer ("Other") or dismisses a question. Record why: the question was unclear, the proposed method did not fit, or the user added an instruction of their own;

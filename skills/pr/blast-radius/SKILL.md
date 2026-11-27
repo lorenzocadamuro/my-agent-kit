@@ -3,13 +3,13 @@ name: blast-radius
 description: "Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it's safe because of by running real code instead of writing it up. Use for 'blast radius of X', 'what could this break', or reviewing a small diff you don't trust."
 disable-model-invocation: true
 when: "\"/my:blast-radius\", \"blast radius of X\", \"what could this break\", reviewing a small diff you don't trust"
-reads: [rules/core.md, skills/writing/unslop/SKILL.md]
+reads: [rules/core.md, rules/learning.md, skills/writing/unslop/SKILL.md]
 ---
-Source: [pstack](https://github.com/cursor/plugins/tree/41e4009/pstack) `pstack/skills/blast-radius/SKILL.md` at `41e4009`, MIT (`pstack/LICENSE`), below its frontmatter, which read `name: blast-radius`, the description above and `disable-model-invocation: true`; adapted: `arena` is three fresh agents, `unslop` is the kit's `writing/unslop`, the companion line about `how` and `why` is gone.
+Source: [pstack](https://github.com/cursor/plugins/tree/41e4009/pstack) `pstack/skills/blast-radius/SKILL.md` at `41e4009`, MIT (`pstack/LICENSE`), below its frontmatter, which read `name: blast-radius`, the description above and `disable-model-invocation: true`; adapted: `arena` is up to 3 fresh agents, `unslop` is the kit's `writing/unslop`, the sentence that justified `arena` ("Different models catch different real bugs") and the companion line about `how` and `why` are gone.
 
 # Blast radius
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
 
 Find what a change breaks somewhere else, before it ships. Use for "blast radius of X", "what could this break", or reviewing a small diff you don't trust yet.
 
@@ -38,7 +38,7 @@ Step 4 is usually one small script that imports the same library the app ships a
 3. Look where grep stops. Read the source of the library you call, and check its pinned version and any local patch. Work out when things run: microtasks, unmount and teardown, Solid versus React. Follow what a symbol search misses: the JSON an API returns, a DB column, a wire format, another language reading the same bytes, a feature flag, code three hops downstream.
 4. Be honest about each risk. Give it a real chance of happening and a real cost if it does. Keep the risks you confirmed. List the ones you checked and cleared separately. Cite a real `file:line`, a search that finds nothing is still an answer, and never make up a caller or an API.
 5. Prove the one fact. Write a script or test that runs the real code, run it, and paste what happened.
-6. For a big or wide change, start up to 3 fresh agents with the same question and merge their answers. Different models catch different real bugs.
+6. For a big or wide change, start up to 3 fresh agents with the same question and merge their answers.
 
 ## What to hand back
 
