@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 # Derives the state file's parts from plan.md's boxes (rules/kit-data.md § State file, parts[].steps),
-# so no status is ever set by hand: each step is failed (already failed and unticked), running (named
-# by --running), done (ticked) or todo, in that order; each part's done, total and status follow.
-# Labels and short titles the coordinator wrote are kept by position; a step past the last label gets
-# its first words until one is written. Every other field is kept. Rewritten through a temp file and a rename.
-# Usage: state-steps.sh <state.json> <plan.md> [--running A2,B1] [--new-round]
+# so no status is ever set by hand: each step is failed (already failed, or named by --failed, and
+# unticked), running (named by --running), done (ticked) or todo, in that order; each part's done,
+# total and status follow. It is the only writer of steps; scripts/state.sh calls it.
+# Labels given by --labels, else the ones already written, are kept by position; a step past the last
+# label gets its first words until one is written. Every other field is kept. Rewritten through a temp file and a rename.
+# Usage: state-steps.sh <state.json> <plan.md> [--running A2,B1] [--new-round] [--failed A2] [--labels A=<label>,<label>]...
 #   --running    the steps the open round's items implement or rework: part letter and step number
 #                (a bare number in a plan without parts); none once the round has ended
 #   --new-round  a round entry was just added to rounds: failed marks are cleared
+#   --failed     the steps of the items verification blames (run step 6); their boxes must be unticked
+#   --labels     a part's step labels, in the plan's order (`plan=` in a plan without parts)
 set -euo pipefail
 
 if [[ $# -lt 2 || ! -f "$2" ]]; then
-  sed -n '7,10p' "$0" >&2
+  sed -n '8,13p' "$0" >&2
   exit 2
 fi
 
@@ -20,13 +23,19 @@ import json, os, re, sys, tempfile
 
 state_path, plan_path = sys.argv[1], sys.argv[2]
 args = sys.argv[3:]
-running, new_round = set(), False
+running, new_round, failed, labels = set(), False, set(), {}
 while args:
     a = args.pop(0)
     if a == "--running" and args:
         running = {s.strip().upper() for s in args.pop(0).split(",") if s.strip()}
     elif a == "--new-round":
         new_round = True
+    elif a == "--failed" and args:
+        failed |= {s.strip().upper() for s in args.pop(0).split(",") if s.strip()}
+    elif a == "--labels" and args and "=" in args[0]:
+        part, _, value = args.pop(0).partition("=")
+        part = part.strip().upper()
+        labels["" if part in ("", "PLAN") else part] = [l.strip() for l in value.split(",") if l.strip()]
     else:
         sys.exit(f"state-steps.sh: unknown argument {a}")
 
@@ -74,11 +83,17 @@ for part in parts:
     steps = []
     for i, (ticked, text) in enumerate(part["boxes"]):
         was = prev_steps[i] if i < len(prev_steps) else {}
-        label = was.get("label")
+        given = labels.get(part["letter"], [])
+        label = given[i] if i < len(given) else was.get("label")
         if not label:
             label = first_words(text)
             unlabelled.append(f"{part['letter'] or 'plan'}{i + 1}")
-        if was.get("status") == "failed" and not ticked and not new_round and len(prev_steps) == len(part["boxes"]):
+        sid = f"{part['letter']}{i + 1}"
+        if sid in failed and ticked:
+            print(f"state-steps.sh: --failed {sid} is ticked in the plan: untick it first", file=sys.stderr)
+        if sid in failed and not ticked:
+            status = "failed"
+        elif was.get("status") == "failed" and not ticked and not new_round and len(prev_steps) == len(part["boxes"]):
             status = "failed"
         elif f"{part['letter']}{i + 1}" in running:
             status = "running"
@@ -103,6 +118,10 @@ for part in parts:
 known = {f"{p['letter']}{i + 1}" for p in parts for i in range(len(p["boxes"]))}
 for step in sorted(running - known):
     print(f"state-steps.sh: --running {step} names no step of the plan", file=sys.stderr)
+for step in sorted(failed - known):
+    print(f"state-steps.sh: --failed {step} names no step of the plan", file=sys.stderr)
+for letter in sorted(set(labels) - {p["letter"] for p in parts}):
+    print(f"state-steps.sh: --labels {letter or 'plan'} names no part of the plan", file=sys.stderr)
 
 state["parts"] = out
 folder = os.path.dirname(os.path.abspath(state_path))

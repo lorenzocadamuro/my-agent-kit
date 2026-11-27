@@ -83,4 +83,15 @@ expect "a new label stops before the test note" "$(q '.parts[0].steps[1].label')
 expect "an unknown running step is reported" "$(grep -c 'Z9' "$tmp/err")" "1"
 expect "a missing state folder is created" "$(bash "$script" "$tmp/new/dir/state.json" "$tmp/gates.md" > /dev/null 2>&1; echo $?)" "0"
 
+# --failed marks an unticked step failed; a ticked step stays done, with a warning. --labels set the labels.
+bash "$script" "$tmp/state.json" "$tmp/gates.md" --failed A2 --labels "A=Write ledger,Replay ledger" > /dev/null 2> "$tmp/err"
+expect "--failed marks an unticked step failed" "$(q '.parts[0].steps[1].status')" "failed"
+expect "--labels set the part's labels" "$(q '.parts[0].steps[0].label') / $(q '.parts[0].steps[1].label')" "Write ledger / Replay ledger"
+bash "$script" "$tmp/state.json" "$tmp/gates.md" --failed A1 > /dev/null 2> "$tmp/err"
+expect "--failed on a ticked step leaves it done" "$(q '.parts[0].steps[0].status')" "done"
+expect "--failed on a ticked step is reported" "$(grep -c 'A1' "$tmp/err")" "1"
+printf '{}' > "$tmp/state.json"
+bash "$script" "$tmp/state.json" "$tmp/small.md" --labels "plan=Date parse,Parse test" --failed 2 > /dev/null 2>&1
+expect "a plan without parts takes plan= labels and bare ids" "$(q '[.parts[0].steps[] | .label + " " + .status] | join(",")')" "Date parse done,Parse test failed"
+
 exit "$fail"

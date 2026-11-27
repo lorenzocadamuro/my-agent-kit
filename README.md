@@ -70,7 +70,7 @@ One line per skill, generated from each skill's frontmatter by `scripts/index.sh
 
 - `/my:profile`: Build the project profile of a repository, from its agent instructions, guides, CI workflows and skills, and ask the user to confirm it.
 - `/my:scope`: Build the plan for a code change with the user, before any code: research, multiple-choice interview, goal, boundary, bar for done, invariants, gates; then the worktree.
-- `/my:run`: Run the plan round after round, on its own, until something needs the user: a gate, failed verification, drift over budget, new PR comments, conflicts with main, ready-for-review, anything to publish, or the round cap. One notification and one summary at the end.
+- `/my:run`: Run the plan round after round, on its own, until something needs the user: a gate, failed verification, drift over budget, new PR comments, conflicts with main or between lanes, ready-for-review, anything to publish, or the round cap. One notification and one summary at the end.
 
 **pr**
 
@@ -131,7 +131,7 @@ On the desktop, text is fitted to its room by whole words and whole pieces: the 
 
 The band's own text never names the work, the plan's title or the PR: only states and modes, part letters and short titles, step labels, reasons, figures and actions. Two places show other text as it is written: an agent's task, as its spawner described it, and the Open plan pane, titled with the plan's title. The status line reads `my: <state>[ · extras] · <n> kit notes`, the extras being Planning's step, Running's percentage and time left, an activity's mode, then, beside a plan's state, new comments and conflicts (`my: Ready · 3 comments · 2 kit notes`). `/my-status` refreshes the band and opens the plan; `/my-status measure` reports the desktop calibration (px per row and per column) and what the band last measured.
 
-**What it reads.** The state file `/my:scope` and `/my:run` write: `/my:scope` records when the work started and each part's short title (two or three words, at most 16 characters, so it fits under its part) and steps, two or three words each; `/my:run` records each round's start and end; and every write derives each step's status from the plan's boxes and the open round with `scripts/state-steps.sh`, never by hand (done, running, to do, or failed when verification blames its item). A state file written by kit 5.6.0, without steps or short titles, still draws: numbered segments, labelled from the steps it lists as left, the short title from the heading after "Part X:", and the time left "estimating…". The mod also reads the progress sidecar, only for its `updatedAt`, which keeps a running file fresh (its item counts are no longer shown); the activity sidecar of `pr:*` modes and `improve run`; whether the plan file exists, and its text for the pane; the open kit notes; the session's agents; and `git` and `gh`. It never changes your files. A chat shows only its own planning and activity, even when several chats work in the same folder (without a session id, the folder's file); planning inside the change's worktree is the worktree's file, shown to every chat there. A planning, running or activity state untouched for 6 hours is ignored; one without an `updatedAt` never is. New comments count only other people's, and a failed network call shows nothing rather than zero.
+**What it reads.** The state file `/my:scope` and `/my:run` write: `/my:scope` records when the work started and each part's short title (two or three words, at most 16 characters, so it fits under its part) and steps, two or three words each; `/my:run` records each round's start and end; and every write goes through `scripts/state.sh`, which derives each step's status from the plan's boxes and the open round with `scripts/state-steps.sh`, never by hand (done, running, to do, or failed when verification blames its item). A state file written by kit 5.6.0, without steps or short titles, still draws: numbered segments, labelled from the steps it lists as left, the short title from the heading after "Part X:", and the time left "estimating…". The mod also reads the progress sidecar, only for its `updatedAt`, which keeps a running file fresh (its item counts are no longer shown); the activity sidecar of `pr:*` modes and `improve run`; whether the plan file exists, and its text for the pane; the open kit notes; the session's agents; and `git` and `gh`. It never changes your files. A chat shows only its own planning and activity, even when several chats work in the same folder (without a session id, the folder's file); planning inside the change's worktree is the worktree's file, shown to every chat there. A planning, running or activity state untouched for 6 hours is ignored; one without an `updatedAt` never is. New comments count only other people's, and a failed network call shows nothing rather than zero.
 
 ## Principles
 
@@ -228,8 +228,10 @@ scripts/lanes.py     splits a round's items into parallel lanes; refuses shared 
 scripts/lane-merge.sh  merges the lane branches into the work branch, stopping at the first conflict
 scripts/drift.sh     size versus budget (production code; tests reported apart), distance from main, conflict preview
 scripts/drift.test.sh  tests that the budget counts production code, not tests
+scripts/state.sh     writes the state file: fields, rounds, and the steps through state-steps.sh
 scripts/state-steps.sh  derives the state file's step and part statuses from plan.md's boxes
 scripts/state-steps.test.sh  tests the derivation
+scripts/stop-policy.py  decides whether a run stops after a round, from the round's facts
 scripts/append-entry.sh  appends a log note or a method kind, numbered under a lock; lists duplicate ids
 scripts/append-entry.test.sh  tests that ten writers at once get ten ids
 scripts/no-form-rules.test.sh  tests that no kit text sets the language for the user, or a form beyond unslop
@@ -267,6 +269,8 @@ bash scripts/check.test.sh            # test the privacy check and each layout c
 bash scripts/index.test.sh            # test the index and the README skill list
 bash scripts/drift.test.sh            # test that the size budget counts production code, not tests
 bash scripts/state-steps.test.sh      # test that step statuses come from the plan's boxes
+bash scripts/state.test.sh            # test the state file writes
+bash scripts/stop-policy.test.sh      # test the stop list, one row per rule
 bash scripts/lanes.test.sh            # test the lane split and its refusals
 bash scripts/lane-merge.test.sh       # test the lane merge on a temp repository: disjoint, conflicting, resumed
 bash scripts/append-entry.test.sh     # test that notes and kinds written at once never share an id
