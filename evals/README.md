@@ -54,7 +54,7 @@ Always local: without `--no-publish`, the report is uploaded to claude.ai. `--ab
 
 ## A new case
 
-Only for a behaviour a small fixture can reach. Otherwise there is no case, and the review checks the wording.
+Only for a behaviour a small fixture can reach. Otherwise there is no case: a script test covers the behaviour when a script carries it, or the review checks the wording.
 
 The mutant is the kit's text without the behaviour: for a new rule, the text before the change; for an existing rule, the text with the rule removed from every place that states it.
 
