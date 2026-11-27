@@ -2,6 +2,38 @@
 
 All notable changes to this kit are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [8.2.0] - 2026-11-27
+
+Tools for growth. The kit can take in a skill from outside, audit its own text, keep each project profile current, and report its size, its repeats and the evals a change reaches. The rules merge into fewer files, and each skill reads only the rules it uses.
+
+### Improve (`add-skill`, `improve`)
+
+- C8: `/my:add-skill` brings a skill into the kit from a pasted text or a link. It checks the candidate against the constitution first and stops, naming the clause, when it breaks one; `scripts/skill-overlap.sh` ranks the kit's skills by shared trigger words, and when one already does the same job it asks whether to integrate, improve or add. Otherwise it adapts the skill to `skill-template.md`, with a source line and an eval case from `eval-template.md`, makes `check.sh` pass, and ships it as `/my:improve run` does, after the diff and the user's yes. Its note id is `improve:add-skill`.
+- C7: `/my:improve audit [folder]` starts one read-only agent per skill of the kit (the plugin's own, or the one in the folder), each applying `rules/writing-for-agents.md` to that skill's text; the findings come back as proposed notes, saved only on the user's yes.
+- `rules/learning.md` § The kit's improvement loop names `/my:add-skill` among the ways the kit changes.
+
+### Profile (`profile`, `scope`, `run`, `review`, `sync`)
+
+- C9: a profile records the files it was built from, each with its git blob hash, in a Sources section, and marks the user's own answers `(user)`. At the start of `/my:scope`, `/my:run`, `/my:review` and `/my:sync`, `scripts/profile-fresh.sh` compares the hashes with the repository's default branch (`origin/<default>`, never the PR head; without git, the files in the folder in git's blob form). A fact a changed source states is refreshed with a one-line report; a fact the user answered, and every fact of a profile written before 8.2.0, changes only after the user's yes. A profile without Sources gets them recorded on its first check, with one line. The procedure lives in `skills/plan/profile/SKILL.md` § Keeping it current; `profile-template.md`, `rules/kit-data.md` and `improve` name it as the exception to "a profile changes through `/my:improve`".
+
+### Rules (C11, C16)
+
+- `rules/question-format.md` becomes `rules/asking.md`; the `rules/core.md` section that only pointed to it is gone.
+- `rules/review-lenses.md` and the `rules/core.md` section "Review depth follows the stakes" become `rules/reviewing.md`.
+- `rules/model-choice.md` and the `rules/core.md` section "Which model an agent runs on" become `rules/models.md`.
+- `rules/local-data.md` and `rules/files.md` become `rules/kit-data.md`.
+- Each section moved verbatim; a pointer the merge made point into its own file was removed or became an in-file reference. Every path follows.
+- Each skill's `reads` and "Read first:" list only the rules it uses: every workflow keeps `core`, `learning` and `verifying`, a skill that starts agents keeps `worker`, and any other rule stays when the skill's text or a file it opens names it or relies on one of its sections. `go`, `unslop` and `wait-what` keep theirs. `log` and `method` now read 4 rule files instead of 10; `note`, `profile` and `learn` 5; `sync` and `comments` 6.
+
+### Scripts (C18)
+
+- `scripts/budget.sh` reports the words of each kit file and of each skill with its reads; `scripts/single-source.sh` reports the sentences two kit files repeat; `scripts/affected.sh` lists the eval cases a set of changed files reaches. They only report: `check.sh` runs their tests, never their output.
+
+### Evals
+
+- New cases: `add-skill/new-skill-added`, `add-skill/same-job-asks`, `add-skill/constitution-conflict-stops`, `improve/audit-proposes-notes`, `scope/profile-refreshes-changed-source`, `scope/profile-answer-kept`.
+- `comments/human-review-explained` and `improve/run-flags-old-notes` graders also accept the new rule file names.
+
 ## [8.1.0] - 2026-11-26
 
 The accepted behaviour changes of the restructure. `/my:run` always runs the whole plan; the `round` skill is gone. A note is saved only with your yes. The kit gains `unslop`, `wait-what` and `blast-radius`, a rule on writing for agents, and a `Reply:` line at the end of every workflow.
