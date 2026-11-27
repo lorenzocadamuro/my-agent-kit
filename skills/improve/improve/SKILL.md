@@ -1,9 +1,9 @@
 ---
 name: improve
-description: "Grow the `my` kit from real use: no argument lists open notes; `run [skill|ids]` finds the upstream lesson behind open notes and turns it into approved changes backed by eval cases, then updates README, CHANGELOG and version, and ships them after showing you the diff."
+description: "Grow the `my` kit from real use: no argument lists open notes; `run [skill|ids]` finds the upstream lesson behind open notes and turns it into approved changes backed by eval cases, then updates README, CHANGELOG and version, and ships them after showing you the diff; `audit [folder]` checks each skill's text against the rule on writing for agents and proposes notes."
 argument-hint: "note <what happened> | digest [file] | run [skill|ids] [--propose-only] | audit [folder] | log [skill] | method | (none: list open)"
 disable-model-invocation: true
-when: "\"/my:improve\", \"improve the kit\", \"what's open on the kit\""
+when: "\"/my:improve\", \"improve the kit\", \"what's open on the kit\", \"audit the kit's skills\""
 reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/kit-data.md, rules/asking.md, rules/reviewing.md, rules/models.md, rules/writing-for-agents.md, skills/writing/unslop/SKILL.md]
 ---
 

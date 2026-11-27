@@ -1,4 +1,4 @@
-# Local data
+# Kit data
 
 Personal and employer-specific material lives outside this repository, in the data root (`~/.my-agent-kit/` by default). Skills create missing folders on first use. It is deliberately not under `~/.claude/`: Claude Code treats that folder as protected configuration, so every write there needs approval, and headless runs refuse it.
 

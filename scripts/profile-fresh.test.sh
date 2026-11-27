@@ -3,7 +3,8 @@
 # recorded with the source's blob on the repository's default branch (origin/<default>, never the
 # branch's own HEAD), and prints the changed ones; a profile with no Sources section gets one recorded
 # from the files that exist, with one line; --record rewrites the hashes to the current ones; without
-# git it hashes the files in the folder the same way (the blob form, as `git hash-object` does).
+# git it hashes the files in the folder the same way (the blob form, as `git hash-object` does); a
+# removed source keeps its old hash through --record; with git but no default-branch ref it stops.
 # Usage: bash scripts/profile-fresh.test.sh
 set -uo pipefail
 
@@ -74,6 +75,32 @@ out="$(bash "$script" "$p2" "$r" 2>&1)"
 [[ "$(grep -c . <<<"$out")" -eq 1 ]] && grep -qi 'recorded' <<<"$out" && ok "no Sources: one line saying they were recorded" || ko "no-Sources output: $out"
 grep -q '^## Sources' "$p2" && grep -qF "\`CLAUDE.md\`: \`$h_claude\`" "$p2" && grep -q 'ci.yml' "$p2" && ok "no Sources: the section is written with each existing source" || ko "Sources not written: $(cat "$p2")"
 grep -qi "yes" <(sed -n '/^## Sources/,$p' "$p2") && ok "the recorded section says unmarked facts change only with a yes" || ko "no note on unmarked facts"
+
+# A source removed on the default branch: reported as removed, and --record keeps its old hash, so the
+# next run reports it again until the user updates the profile.
+h_ci_now="$(git -C "$r" rev-parse origin/main:.github/workflows/ci.yml)"
+p3="$tmp/p3.md"; cp "$p" "$p3"
+g -C "$r" rm -q .github/workflows/ci.yml && g -C "$r" commit -qm "drop ci" && g -C "$r" push -q origin HEAD:main 2>/dev/null && g -C "$r" fetch -q origin
+out="$(bash "$script" "$p3" "$r" 2>&1)"
+grep -qx 'removed: \.github/workflows/ci\.yml' <<<"$out" && ok "a removed source is reported" || ko "removed source: $out"
+bash "$script" --record "$p3" "$r" > /dev/null 2>&1
+grep -qF "\`.github/workflows/ci.yml\`: \`$h_ci_now\`" "$p3" && ok "--record keeps a removed source's old hash" || ko "--record on a removed source: $(cat "$p3")"
+out="$(bash "$script" "$p3" "$r" 2>&1)"
+grep -qx 'removed: \.github/workflows/ci\.yml' <<<"$out" && ok "after --record the removed source is reported again" || ko "removed source after --record: $out"
+
+# Git but no default-branch ref (a clone whose origin refs are gone): one line on stderr, exit 2, and
+# nothing compared or written.
+norefs="$tmp/norefs"; g clone -q "$tmp/origin.git" "$norefs" 2>/dev/null
+for ref in $(git -C "$norefs" for-each-ref --format='%(refname)' refs/remotes); do git -C "$norefs" update-ref -d "$ref"; done
+printf '# Rules\nUse yarn.\n' > "$norefs/CLAUDE.md"  # differs from the recorded hash
+cp "$p3" "$tmp/before.md"
+err="$(bash "$script" "$p3" "$norefs" 2>&1 >/dev/null)"; rc=$?
+[[ $rc -eq 2 ]] && ok "no default-branch ref: exit 2" || ko "no default-branch ref: exit $rc"
+grep -q '^no default-branch ref: ' <<<"$err" && [[ "$(grep -c . <<<"$err")" -eq 1 ]] && ok "no default-branch ref: one line on stderr" || ko "no default-branch ref stderr: $err"
+outn="$(bash "$script" "$p3" "$norefs" 2>/dev/null)"
+[[ -z "$outn" ]] && ok "no default-branch ref: nothing compared" || ko "no default-branch ref stdout: $outn"
+bash "$script" --record "$p3" "$norefs" > /dev/null 2>&1
+cmp -s "$p3" "$tmp/before.md" && ok "no default-branch ref: --record writes nothing" || ko "no default-branch ref: --record changed the profile"
 
 # Without git (a plain folder, as in an eval sandbox): the files are hashed in the blob form.
 plain="$tmp/plain"; mkdir -p "$plain/.github/workflows"

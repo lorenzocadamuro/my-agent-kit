@@ -27,10 +27,10 @@ A new profile records the files it was built from in its Sources section: `${CLA
 
 At the start of `/my:scope`, `/my:run`, `/my:review` and `/my:sync`, once the profile is loaded:
 
-1. Run `${CLAUDE_PLUGIN_ROOT}/scripts/profile-fresh.sh <profile> <repository>`. It compares each recorded source with its blob on the repository's default branch (`origin/<default>`), never the PR head, and prints the changed ones. A profile without a Sources section gets one, with one line saying so.
+1. Run `${CLAUDE_PLUGIN_ROOT}/scripts/profile-fresh.sh <profile> <repository>`. It compares each recorded source with its blob on the repository's default branch (`origin/<default>`), never the PR head, and prints the changed ones. A profile without a Sources section gets one, with one line saying so. When it prints `no default-branch ref: <ref>` (a repository without that ref), it compared nothing: tell the user in one sentence.
 2. For each changed source, read it and update the facts of the profile it states (a command, a rule, a guide), each with a one-line report: `profile: <fact> is now <value> (from <source>)`.
 3. A fact marked `(user)`, and every fact of a profile whose Sources section says it was recorded from a profile without marks, changes only after the user's yes: ask, with the old and the new value, and keep the old one until then.
-4. Run it again with `--record`, so the hashes match what the profile now says.
+4. Once every question of step 3 has its answer, run it again with `--record`, so the hashes match what the profile now says. In a run that cannot ask such a question, do not record, and say so.
 
 No source changed: say nothing.
 

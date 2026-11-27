@@ -4,9 +4,11 @@
 # compared with its blob on the repository's default branch (origin/<default>), never the branch's
 # own HEAD; without git (an eval sandbox), with the file in <repo>, hashed in git's blob form.
 # Prints "changed: <path> (<old> -> <new>)" or "removed: <path>" for each, nothing when all match.
+# With git but no origin/<default> ref, it prints "no default-branch ref: <ref>" on stderr, exits 2
+# and compares nothing.
 # A profile with no Sources section gets one, from the sources that exist (agent instructions, CI
 # workflows, package manifests, CODEOWNERS), and one line saying so. --record rewrites every hash
-# to the current one, after the profile was refreshed.
+# to the current one, after the profile was refreshed; a removed source keeps its old hash.
 # Usage: profile-fresh.sh [--record] [--ref <ref>] <profile> <repo>
 set -euo pipefail
 
@@ -24,12 +26,15 @@ profile="${args[0]}"; repo="${args[1]}"
 [[ -f "$profile" ]] || { echo "profile-fresh: no profile at $profile" >&2; exit 2; }
 
 # The yardstick: origin/<default>, else origin/main or origin/master; none in a folder without git.
+# With git but none of these refs, it stops: comparing with the working tree would read the branch.
 if [[ -z "$ref" ]] && git -C "$repo" rev-parse --git-dir > /dev/null 2>&1; then
   ref="$(git -C "$repo" symbolic-ref -q --short refs/remotes/origin/HEAD 2>/dev/null || true)"
+  want="${ref:-origin/main}"
   for r in "$ref" origin/main origin/master; do
     if [[ -n "$r" ]] && git -C "$repo" rev-parse -q --verify "$r^{commit}" > /dev/null 2>&1; then ref="$r"; break; fi
     ref=""
   done
+  [[ -n "$ref" ]] || { echo "no default-branch ref: $want" >&2; exit 2; }
 fi
 blob() { # <path>: the blob hash at the yardstick, or of the file in the folder; nothing when absent
   if [[ -n "$ref" ]]; then
@@ -63,8 +68,9 @@ fi
 if [[ -n "$record" ]]; then
   tmpf="$profile.tmp.$$"; n=0  # next to the profile: a sandbox may block the system temp folder
   while IFS= read -r line; do
-    if [[ "$line" =~ ^-\ \`([^\`]+)\`:\ \`[0-9a-f]{7,40}\`(.*)$ ]]; then
-      line="- \`${BASH_REMATCH[1]}\`: \`$(blob "${BASH_REMATCH[1]}")\`${BASH_REMATCH[2]}"; n=$((n + 1))
+    if [[ "$line" =~ ^-\ \`([^\`]+)\`:\ \`([0-9a-f]{7,40})\`(.*)$ ]]; then
+      new="$(blob "${BASH_REMATCH[1]}")"  # a removed source keeps its old hash, so it is reported again
+      line="- \`${BASH_REMATCH[1]}\`: \`${new:-${BASH_REMATCH[2]}}\`${BASH_REMATCH[3]}"; n=$((n + 1))
     fi
     printf '%s\n' "$line"
   done < "$profile" > "$tmpf"

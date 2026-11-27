@@ -83,7 +83,7 @@ One line per skill, generated from each skill's frontmatter by `scripts/index.sh
 **improve**
 
 - `/my:note`: Log a problem with the my kit, without changing anything; with `signals`, propose notes from the signals the work collected and save each on your yes
-- `/my:improve`: Grow the `my` kit from real use: no argument lists open notes; `run [skill|ids]` finds the upstream lesson behind open notes and turns it into approved changes backed by eval cases, then updates README, CHANGELOG and version, and ships them after showing you the diff.
+- `/my:improve`: Grow the `my` kit from real use: no argument lists open notes; `run [skill|ids]` finds the upstream lesson behind open notes and turns it into approved changes backed by eval cases, then updates README, CHANGELOG and version, and ships them after showing you the diff; `audit [folder]` checks each skill's text against the rule on writing for agents and proposes notes.
 - `/my:add-skill`: Add a skill to the kit from a pasted text or a link: look for an existing skill with the same job and for conflicts with the constitution, then adapt it to the kit's template with its source and an eval case, and ship it after your yes.
 - `/my:log`: Show the history of kit notes and the versions that fixed them
 - `/my:method`: Show the decision kinds the kit has learned, and which ones are handed over
