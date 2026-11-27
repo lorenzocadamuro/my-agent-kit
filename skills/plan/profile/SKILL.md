@@ -21,7 +21,7 @@ Used by `/my:scope` when `<data root>/projects/<owner>-<repo>.md` does not exist
 5. **Package manifests** (`package.json` scripts, `pyproject.toml`, `Makefile`): targeted test commands per area.
 6. **Merge requirements:** `gh api repos/<o>/<r>/rules/branches/<default>` and `CODEOWNERS`.
 
-A new profile records the files it was built from in its Sources section: `${CLAUDE_PLUGIN_ROOT}/scripts/profile-fresh.sh --record <profile> <repository>` writes each one's git blob hash once the section lists them. Each fact the user answered is marked `(user)`.
+A new profile records the files it was built from in its Sources section: list each one as ``- `<path>` ``, then `${CLAUDE_PLUGIN_ROOT}/scripts/profile-fresh.sh --record <profile> <repository>` writes each one's git blob hash and drops the template's example line; without the section, it writes one from the default sources. Each fact the user answered is marked `(user)`.
 
 ## Keeping it current
 

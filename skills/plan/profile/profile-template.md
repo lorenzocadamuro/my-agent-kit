@@ -59,6 +59,6 @@ Routing index for module rules, if any: <path>
 
 ## Sources
 
-The files this profile was built from, each with its git blob hash on `origin/<default>` (`scripts/profile-fresh.sh` compares them):
+The files this profile was built from, each with its git blob hash on `origin/<default>` (`scripts/profile-fresh.sh` compares them; its `--record` fills the hashes and drops the example line below):
 
 - `<path>`: `<git blob hash>`

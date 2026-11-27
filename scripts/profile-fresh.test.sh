@@ -88,6 +88,27 @@ grep -qF "\`.github/workflows/ci.yml\`: \`$h_ci_now\`" "$p3" && ok "--record kee
 out="$(bash "$script" "$p3" "$r" 2>&1)"
 grep -qx 'removed: \.github/workflows/ci\.yml' <<<"$out" && ok "after --record the removed source is reported again" || ko "removed source after --record: $out"
 
+# A new profile written from the template: --record drops the template's example line and fills a
+# placeholder hash and a path-only line with the current hashes.
+p4="$tmp/new-profile.md"
+printf '# Project profile: acme/shop\n\n## Sources\n\nThe files this profile was built from:\n\n- `<path>`: `<git blob hash>`\n- `CLAUDE.md`: `<git blob hash>`\n' > "$p4"
+bash "$script" --record "$p4" "$r" > /dev/null 2>&1
+grep -qF "\`CLAUDE.md\`: \`$h_claude\`" "$p4" && ok "--record fills a placeholder hash" || ko "--record placeholder: $(cat "$p4")"
+if grep -qF '<path>' "$p4"; then ko "--record keeps the template's example line: $(cat "$p4")"; else ok "--record drops the template's example line"; fi
+out="$(bash "$script" "$p4" "$r" 2>&1)"
+[[ -z "$out" ]] && ok "after --record a new profile reports nothing" || ko "new profile after --record: $out"
+p5="$tmp/path-only.md"
+printf '# Project profile: acme/shop\n\n## Sources\n\n- `CLAUDE.md`\n' > "$p5"
+bash "$script" --record "$p5" "$r" > /dev/null 2>&1
+grep -qxF -- "- \`CLAUDE.md\`: \`$h_claude\`" "$p5" && ok "--record fills a path-only line" || ko "--record path-only: $(cat "$p5")"
+# A new profile without the section: --record writes it, without the line for a profile older than marks.
+p6="$tmp/new-no-section.md"
+printf '# Project profile: acme/shop\n\n## Commands\n\n- Tests: `npm test`\n' > "$p6"
+bash "$script" --record "$p6" "$r" > /dev/null 2>&1
+grep -q '^## Sources' "$p6" && grep -qF "\`CLAUDE.md\`: \`$h_claude\`" "$p6" && ok "--record without a section writes it" || ko "--record without a section: $(cat "$p6")"
+if grep -q 'without marks' "$p6"; then ko "--record on a new profile says it is older than marks: $(cat "$p6")"; else ok "--record on a new profile has no without-marks line"; fi
+grep -q 'without marks' "$p2" && ok "a plain check of an old profile writes the without-marks line" || ko "old profile without the marks line: $(cat "$p2")"
+
 # Git but no default-branch ref (a clone whose origin refs are gone): one line on stderr, exit 2, and
 # nothing compared or written.
 norefs="$tmp/norefs"; g clone -q "$tmp/origin.git" "$norefs" 2>/dev/null

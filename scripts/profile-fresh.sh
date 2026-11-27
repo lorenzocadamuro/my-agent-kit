@@ -7,8 +7,11 @@
 # With git but no origin/<default> ref, it prints "no default-branch ref: <ref>" on stderr, exits 2
 # and compares nothing.
 # A profile with no Sources section gets one, from the sources that exist (agent instructions, CI
-# workflows, package manifests, CODEOWNERS), and one line saying so. --record rewrites every hash
-# to the current one, after the profile was refreshed; a removed source keeps its old hash.
+# workflows, package manifests, CODEOWNERS), and one line saying so; a plain check also marks it as
+# written before marks. --record rewrites every hash in the Sources section to the current one, after
+# the profile was refreshed, fills a placeholder hash or a path-only line, and drops the template's
+# example line; a removed source keeps its old hash. --record on a profile with no section writes it
+# without that mark (a new profile).
 # Usage: profile-fresh.sh [--record] [--ref <ref>] <profile> <repo>
 set -euo pipefail
 
@@ -57,20 +60,27 @@ if ! grep -q '^## Sources[[:space:]]*$' "$profile"; then
     [[ -z "$f" ]] && continue
     lines+="- \`$f\`: \`$(blob "$f")\`"$'\n'; n=$((n + 1))
   done < <(listed)
-  {
-    printf '\n## Sources\n\nRecorded on %s by `profile-fresh.sh` from a profile without marks: every fact above changes only with the user'"'"'s yes.\n\n' "$(date +%Y-%m-%d)"
-    printf '%s' "$lines"
-  } >> "$profile"
+  if [[ -n "$record" ]]; then  # a new profile: its facts were confirmed as it was written
+    intro="The files this profile was built from, each with its git blob hash on \`origin/<default>\` (\`scripts/profile-fresh.sh\` compares them):"
+  else
+    intro="Recorded on $(date +%Y-%m-%d) by \`profile-fresh.sh\` from a profile without marks: every fact above changes only with the user's yes."
+  fi
+  printf '\n## Sources\n\n%s\n\n%s' "$intro" "$lines" >> "$profile"
   echo "profile-fresh: recorded $n sources in $profile${ref:+ (at $ref)}; it had none"
   exit 0
 fi
 
 if [[ -n "$record" ]]; then
-  tmpf="$profile.tmp.$$"; n=0  # next to the profile: a sandbox may block the system temp folder
+  tmpf="$profile.tmp.$$"; n=0; in_sources=""  # next to the profile: a sandbox may block the system temp folder
+  entry='^- `([^`]+)`(: `([^`]*)`)?(.*)$'  # a source with its hash, a placeholder (<git blob hash>) or none
   while IFS= read -r line; do
-    if [[ "$line" =~ ^-\ \`([^\`]+)\`:\ \`([0-9a-f]{7,40})\`(.*)$ ]]; then
-      new="$(blob "${BASH_REMATCH[1]}")"  # a removed source keeps its old hash, so it is reported again
-      line="- \`${BASH_REMATCH[1]}\`: \`${new:-${BASH_REMATCH[2]}}\`${BASH_REMATCH[3]}"; n=$((n + 1))
+    if [[ "$line" =~ ^##\  ]]; then [[ "$line" =~ ^##\ Sources[[:space:]]*$ ]] && in_sources=1 || in_sources=""; fi
+    if [[ -n "$in_sources" && "$line" =~ $entry ]]; then
+      path="${BASH_REMATCH[1]}"; old="${BASH_REMATCH[3]}"; rest="${BASH_REMATCH[4]}"
+      [[ "$path" == "<"* ]] && continue  # the template's example line
+      new="$(blob "$path")"  # a removed source keeps its old hash, so it is reported again
+      if [[ "$old" =~ ^[0-9a-f]{7,40}$ ]]; then new="${new:-$old}"; else rest="${rest#:}"; fi
+      if [[ -n "$new" ]]; then line="- \`$path\`: \`$new\`$rest"; n=$((n + 1)); else echo "missing: $path" >&2; fi
     fi
     printf '%s\n' "$line"
   done < "$profile" > "$tmpf"
