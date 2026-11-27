@@ -80,6 +80,7 @@ EOF
   printf 'See `rules/core.md:3` and `rules/core.md#x`.\n' >> "$d/rules/core.md"
   printf 'x\n' > "$d/evals/go/a/prompt.md"
   printf 'x\n' > "$d/evals/scope/a/prompt.md"
+  printf '# Evals\n\n## Smoke set\n\n<!-- smoke:start -->\n```text\ngo/a\nscope/a\n```\n<!-- smoke:end -->\n' > "$d/evals/README.md"
   printf '# Kit\n\n<!-- skills:start -->\n<!-- skills:end -->\n' > "$d/README.md"
   printf 'const cmd = "/my:scope";\n' > "$d/mods/my-status/hooks/adapter.ts"
   [[ -f "$d/scripts/index.sh" ]] && bash "$d/scripts/index.sh" --write "$d"
@@ -127,7 +128,22 @@ layout_case "missing reads path" "perl -pi -e 's/^reads: \[rules\/core.md\]/read
 layout_case "reads and Read first differ" "perl -pi -e 's/^reads: \[rules\/core.md\]/reads: [rules\/core.md, skills\/go\/index.md]/' skills/plan/scope/SKILL.md"
 layout_case "stale index" "perl -pi -e 's/Build the plan before any code/Build the plan first/' skills/plan/scope/SKILL.md"
 layout_case "orphan eval folder" "mkdir -p evals/ghost/a && echo x > evals/ghost/a/prompt.md"
-layout_case "skill without eval folder" "rm -r evals/scope"
+layout_case "case not in smoke list" "mkdir -p evals/go/b && echo x > evals/go/b/prompt.md"
+layout_case "listed case missing" "rm -r evals/scope/a"
+layout_pass() { # <label> <edit command run in the kit>: check.sh passes
+  local k; k="$(mktemp -d)"
+  make_kit "$k"
+  (cd "$k" && eval "$2")
+  if MY_AGENT_KIT_DENY=/nonexistent MY_AGENT_KIT_ALLOW_NO_DENY=1 bash "$k/scripts/check.sh" >/dev/null 2>"$k/err"; then
+    echo "ok: $1 passes"
+  else
+    echo "FAIL: $1 failed: $(grep -m1 '^check.sh: ' "$k/err")" >&2; fail=1
+  fi
+  rm -rf "$k"
+}
+# A skill needs no eval folder; the results of a smoke run never fail a commit.
+layout_pass "a skill with no eval folder and no smoke line" "rm -r evals/scope && perl -ni -e 'print unless m{^scope/a\$}' evals/README.md"
+layout_pass "a smoke run's results folder" "mkdir -p evals/results/2026 && echo x > evals/results/2026/report.html"
 layout_case "missing skill" "echo 'Then run /my:ghost.' >> rules/core.md"
 layout_case "missing file" "echo 'Read \`\${CLAUDE_PLUGIN_ROOT}/rules/nope.md\`.' >> rules/core.md"
 layout_case "dangling relative link" "echo 'See [the lenses](review-lenses.md).' >> rules/core.md"

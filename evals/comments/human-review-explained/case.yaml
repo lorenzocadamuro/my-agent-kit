@@ -1,9 +1,0 @@
-schema_version: "1"
-name: human-review-explained
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 30
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
-  prompt: |
-    /my:comments Nessun accesso a GitHub: la review è in ./comments.md, il codice alla testa in ./app e il piano della PR in ./plan.md. Data root ./kit-data. Salva il triage e le bozze di risposta in ./triage.md. Non pubblicare nulla.

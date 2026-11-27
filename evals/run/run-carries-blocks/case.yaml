@@ -1,9 +1,0 @@
-schema_version: "1"
-name: run-carries-blocks
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 40
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
-  prompt: |
-    /my:run --no-push. Il worktree è ./wt (repository acme/shop, branch feature). In questo ambiente git non è eseguibile: gli output git sono in ./git-out/git.txt, usali al posto di git e dello script di verifica. La review del round 1 è già stata fatta: è in ./wt/.plans/round-1-review.md. Data root ./kit-data. Scrivi il riepilogo finale anche in ./summary.md.

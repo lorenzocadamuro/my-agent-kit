@@ -1,9 +1,0 @@
-schema_version: "1"
-name: research-reads-both-ways
-context:
-  scaffold_script: setup.sh
-execution:
-  max_turns: 40
-  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill, Task]
-  prompt: |
-    /my:scope --dry-run Il ticket è in ./ticket.md. Data root ./kit-data, salva il piano in ./plan.md. Non posso rispondere alle domande ora: scrivi in ./questions.md le domande che mi faresti, ciascuna con le opzioni e la raccomandazione, poi continua con le raccomandate. Non c'è un repository git: pianifica dai file presenti.

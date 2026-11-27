@@ -25,7 +25,8 @@ else
 fi
 
 # The layout checks I1 to I7 (the layout of skill folders and rules/):
-# frontmatter and "Read first:" (I1), the index (I2), eval folders (I3), no missing skill or file (I4),
+# frontmatter and "Read first:" (I1), the index (I2), eval folders naming a skill and the smoke list of
+# evals/README.md (I3), no missing skill or file (I4),
 # only the router model-invoked (I5), the mod's commands (I6), unique names (I7), and a closing Reply: line on every workflow.
 fm() { # <file> <key>: the frontmatter value, surrounding quotes removed; nothing when absent
   awk -v k="$2" '
@@ -39,7 +40,7 @@ fm() { # <file> <key>: the frontmatter value, surrounding quotes removed; nothin
     END { if (!found) exit 1 }' "$1"
 }
 layout_checks() {
-  local errs=0 f rel k v reads first names="" n d
+  local errs=0 f rel k v reads first names="" n d c listed cases
   err() { echo "check.sh: $1" >&2; errs=$((errs + 1)); }
   cd "$root"
   while IFS= read -r f; do
@@ -82,9 +83,19 @@ layout_checks() {
     [[ "$d" == "results" ]] && continue
     grep -qxF "$d" <<<"$names" || err "orphan eval folder: evals/$d names no skill"
   done
-  while IFS= read -r n; do
-    [[ -z "$n" || -d "evals/$n" ]] || err "skill without eval folder: $n has no evals/$n/"
-  done <<<"$names"
+  # The smoke list: the case lines between the smoke markers of evals/README.md and the case folders
+  # (evals/<skill>/<case>/) agree both ways; results/ and runs/ hold run output, not cases.
+  listed="$( [[ -f evals/README.md ]] && awk '/^<!-- smoke:end -->/ { s = 0 }
+    s && NF && !/^```/ { sub(/^[ \t]+/, ""); sub(/[ \t]+$/, ""); print }
+    /^<!-- smoke:start -->/ { s = 1 }' evals/README.md | sort -u || true)"
+  cases="$( [[ -d evals ]] && find evals -mindepth 2 -maxdepth 2 -type d | sed 's#^evals/##' |
+    grep -v -E '(^|/)(results|runs)(/|$)' | sort || true)"
+  while IFS= read -r c; do
+    [[ -z "$c" ]] || grep -qxF "$c" <<<"$listed" || err "case not in smoke list: evals/$c is not listed in evals/README.md § Smoke set"
+  done <<<"$cases"
+  while IFS= read -r c; do
+    [[ -z "$c" || -d "evals/$c" ]] || err "listed case missing: evals/README.md § Smoke set lists $c, which has no folder evals/$c/"
+  done <<<"$listed"
 
   local texts=()
   for p in skills rules README.md .claude/CLAUDE.md; do [[ -e "$p" ]] && texts+=("$p"); done
