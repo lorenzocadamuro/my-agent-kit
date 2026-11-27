@@ -25,6 +25,7 @@
     "./skills/pr/blast-radius",
     "./skills/improve/note",
     "./skills/improve/improve",
+    "./skills/improve/add-skill",
     "./skills/improve/log",
     "./skills/improve/method",
     "./skills/writing/unslop",

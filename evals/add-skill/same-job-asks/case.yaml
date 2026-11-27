@@ -1,0 +1,24 @@
+schema_version: "1"
+name: same-job-asks
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 40
+  timeout_seconds: 900
+  allowed_tools: [Read, Glob, Grep, Bash, Write, Edit, Skill]
+  prompt: |
+    /my:add-skill Use ./kit-data as the data root for this test. The kit worktree is already created at ./kit, from origin/main; git and claude do not run here.
+
+    ---
+    name: branch-refresh
+    description: "Refresh my feature branch: fetch, merge origin/main into it, show each conflict before resolving it, rerun the checks, then push."
+    when: "\"refresh my branch\", \"bring my branch up to date\", \"pull main into my branch\""
+    ---
+
+    # Branch refresh
+
+    1. `git fetch origin`.
+    2. Preview the conflicts of merging `origin/main`; show each one before resolving it.
+    3. Merge `origin/main` (never rebase).
+    4. Rerun the project's checks.
+    5. Push the branch.
