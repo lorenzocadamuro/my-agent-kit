@@ -1,0 +1,15 @@
+## Parallel lanes
+
+Only the full lane of `/my:run` splits, and only into parallel lanes: the S lane never does.
+
+- **When steps run in parallel.** A plan step may carry `Lanes:` (its lane id: `a`, `b` or `c`, so at most 3 lanes) and `Depends on:` (the step ids it needs: part letter and position, `B2`, or a bare number in a plan without parts). A step without `Lanes:` is in lane `a`, so a plan without them runs one executor, as before. A block fix or an added item in `round-<N>.md` takes the lane of the step it reworks (its own `Lanes:` line), else `a`. Lanes must touch disjoint files, and a step and the steps it depends on share a lane: `${CLAUDE_PLUGIN_ROOT}/scripts/lanes.py <round file> <plan.md>` prints each lane's items and refuses a file in two lanes, a dependency cycle and a dependency across lanes. When it refuses, the round runs one executor with every item, and the round's report says why.
+- **Where lanes work.** Each lane has its own worktree under the profile's worktree root, on branch `<work branch>-lane-<id>`, cut from the work branch's HEAD at the round's start, with the profile's setup step run in it. A profile that works in one checkout (no worktree root, or "work on `main`") runs one executor.
+- **A lane that stops or fails** is the stop "an executor that stopped": no lane is merged, and the others' summaries wait with it.
+- **Merging.** Once every lane has finished, `${CLAUDE_PLUGIN_ROOT}/scripts/lane-merge.sh <work branch> <lane ids>` merges the lane branches into the work branch in lane order, with `git merge --no-ff`, never a rebase, so every lane commit stays on HEAD. At the first conflict it aborts the merge and leaves a clean tree: that is the stop "conflicts" of `/my:run` § Run.
+- **Resuming** reads which lane branches are already merged: `lane-merge.sh` skips them and resumes from the first unmerged lane.
+- **Cleanup.** Once `verify-round.sh` passes, pushed or not, remove each lane's worktree (`git worktree remove`), its branch (`git branch -d`) and its progress sidecar.
+
+## Parallel requests
+
+- **Two independent requests** (unrelated work, each in its own worktree, such as two tickets to plan) may start in parallel, as separate sessions, each in its own worktree: with the app's session tool (`start_session`), one per request, its prompt the request as the user wrote it. Never as background agents: an agent in the background cannot ask the user (`rules/worker.md`), and `/my:run` stays in the user's session. Without the tool, give the user one line per request to type in a new session.
+- **Say which sessions started,** one line each, and nothing else starts in this session.

@@ -4,7 +4,7 @@ description: "Run the plan round after round, on its own, until something needs 
 argument-hint: "[source] [--deep] [--no-push]"
 disable-model-invocation: true
 when: "\"/my:run\", \"run the plan\", \"vai avanti col piano\", \"finish the plan on your own\""
-reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/kit-data.md, rules/asking.md, rules/reviewing.md, rules/models.md, skills/writing/unslop/SKILL.md]
+reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/kit-data.md, rules/asking.md, rules/reviewing.md, rules/models.md, rules/parallel.md, skills/writing/unslop/SKILL.md]
 ---
 
 # /my:run — rounds, no babysitting
@@ -14,7 +14,7 @@ You are the coordinator. You stay in the user's session and hand the work to bac
 - **The run goes round after round,** as § Run says, until something needs the user.
 - **Every gate follows the method of `rules/learning.md`:** you decide a handed-over kind alone and list it in the report, record the other answers in the plan (question format § After the answer) and in `<data root>/method.md`, and propose due hand-overs; the executor only reports.
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md`, `${CLAUDE_PLUGIN_ROOT}/rules/models.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md`, `${CLAUDE_PLUGIN_ROOT}/rules/models.md`, `${CLAUDE_PLUGIN_ROOT}/rules/parallel.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
 
 ## Arguments
 
@@ -53,7 +53,7 @@ At the end of a round or a run, set `state`: `done` when the bar is met and the 
 
 Write `.plans/round-<N>.md` from `${CLAUDE_PLUGIN_ROOT}/skills/plan/run/round-template.md`, where N is the next unused number, and copy its `Comments read until` time into the state file's `commentsReadUntil` (`none` leaves the field as it was).
 
-**Ready steps go in as written.** A plan step is unchanged when its bullet line and its label lines (up to the next `- [` or heading), with `[x]` and `[ ]` alike and whitespace ignored, appear as such under the same part letter in `.plans/plan-approved.md`. When that file is missing, or the plan's Boundary, Invariants, Intentional changes or Out of scope differ from it, no step is unchanged. Only `plan:scope` step 7 writes `plan-approved.md`; a round never refreshes it. A step whose six labels (`skills/plan/scope/plan-template.md` § Parts) are all filled and that is unchanged goes into the round file under its `### <k>.` heading with its labels as written: rerun each of its `Searches:` at HEAD, and mark it `Ready from plan`. A count that moved, a missing or different copy, a step with a label missing, a review block fix and an added item take the full triage.
+**Ready steps go in as written.** A plan step is unchanged when its bullet line and its label lines (up to the next `- [` or heading), with `[x]` and `[ ]` alike and whitespace ignored, appear as such under the same part letter in `.plans/plan-approved.md`. When that file is missing, or the plan's Boundary, Invariants, Intentional changes or Out of scope differ from it, no step is unchanged. Only `plan:scope` step 7 writes `plan-approved.md`; a round never refreshes it. A step whose six labels (`skills/plan/scope/plan-template.md` § Parts; its optional `Lanes:` and `Depends on:` are not among them) are all filled and that is unchanged goes into the round file under its `### <k>.` heading with its labels as written: rerun each of its `Searches:` at HEAD, and mark it `Ready from plan`. A count that moved, a missing or different copy, a step with a label missing, a review block fix and an added item take the full triage.
 
 **Full triage,** for every other item:
 
@@ -80,14 +80,15 @@ The check runs on the items step 3 triaged in full, and the round file says `Tri
 - Mark a session chapter `Round N · <goal>` with the app's chapter tool; skip it when the tool is missing.
 - Tell the user in one line that round N started with k items and that they will hear from you at a gate or at the end. Say it for the first round only.
 - **S lane:** once step 3's round file is written, make the changes yourself, following [executor-agent.md](executor-agent.md) § How, except its Progress line, and § Stop and report, except that you ask the user (a gate) where it says to stop. After each item, update `items` in the state file (no progress sidecar); at the end, write `.plans/round-<N>-summary.md` in the shape of `${CLAUDE_PLUGIN_ROOT}/skills/plan/run/round-summary-template.md`. Steps 6–8 follow as in the full lane: a change you make yourself, however small or directly asked, gets step 7's fresh review before the push.
-- **Full lane:** launch a **background** general-purpose agent with [executor-agent.md](executor-agent.md) (model: `rules/models.md`), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`).
+- **Full lane:** run `${CLAUDE_PLUGIN_ROOT}/scripts/lanes.py .plans/round-<N>.md .plans/plan.md` (`rules/parallel.md`). With one lane, launch a **background** general-purpose agent with [executor-agent.md](executor-agent.md) (model: `rules/models.md`), filled in: the worktree path, the round file, the guides, the commands, and the absolute path of the progress sidecar (the state file's path, `.json` becoming `.progress.json`). With two or more lanes, make each lane's worktree and branch, then launch one such agent per lane, all at once, each filled in with its lane's worktree, branch and HEAD, its lane's items only, and its lane progress sidecar (`.json` becoming `.lane-<id>.progress.json`).
   - **When the agent stops with questions,** ask the user (gate, with a notification), then continue the same agent with `SendMessage`.
-  - **When it finishes,** write its returned summary to `.plans/round-<N>-summary.md`.
+  - **When it finishes,** write its returned summary to `.plans/round-<N>-summary.md`. With lanes, wait for every lane, then step 6 merges them first.
 
 ### 6. Verify
 
 When the round's verification needs a manual check in the browser, follow the profile's "Manual testing" rule. Moving the local stack to this worktree is a gate: ask, then move it back afterwards.
 
+- **With lanes,** in the work branch's worktree, run `${CLAUDE_PLUGIN_ROOT}/scripts/lane-merge.sh <work branch> <lane ids>`, then write one `.plans/round-<N>-summary.md` from the lane summaries, one row per item; once `verify-round.sh` below passes, clean the lanes up (`rules/parallel.md`).
 - Run `${CLAUDE_PLUGIN_ROOT}/scripts/verify-round.sh .plans <N>`. A missing item, a fake commit or a dirty tree fails the round: report it, and never paper over it.
 - **Check the summary's claims yourself:** audit counts, test results, and every decision taken alone.
   - A decision flagged boundary, rule or someone else's code, or one that relaxes a check or a stop condition, is a gate.
@@ -133,7 +134,7 @@ The run repeats steps 1–9 without the user, round after round. Each round repo
 - **Stop the run** at the first of:
   - a gate the plan or `rules/core.md` names, and any decision for the user (boundary, a repository rule, someone else's code), unless the method lets you decide it alone (`rules/learning.md`: the method): then decide it and list it;
   - failed verification;
-  - conflicts with main;
+  - conflicts with main, or between lanes (`rules/parallel.md`);
   - new PR comments not covered by the source (suggest "Review comments");
   - red CI known at round start;
   - anything to publish: the first push's draft-PR question, replies, ticket changes;

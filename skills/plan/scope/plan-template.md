@@ -72,7 +72,7 @@ Flags, deploy order, data migrations, backfills, monitoring, how to turn it off.
 
 ## Parts [M+]
 
-A step is ready only when every label under it is filled; `none` with its reason counts as filled.
+A step is ready only when every label under it is filled; `none` with its reason counts as filled. `Lanes:` and `Depends on:` are optional: they let the run give steps that touch disjoint files to parallel lanes.
 
 ### Part A: <what this part makes the code do, as a sentence>
 
@@ -83,6 +83,8 @@ A step is ready only when every label under it is filled; `none` with its reason
   - Environment: <providers, mocks, fixtures, and how each state the test needs is produced>
   - Pins: <each invariant or boundary clause the step touches: the test that fails when that clause alone breaks, and the input it must let through>
   - Estimate: <production lines, as a number>
+  - Lanes: <optional: a, b or c, at most 3 lanes; a step without it is in lane a>
+  - Depends on: <optional: the ids of the steps it needs (part letter and position, B2), each in its own lane>
 
 ## Verification [always]
 

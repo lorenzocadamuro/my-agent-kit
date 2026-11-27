@@ -89,7 +89,7 @@ First settle the frame (question format: when to ask): a request to explore or p
 
 - Write it to `<worktree>/.plans/plan.md` (for `--dry-run`, where the Arguments say), from `skills/plan/scope/plan-template.md`. If the profile names a plan style guide, follow its structure and keep the template's sections inside it.
 - Drop the sections that do not apply to the size, all in one line and without their headings: `Dropped for size S: Invariants, Existing vs new behaviour, Size budget, People, Rollout, Parts; research skipped: overlap, people and merge requirements.` Content they would have held goes in a section the size keeps (an S plan's steps go in Verification).
-- For M and L, each step under Parts fills the template's six labels (`Files:`, `Searches:`, `Test:`, `Environment:`, `Pins:`, `Estimate:`) from the research, so a round can execute it as written.
+- For M and L, each step under Parts fills the template's six labels (`Files:`, `Searches:`, `Test:`, `Environment:`, `Pins:`, `Estimate:`) from the research, so a round can execute it as written, and the optional `Lanes:` and `Depends on:` when steps can run in parallel lanes.
 - An S plan fits on about one page.
 
 ### 6. Independent review

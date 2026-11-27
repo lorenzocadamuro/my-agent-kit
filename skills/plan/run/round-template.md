@@ -21,6 +21,8 @@ Bar: see plan § Bar for done. Act only on items below; anything else is reporte
 - Verified at: `<file>:<line>` (<sha>) — <what the code shows>
 - Callers covered (paths): <list>; for each field, state, key or rule added or changed: writers · readers (saved data too) · transitions · routes opened
 - Owning code point: <file · function>
+- Files: <in a plan with lanes only: every path the item changes>
+- Lanes: <in a plan with lanes only: the lane of the step it implements or reworks, else a>
 - Change: <what to do, or `none, check only`> (~<n> production lines)
 - Test: <name and what it asserts>
 - Stop if: <condition>
@@ -28,7 +30,7 @@ Bar: see plan § Bar for done. Act only on items below; anything else is reporte
 ### <k>. <a ready step, its bullet line as the plan writes it>
 
 - Ready from plan: yes (Searches rerun at HEAD: <counts>)
-- <its six labels, copied from the plan as written>
+- <its six labels, and its `Lanes:` and `Depends on:` when it has them, copied from the plan as written>
 - Stop if: <condition>
 
 ## Not this round

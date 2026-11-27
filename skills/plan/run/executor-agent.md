@@ -4,13 +4,13 @@ You are executing round <N> of a code change. You work alone, in the background.
 
 ## Where
 
-- **Worktree:** `<worktree path>`. Run every command there (`git -C <path>`, or `cd` first).
-- **Before anything else,** verify: branch `<branch>`, HEAD `<sha>`, clean tree. If any differs, stop and report.
+- **Worktree:** `<worktree path>` (in a parallel lane, the lane's). Run every command there (`git -C <path>`, or `cd` first).
+- **Before anything else,** verify: branch `<branch>` (in a parallel lane, `<work branch>-lane-<id>`), HEAD `<sha>`, clean tree. If any differs, stop and report.
 
 ## What
 
-- **Round file:** `<worktree>/.plans/round-<N>.md`. Execute its items, in order. It is your only task list.
-- **Plan:** `<worktree>/.plans/plan.md`. Read it for the boundary, the invariants, the intentional changes and the decisions. Do not redesign.
+- **Round file:** `<absolute path of .plans/round-<N>.md in the work branch's worktree>` (a lane's worktree has no `.plans/`, which git ignores). Execute its items, in order (in a parallel lane, only items <k, …>). It is your only task list.
+- **Plan:** `<absolute path of .plans/plan.md in the work branch's worktree>`. Read it for the boundary, the invariants, the intentional changes and the decisions. Do not redesign.
 - **Guides to read before coding:** <list from the project profile for the touched paths>.
 
 ## How

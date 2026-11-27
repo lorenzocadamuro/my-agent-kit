@@ -85,6 +85,7 @@ One file per change and folder, rewritten whole through a temp file and a rename
 - `ticketFrom`: the ticket's status before `plan:scope` moved it to the start status, so a cancelled plan can move it back.
 - `reason`: two or three words (`Plan approval`). The status band and line never show the work's name or the plan title; part titles and step labels, two or three words each, they may. A `name` left by an older version is ignored.
 - **Progress sidecar** `<same base>.progress.json`: `{ "round": 3, "items": { "done": 4, "total": 6 }, "updatedAt": "…" }`, written only by the round's executor after each item, at the path the coordinator gives it.
+- **Lane progress sidecar** `<same base>.lane-<id>.progress.json`, in the same shape, its `items` counting only the lane's: in a round with parallel lanes (`rules/parallel.md`) each lane's executor writes its own instead of the progress sidecar. The coordinator deletes it with the lane's worktree, once `verify-round.sh` passes.
 - **Activity sidecar** `state/session-<session id>.activity.json`, or without a session id `<base>.activity.json`, `<base>` computed as above from the session's folder; the name is fixed once, when the mode starts, and kept for every later write of that mode: `{ "mode": "pr:review", "state": "running", "updatedAt": "…" }`, `state` being `running`, `needs_you` or `done`; written by the `pr:*` modes and `improve run`, each by the rule in its skill.
 
 ## Paths
