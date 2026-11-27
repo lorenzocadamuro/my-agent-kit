@@ -36,6 +36,7 @@ Runs write code in parallel lanes, and scripts hold the facts. A round whose pla
 ### Evals and tests
 
 - New case `go/two-requests-start-apart`. New script tests: `lanes.test.sh`, `lane-merge.test.sh` (a refused merge commit and a merge that cannot start included), `state.test.sh`, `stop-policy.test.sh`, `verify-round.test.sh` (a round of two merged lanes included).
+- `add-skill/new-skill-added`: the grader `eval-case-written` checks that the case file exists (`file_exists` on `kit/evals/todo-sweep/*/case.yaml`), whatever tool wrote it; it failed on both versions when the model wrote the file with a shell command (D54).
 - `run/round-digest-writes-note` keeps its name; its `case.yaml` says it now checks that no note is written. `run/added-item-checked` names the summary template's current path.
 
 ## [8.2.0] - 2026-11-27
