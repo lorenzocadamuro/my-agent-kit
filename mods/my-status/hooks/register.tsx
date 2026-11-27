@@ -213,6 +213,11 @@ async function refresh($: EngineInterface): Promise<void> {
   const found = await findRun($, root, own, `${base}.json`, top)
   const run = found?.run ?? null
   const progress = found ? parseJson<MyStatusProgress>(await readText($, found.file.replace(/\.json$/, '.progress.json'))) : null
+  const lanes = found
+    ? (await Promise.all(['a', 'b', 'c'].map(id => readText($, found.file.replace(/\.json$/, `.lane-${id}.progress.json`)))))
+        .map(text => parseJson<MyStatusProgress>(text))
+        .filter((lane): lane is MyStatusProgress => lane !== null)
+    : []
   const activity =
     (own ? parseJson<MyStatusActivity>(await readText($, `${own}.activity.json`)) : null) ?? parseJson<MyStatusActivity>(await readText($, `${base}.activity.json`))
   const now = await $.clock.now()
@@ -236,6 +241,7 @@ async function refresh($: EngineInterface): Promise<void> {
   const snap: MyStatusSnapshot = {
     run,
     progress,
+    lanes,
     activity,
     activitySince: activitySeen?.at,
     hasPlanFile: await exists($, run?.plan?.path),

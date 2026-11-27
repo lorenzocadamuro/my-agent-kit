@@ -647,6 +647,79 @@ test('a fresh progress sidecar keeps a running state untouched for 7 hours', asy
   expect((await seen($, 'desktop')).words).toMatch(/^Running/)
 })
 
+// ---------- parallel lanes: each lane's progress sidecar beside the state file (rules/kit-data.md § State file) ----------
+
+const LANE = (id: string) => `acme-shop-feature.lane-${id}.progress.json`
+const laneFile = (round: number, done: number, total: number, updatedAt = '2026-01-10T09:20:00Z') => ({ round, items: { done, total }, updatedAt })
+// line 2's pieces as each surface joins them: the desktop's picture alt with commas, the terminal with dots
+const seq = (surface: Surface, ...pieces: string[]) => pieces.join(surface === 'desktop' ? ', ' : '  ·  ')
+
+test('two lanes under way: the running band shows "lanes 0/2 done" after the step label', async ($, on) => {
+  world(on, { run: V2_RUNNING, files: { [LANE('a')]: laneFile(3, 1, 2), [LANE('b')]: laneFile(3, 0, 3) } })
+  await refresh($)
+  for (const surface of SURFACES) expect((await seen($, surface)).words).toContain(seq(surface, 'Remove form', 'lanes 0/2 done', 'step 2 of 3'))
+})
+
+test('three lanes, one finished: "lanes 1/3 done"', async ($, on) => {
+  world(on, { run: V2_RUNNING, files: { [LANE('a')]: laneFile(3, 2, 2), [LANE('b')]: laneFile(3, 1, 3), [LANE('c')]: laneFile(3, 0, 1) } })
+  await refresh($)
+  for (const surface of SURFACES) expect((await seen($, surface)).words).toContain(seq(surface, 'Remove form', 'lanes 1/3 done', 'step 2 of 3'))
+})
+
+test('without lane files the running band is unchanged', async ($, on) => {
+  world(on, { run: V2_RUNNING })
+  await refresh($)
+  for (const surface of SURFACES) {
+    const words = (await seen($, surface)).words
+    expect(words).toContain(`${seq(surface, 'Remove form', 'step 2 of 3')}${surface === 'desktop' ? ';' : ' |'}`)
+    expect(words).not.toMatch(/lanes/)
+  }
+})
+
+test('a lane file left by an earlier round is not counted', async ($, on) => {
+  world(on, { run: V2_RUNNING, files: { [LANE('a')]: laneFile(3, 0, 2), [LANE('b')]: laneFile(2, 3, 3) } })
+  await refresh($)
+  expect((await seen($, 'desktop')).words).toContain(seq('desktop', 'Remove form', 'lanes 0/1 done', 'step 2 of 3'))
+})
+
+test('only lane files of an earlier round: no lane count', async ($, on) => {
+  world(on, { run: V2_RUNNING, files: { [LANE('a')]: laneFile(2, 2, 2) } })
+  await refresh($)
+  expect((await seen($, 'desktop')).words).not.toMatch(/lanes/)
+})
+
+test('a fresh lane file keeps a running state untouched for 7 hours', async ($, on) => {
+  const old = { ...V2_RUNNING, updatedAt: '2026-01-10T09:20:00Z' }
+  world(on, { run: old, now: '2026-01-10T16:30:00Z', files: { [LANE('a')]: laneFile(3, 1, 2, '2026-01-10T15:00:00Z') } })
+  await refresh($)
+  expect((await seen($, 'desktop')).words).toMatch(/^Running/)
+})
+
+test('a fresh lane file of an earlier round does not keep a running state fresh', async ($, on) => {
+  const old = { ...V2_RUNNING, updatedAt: '2026-01-10T09:20:00Z' }
+  world(on, { run: old, now: '2026-01-10T16:30:00Z', files: { [LANE('a')]: laneFile(2, 1, 2, '2026-01-10T15:00:00Z') } })
+  await refresh($)
+  expect((await seen($, 'desktop')).band).toBe(false)
+})
+
+test('a narrow band drops the lane count first, before the step position', async ($, on) => {
+  world(on, { run: V2_RUNNING, files: { [LANE('a')]: laneFile(3, 1, 2), [LANE('b')]: laneFile(3, 0, 3) } })
+  await refresh($)
+  const header = async (columns: number) => {
+    const ui = await $.ui.mount(band('desktop', 400, columns))
+    const svg = await source(ui, 'header')
+    await ui.unmount()
+    return svg
+  }
+  expect(await header(110)).toContain('lanes 0/2 done')
+  let dropped = ''
+  for (let columns = 110; columns >= 40 && !dropped; columns -= 2) {
+    const svg = await header(columns)
+    if (!svg.includes('lanes 0/2 done')) dropped = svg
+  }
+  expect(dropped).toContain('step 2 of 3')
+})
+
 test('pr and improve activity shows Running or Needs you with its mode, not its name; a done one draws nothing', async ($, on) => {
   const w: World = {}
   world(on, w)

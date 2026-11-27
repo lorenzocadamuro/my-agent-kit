@@ -171,7 +171,7 @@ export function headerPic(m: BandModel, W: number, A: number, isNarrowBand: bool
   // line 2: drop the trailing pieces by rank until it fits; the bold first piece stays, wrapping if it must
   const width = (ps: BandModel['line2']) => ps.reduce((a, p, i) => a + tw((i ? SEP : '') + p.text, 12.5, p.role === 't1' ? 600 : 400) * FIT, 0)
   let pieces = m.line2
-  for (const rank of [1, 2, 3]) if (width(pieces) > room) pieces = pieces.filter(p => p.rank !== rank)
+  for (const rank of [...new Set(pieces.map(p => p.rank))].filter(r => r > 0).sort((a, b) => a - b)) if (width(pieces) > room) pieces = pieces.filter(p => p.rank !== rank)
   let lines: string[] = []
   if (width(pieces) > room) {
     pieces = pieces.slice(0, 1)

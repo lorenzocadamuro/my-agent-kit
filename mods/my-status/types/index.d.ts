@@ -62,6 +62,8 @@ export type MyStatusActivity = {
 export type MyStatusSnapshot = {
   run: MyStatusRun | null
   progress?: MyStatusProgress | null
+  /** A round with parallel lanes: each lane's progress sidecar (`<state file>.lane-<id>.progress.json`), any round. */
+  lanes?: MyStatusProgress[]
   activity?: MyStatusActivity | null
   /** When the mod first saw the current activity: its elapsed time counts from there. */
   activitySince?: number

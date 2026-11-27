@@ -1,4 +1,4 @@
-import type { MyStatusActivity, MyStatusPart, MyStatusRun, MyStatusSnapshot, Part, Step } from '../types'
+import type { MyStatusActivity, MyStatusPart, MyStatusProgress, MyStatusRun, MyStatusSnapshot, Part, Step } from '../types'
 
 // From what the kit writes (the state file, its sidecars, the PR's comments and conflicts) to the scene the approved
 // prototype draws: the state that leads, its header (word, line 2, figures), the parts with their steps, and the
@@ -6,7 +6,7 @@ import type { MyStatusActivity, MyStatusPart, MyStatusRun, MyStatusSnapshot, Par
 
 export type State = 'planning' | 'ready' | 'running' | 'needs_you' | 'stopped' | 'done'
 export type Role = 't1' | 't2' | 't3'
-// A piece of line 2; `rank` is the order pieces drop in when line 2 meets the figures (0 never drops)
+// A piece of line 2; `rank` is the order pieces drop in when line 2 meets the figures, lowest first (0 never drops)
 export type Piece = { text: string; role: Role; rank: number }
 export type Metric = { value: string; caption: string; muted?: boolean }
 export type Cta =
@@ -51,6 +51,18 @@ function isStale(updatedAt: string | undefined, now: number, newer?: string): bo
   return Number.isFinite(at) && now - at > STALE_MS
 }
 
+/** The lane sidecars of the open round (the last without endedAt, else `round`): a failed round leaves its own behind. */
+function openLanes(snap: MyStatusSnapshot): MyStatusProgress[] {
+  const open = [...(snap.run?.rounds ?? [])].reverse().find(r => !r.endedAt)?.n ?? snap.run?.round
+  return open === undefined ? [] : (snap.lanes ?? []).filter(lane => lane.round === open)
+}
+
+/** The newest of the progress sidecar's and the open round's lane sidecars' updatedAt: a sign the run is alive. */
+function newestSidecar(snap: MyStatusSnapshot): string | undefined {
+  const times = [snap.progress?.updatedAt, ...openLanes(snap).map(lane => lane.updatedAt)].filter((t): t is string => Number.isFinite(Date.parse(t ?? '')))
+  return times.sort((a, b) => Date.parse(b) - Date.parse(a))[0]
+}
+
 type Lead = { state: State; run: MyStatusRun; activity?: undefined } | { state: 'running' | 'needs_you'; activity: MyStatusActivity; run?: undefined }
 
 /**
@@ -61,7 +73,7 @@ type Lead = { state: State; run: MyStatusRun; activity?: undefined } | { state: 
 function lead(snap: MyStatusSnapshot): Lead | null {
   const stored = snap.run
   const mayAge = stored?.state === 'planning' || stored?.state === 'running'
-  const run = stored && !(mayAge && isStale(stored.updatedAt, snap.now, snap.progress?.updatedAt)) ? stored : null
+  const run = stored && !(mayAge && isStale(stored.updatedAt, snap.now, newestSidecar(snap))) ? stored : null
   const act = snap.activity
   const activity = act && (act.state === 'running' || act.state === 'needs_you') && !isStale(act.updatedAt, snap.now) ? act : null
   if (run && (run.state === 'planning' || run.state === 'needs_you' || run.state === 'running')) return { state: run.state, run }
@@ -123,13 +135,16 @@ function where(parts: Part[]): Piece | null {
   return at ? { text: position(parts, at), role: 't3', rank: 1 } : nextPiece(parts)
 }
 
-function line2(run: MyStatusRun, state: State, parts: Part[]): Piece[] {
+function line2(run: MyStatusRun, state: State, parts: Part[], lanes: MyStatusProgress[]): Piece[] {
   const pieces: (Piece | null)[] = []
   if (state === 'running') {
     const at = find(parts, s => s.status === 'running' || s.status === 'failed') ?? find(parts, s => s.status !== 'done')
     if (at) {
       pieces.push({ text: `Part ${parts[at.i]!.letter}`, role: 't1', rank: 0 })
       pieces.push({ text: stepAt(parts, at).label, role: 't2', rank: 3 })
+      const done = lanes.filter(lane => (lane.items?.total ?? 0) > 0 && (lane.items?.done ?? 0) >= (lane.items?.total ?? 0)).length
+      // the lanes of a parallel round: the first piece to drop when the band is narrow
+      if (lanes.length > 0) pieces.push({ text: `lanes ${done}/${lanes.length} done`, role: 't3', rank: 0.5 })
       pieces.push({ text: `step ${at.j + 1} of ${parts[at.i]!.steps.length}`, role: 't3', rank: 1 })
     }
   } else if (state === 'needs_you' || state === 'stopped') {
@@ -266,7 +281,7 @@ export function bandModel(snap: MyStatusSnapshot | null, now: number, isQuestion
   if (state === 'ready' || state === 'stopped') ctas.push(RUN_PLAN)
   if (state === 'needs_you')
     ctas.push(isQuestionAway ? { kind: 'question', key: 'show-question', label: 'Show question' } : { kind: 'warning', key: 'answer-below', label: 'Answer in the chat below ↓' })
-  return { state, word: WORD[state], line2: line2(run, state, parts), metrics: metrics(run, state, parts, now), parts, isPlanning: false, hasPlanFile: true, ctas }
+  return { state, word: WORD[state], line2: line2(run, state, parts, openLanes(snap)), metrics: metrics(run, state, parts, now), parts, isPlanning: false, hasPlanFile: true, ctas }
 }
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
