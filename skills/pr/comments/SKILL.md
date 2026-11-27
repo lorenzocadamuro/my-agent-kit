@@ -4,12 +4,12 @@ description: "Make sense of PR comments from bots or colleagues: two lines each,
 argument-hint: "[PR number or URL] [comment URL | new | all]"
 disable-model-invocation: true
 when: "\"/my:comments\", \"cosa vuol dire questo commento\", \"explain these bot comments\", \"is this Bugbot finding real\", \"help me answer this review\""
-reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/repository.md, rules/kit-data.md, rules/reviewing.md, skills/writing/unslop/SKILL.md]
+reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/repository.md, rules/kit-data.md, rules/asking.md, rules/reviewing.md, skills/writing/unslop/SKILL.md]
 ---
 
 # /my:comments — what each comment means, and what to do about it
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
 
 **Activity:** follow `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md` § The activity file.
 

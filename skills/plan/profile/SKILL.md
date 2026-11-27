@@ -3,12 +3,12 @@ name: profile
 description: "Build the project profile of a repository, from its agent instructions, guides, CI workflows and skills, and ask the user to confirm it."
 disable-model-invocation: true
 when: "\"/my:profile\", or `/my:scope` when `<data root>/projects/<owner>-<repo>.md` does not exist"
-reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/repository.md, rules/kit-data.md]
+reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/repository.md, rules/kit-data.md, rules/asking.md]
 ---
 
 # Building a project profile
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md` and `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md` and `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`.
 
 Used by `/my:scope` when `<data root>/projects/<owner>-<repo>.md` does not exist. The result follows `${CLAUDE_PLUGIN_ROOT}/skills/plan/profile/profile-template.md`. The profile holds employer-specific facts and therefore never enters the kit repository.
 

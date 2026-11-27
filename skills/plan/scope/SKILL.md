@@ -4,12 +4,12 @@ description: "Build the plan for a code change with the user, before any code: r
 argument-hint: "<ticket id | url | description> [--adopt <branch|PR>] [--dry-run]"
 disable-model-invocation: true
 when: "\"/my:scope\", \"let's plan this ticket\", \"pianifichiamo\", \"scope this change\", a ticket id with a request to start work, or re-scoping a PR that got out of hand (--adopt)"
-reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/kit-data.md, rules/asking.md, rules/models.md, skills/plan/scope/plan-template.md]
+reads: [rules/core.md, rules/plan-contract.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/kit-data.md, rules/asking.md, rules/reviewing.md, rules/models.md, skills/plan/scope/plan-template.md]
 ---
 
 # /my:scope — the plan is the contract
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/models.md` and `${CLAUDE_PLUGIN_ROOT}/skills/plan/scope/plan-template.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/plan-contract.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md`, `${CLAUDE_PLUGIN_ROOT}/rules/models.md` and `${CLAUDE_PLUGIN_ROOT}/skills/plan/scope/plan-template.md`.
 
 ## Arguments
 

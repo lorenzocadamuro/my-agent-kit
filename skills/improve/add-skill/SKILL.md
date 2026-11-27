@@ -4,12 +4,12 @@ description: "Add a skill to the kit from a pasted text or a link: look for an e
 argument-hint: "<pasted skill text | link>"
 disable-model-invocation: true
 when: "\"/my:add-skill\", \"add this skill to the kit\", \"import this skill\""
-reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/asking.md, rules/writing-for-agents.md, CONSTITUTION.md]
+reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/kit-data.md, rules/asking.md, rules/reviewing.md, rules/models.md, rules/writing-for-agents.md, CONSTITUTION.md]
 ---
 
 # /my:add-skill — bring a skill into the kit
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/writing-for-agents.md` and `${CLAUDE_PLUGIN_ROOT}/CONSTITUTION.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md`, `${CLAUDE_PLUGIN_ROOT}/rules/models.md`, `${CLAUDE_PLUGIN_ROOT}/rules/writing-for-agents.md` and `${CLAUDE_PLUGIN_ROOT}/CONSTITUTION.md`.
 
 How the kit changes: `${CLAUDE_PLUGIN_ROOT}/rules/learning.md` § The kit's improvement loop.
 

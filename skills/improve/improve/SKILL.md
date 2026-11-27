@@ -4,14 +4,14 @@ description: "Grow the `my` kit from real use: no argument lists open notes; `ru
 argument-hint: "note <what happened> | digest [file] | run [skill|ids] [--propose-only] | audit [folder] | log [skill] | method | (none: list open)"
 disable-model-invocation: true
 when: "\"/my:improve\", \"improve the kit\", \"what's open on the kit\""
-reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/kit-data.md, rules/asking.md, rules/models.md, rules/writing-for-agents.md, skills/writing/unslop/SKILL.md]
+reads: [rules/core.md, rules/learning.md, rules/verifying.md, rules/worker.md, rules/repository.md, rules/kit-data.md, rules/asking.md, rules/reviewing.md, rules/models.md, rules/writing-for-agents.md, skills/writing/unslop/SKILL.md]
 ---
 
 # /my:improve — the kit's improvement loop
 
 How the kit changes: `${CLAUDE_PLUGIN_ROOT}/rules/learning.md` § The kit's improvement loop.
 
-Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/models.md`, `${CLAUDE_PLUGIN_ROOT}/rules/writing-for-agents.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
+Read first: `${CLAUDE_PLUGIN_ROOT}/rules/core.md`, `${CLAUDE_PLUGIN_ROOT}/rules/learning.md`, `${CLAUDE_PLUGIN_ROOT}/rules/verifying.md`, `${CLAUDE_PLUGIN_ROOT}/rules/worker.md`, `${CLAUDE_PLUGIN_ROOT}/rules/repository.md`, `${CLAUDE_PLUGIN_ROOT}/rules/kit-data.md`, `${CLAUDE_PLUGIN_ROOT}/rules/asking.md`, `${CLAUDE_PLUGIN_ROOT}/rules/reviewing.md`, `${CLAUDE_PLUGIN_ROOT}/rules/models.md`, `${CLAUDE_PLUGIN_ROOT}/rules/writing-for-agents.md` and `${CLAUDE_PLUGIN_ROOT}/skills/writing/unslop/SKILL.md`.
 
 ## Parse `$ARGUMENTS`
 
