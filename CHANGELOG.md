@@ -38,6 +38,7 @@ Tools for growth. The kit can take in a skill from outside, audit its own text, 
 - New cases: `add-skill/new-skill-added`, `add-skill/same-job-asks`, `add-skill/constitution-conflict-stops`, `improve/audit-proposes-notes`, `scope/profile-refreshes-changed-source`, `scope/profile-answer-kept`.
 - `comments/human-review-explained` and `improve/run-flags-old-notes` graders also accept the new rule file names.
 - `review/review-judges-pr-as-is`: the grader `not-conditioned-on-base` needs a word boundary after "is in", so "is information for the author" no longer matches; a review that waits for the base still fails.
+- `scope/gated-actions-listed` (`gated-listed`) also accepts a stated consequence of going without the user's yes on the gated commits ("resta aperto", "non gira", "remains open", "does not run"), and `improve/constitution-question-explicit` (`shows-new-text`) a "Proposta:" or "Proposed:" label followed by the new text: their failing replies were correct in other words. Both still fail their before versions and the samples that must fail (no gated action, no consequence, a sandbox "senza git … non gira", a bare "proposta di emendamento").
 - `scope/profile-answer-kept` gains `hashes-kept`: the changed source keeps its recorded hash while the question on the user's answer waits.
 - `improve/audit-proposes-notes` is kept as a guard that passes without its rule (D43, as the 23 guards of D29): it fails without the audit mode, but its mutant without § Audit still passes, because the model audits a skill's text without it.
 
